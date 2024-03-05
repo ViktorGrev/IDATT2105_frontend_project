@@ -1,5 +1,9 @@
 # Book That Room
 
+<p align="center">
+  <img src="assets\ReadmePicture.webp" width="500">
+</p>
+
 **Application website:** [Book That Room](https://idatt2105-project.vercel.app/)
 
 Made by: Henrik Berg, Victor Kaste, Viktor Grevskott
