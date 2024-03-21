@@ -69,6 +69,9 @@ export default {
 
 
 <style>
+* {
+  font-family: 'Segoe UI', sans-serif;
+}
 .html,
 body {
   width: 100vw;
