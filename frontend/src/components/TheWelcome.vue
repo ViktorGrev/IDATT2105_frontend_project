@@ -32,6 +32,7 @@
     </div>
     <div class="splitt" id="box2">
       <img src="../assets/logo1.png" width="100%" height="55%">
+      <button id="clickHere" @click="redirectToPage">Click here</button>
     </div>
   </div>
 </template>
@@ -39,8 +40,22 @@
 <script>
 import axios from 'axios';
 import { useUserStore } from '@/stores/counter';
+import { useRouter } from 'vue-router'; // Import useRouter from Vue Router
 
 export default {
+  setup() {
+    const router = useRouter(); // Use the useRouter composable to access the router instance
+
+    // Methods can be returned from setup()
+    return {
+      async login() {
+        // login logic
+      },
+      redirectToPage() {
+        router.push({ name: 'about' }); // Use router.push to navigate to another route
+      }
+    };
+  },
   data() {
     return {
       credentials: {
@@ -49,13 +64,9 @@ export default {
       },
     };
   },
-  methods: {
-    async login() {
-
-    },
-  },
 };
 </script>
+
 
 <style>
 .html,
