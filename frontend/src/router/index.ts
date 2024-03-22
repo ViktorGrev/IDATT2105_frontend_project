@@ -20,4 +20,12 @@ const router = createRouter({
   ]
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.name === 'about') {
+    next({ name: 'home' });
+  }else {
+    next(); // Make sure to call next() to continue navigation for other routes
+  }
+});
+
 export default router
