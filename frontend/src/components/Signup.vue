@@ -1,8 +1,7 @@
 <template>
     <div id="box">
-        <div class="splitt" id="box2">
+        <div class="splitt" id="box3">
         <img src="../assets/logo1.png" width="100%" height="55%">
-        <button id="clickHere" @click="redirectToPage">Click here</button>
         </div>
       <div id="box1" class="splitt">
         <div>
@@ -15,29 +14,32 @@
               <label class="omrs-input-underlined">
                 <input required oninvalid="this.setCustomValidity('Your custom message here')" oninput="this.setCustomValidity('')">
                 <span class="omrs-input-label">Username</span>
-                <span class="omrs-input-helper"></span>
+                <span class="omrs-input-helper">The login and displayed username</span>
               </label>
             </div>
             <div class="omrs-input-group">
               <label class="omrs-input-underlined">
                 <input required type="password">
                 <span class="omrs-input-label">Password</span>
-                <span class="omrs-input-helper"></span>
+                <span class="omrs-input-helper">Account password</span>
               </label>
             </div>
             <div class="omrs-input-group">
               <label class="omrs-input-underlined">
                 <input required type="password">
                 <span class="omrs-input-label">Password</span>
-                <span class="omrs-input-helper"></span>
+                <span class="omrs-input-helper">Repete password</span>
               </label>
             </div>
-            <button>
-              Signup
-              <div class="arrow-wrapper">
-                <div class="arrow"></div>
-              </div>
-            </button>
+            <div class = "buttonHolder">
+                <button>
+                SIGN UP
+                <div class="arrow-wrapper">
+                    <div class="arrow"></div>
+                </div>
+                </button>
+                <p id = "signupText">Already signed up? <a id = "signupLink" @click="redirectToPage">Login</a></p>
+            </div>
           </form>
         </div>
       </div>
@@ -59,7 +61,7 @@
           // login logic
         },
         redirectToPage() {
-          router.push({ name: 'about' }); // Use router.push to navigate to another route
+          router.push({ name: 'login' }); // Use router.push to navigate to another route
         }
       };
     },
@@ -108,7 +110,7 @@
     height: 100%;
   }
   
-  #box2 {
+  #box3 {
     background-color: rgb(22, 144, 248);
     border-bottom-right-radius: 300px 350px;
   }
@@ -140,6 +142,20 @@
   h4.title {
     text-align: center;
     margin-bottom: 45px;
+  }
+
+  .buttonHolder {
+    display: flex;
+    flex-direction: row;
+  }
+
+  #signupText {
+    margin-left: 10px;
+  }
+
+  #signupLink {
+    color: blue;
+    cursor: pointer;
   }
   
   :root {
@@ -263,6 +279,10 @@
   .omrs-input-filled.omrs-input-danger>.omrs-input-helper {
     color: var(--omrs-color-danger);
   }
+
+  .omrs-input-label:hover {
+    cursor:text;
+  }
   
   .omrs-input-danger>svg {
     fill: var(--omrs-color-danger);
@@ -332,10 +352,12 @@
   
   button:hover {
     background-color: var(--hover-color);
+    cursor: pointer;
   }
   
   button:hover .arrow {
     background: var(--secondary-color);
+    cursor: pointer;
   }
   
   button:hover .arrow:before {

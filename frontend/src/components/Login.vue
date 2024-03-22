@@ -21,18 +21,20 @@
               <span class="omrs-input-helper"></span>
             </label>
           </div>
-          <button>
-            Login
-            <div class="arrow-wrapper">
-              <div class="arrow"></div>
+          <div class = "buttonHolder">
+                <button>
+                LOGIN
+                <div class="arrow-wrapper">
+                    <div class="arrow"></div>
+                </div>
+                </button>
+                <p id = "loginText">Dont have an Account Yet? <a id = "loginLink" @click="redirectToPage">Sign up</a></p>
             </div>
-          </button>
         </form>
       </div>
     </div>
     <div class="splitt" id="box2">
       <img src="../assets/logo1.png" width="100%" height="55%">
-      <button id="clickHere" @click="redirectToPage">Click here</button>
     </div>
   </div>
 </template>
@@ -52,7 +54,7 @@ export default {
         // login logic
       },
       redirectToPage() {
-        router.push({ name: 'about' }); // Use router.push to navigate to another route
+        router.push({ name: 'signup' }); // Use router.push to navigate to another route
       }
     };
   },
@@ -138,6 +140,20 @@ h4.title {
   text-align: center;
   margin-bottom: 45px;
 }
+
+.buttonHolder {
+    display: flex;
+    flex-direction: row;
+  }
+
+#loginText {
+    margin-left: 10px;
+  }
+
+#loginLink {
+    color: blue;
+    cursor: pointer;
+  }
 
 :root {
   --omrs-color-ink-lowest-contrast: rgba(47, 60, 85, 0.18);
@@ -235,6 +251,10 @@ div.omrs-input-group {
   fill: var(--omrs-color-ink-high-contrast);
 }
 
+.omrs-input-label:hover {
+    cursor:text;
+  }
+
 /** DISABLED **/
 
 .omrs-input-underlined>input:disabled {
@@ -329,10 +349,12 @@ button .arrow::before {
 
 button:hover {
   background-color: var(--hover-color);
+  cursor: pointer;
 }
 
 button:hover .arrow {
   background: var(--secondary-color);
+  cursor: pointer;
 }
 
 button:hover .arrow:before {
