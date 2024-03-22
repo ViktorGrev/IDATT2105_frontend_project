@@ -9,7 +9,7 @@
         <form @submit.prevent="login">
           <div class="omrs-input-group">
             <label class="omrs-input-underlined">
-              <input required>
+              <input required oninvalid="this.setCustomValidity('Your custom message here')" oninput="this.setCustomValidity('')">
               <span class="omrs-input-label">Username</span>
               <span class="omrs-input-helper"></span>
             </label>
@@ -113,6 +113,7 @@ body {
   text-align: center;
   font-size: 13px;
   margin-bottom: 40px;
+  line-height: 25px;
 }
 
 strong {
