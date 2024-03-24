@@ -89,7 +89,7 @@ body {
 }
 
 nav{
-  width: 100vw;
+  width: 100%;
   background: rgb(22, 144, 248);
 }
 nav .wrapper{
