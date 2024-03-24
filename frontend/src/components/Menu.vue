@@ -85,11 +85,12 @@ nav{
   background: rgb(22, 144, 248);
 }
 nav .wrapper{
-  max-width: 1300px;
   padding: 0px 30px;
   height: 70px;
   line-height: 70px;
   margin: auto;
+  margin-right: 7%;
+  margin-left: 7%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -138,10 +139,11 @@ nav .wrapper{
   width: 180px;
   line-height: 45px;
   top: 85px;
-  left:-30px;
   opacity: 0;
   visibility: hidden;
   box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+  padding-inline-start: 0px;
+  padding: 5px;
 }
 .nav-links li:hover .drop-menu,
 .nav-links li:hover .mega-box{
@@ -151,20 +153,20 @@ nav .wrapper{
   visibility: visible;
 }
 .drop-menu li a{
-  width: 100%;
   display: block;
-  padding: 0px 10px 0px 0px;
+  padding: 0px 0px 0px 10px;
   font-weight: 400;
   border-radius: 0px;
 }
 .mega-box{
   position: absolute;
-  left: 0;
-  width: 100%;
+  left: 4%;
+  width: 90%;
   padding: 0 0px;
   top: 85px;
   opacity: 0;
   visibility: hidden;
+  padding-inline-start: 0px;
 }
 .mega-box .content{
   background: rgb(22, 144, 248);
@@ -189,7 +191,7 @@ nav .wrapper{
   font-weight: 500;
 }
 .content .row .mega-links{
-  margin-left: -40px;
+  margin-left: -80px;
   border-left: 1px solid rgba(255,255,255,0.09);
 }
 .row .mega-links li{
