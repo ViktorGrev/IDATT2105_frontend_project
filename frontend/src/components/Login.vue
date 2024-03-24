@@ -79,7 +79,7 @@ export default {
 body {
   width: 100vw;
   height: 100vh;
-  margin: -2px;
+  margin: 0px;
   padding: 0px;
   justify-content: center;
   align-items: center;

@@ -68,6 +68,14 @@
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
 .html,
 body {
   width: 100vw;
@@ -105,7 +113,7 @@ nav .wrapper{
 
 .wrapper .logo a{
   color: #f2f2f2;
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 600;
   text-decoration: none;
   text-align: center;
@@ -121,7 +129,7 @@ nav .wrapper{
 .nav-links li a{
   color: #f2f2f2;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
   padding: 9px 15px;
   border-radius: 5px;
@@ -191,7 +199,7 @@ nav .wrapper{
   font-weight: 500;
 }
 .content .row .mega-links{
-  margin-left: -80px;
+  margin-left: -40px;
   border-left: 1px solid rgba(255,255,255,0.09);
 }
 .row .mega-links li{
