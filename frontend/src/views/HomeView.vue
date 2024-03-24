@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Login from '../components/Login.vue'
+import Home from '../components/Home.vue'
 </script>
 
 <template>
   <main>
-    <Login></Login>
+    <Home></Home>
   </main>
 </template>
 
@@ -13,8 +13,5 @@ import Login from '../components/Login.vue'
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100vh;
-    background-color: rosybrown;
   }
 </style>

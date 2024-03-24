@@ -7,3 +7,14 @@
 <script setup lang="ts">
 import Signup from '../components/Signup.vue'
 </script>
+
+<style scoped>
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: rosybrown;
+  }
+</style>

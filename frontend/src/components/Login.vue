@@ -22,7 +22,7 @@
             </label>
           </div>
           <div class = "buttonHolder">
-                <button>
+                <button @click="login">
                 LOGIN
                 <div class="arrow-wrapper">
                     <div class="arrow"></div>
@@ -51,7 +51,7 @@ export default {
     // Methods can be returned from setup()
     return {
       async login() {
-        // login logic
+        router.push({ name: 'home' });
       },
       redirectToPage() {
         router.push({ name: 'signup' }); // Use router.push to navigate to another route
@@ -70,7 +70,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 * {
   font-family: 'Segoe UI', sans-serif;
 }
@@ -179,7 +179,7 @@ div.omrs-input-group {
 .omrs-input-underlined>input,
 .omrs-input-filled>input {
   border: none;
-  border-bottom: 0.125rem solid var(--omrs-color-ink-medium-contrast);
+  border-bottom: 0.125rem solid rgba(19, 19, 21, 0.6);
   width: 100%;
   height: 2rem;
   font-size: 1.0625rem;
@@ -200,7 +200,7 @@ div.omrs-input-group {
   top: 0.9375rem;
   left: 0.875rem;
   line-height: 147.6%;
-  color: var(--omrs-color-ink-medium-contrast);
+  color: rgba(19, 19, 21, 0.6);
   transition: top .2s;
 }
 
@@ -209,21 +209,21 @@ div.omrs-input-group {
   position: absolute;
   top: 0.9375rem;
   right: 0.875rem;
-  fill: var(--omrs-color-ink-medium-contrast);
+  fill: rgba(19, 19, 21, 0.6);
 }
 
 .omrs-input-underlined>.omrs-input-helper,
 .omrs-input-filled>.omrs-input-helper {
   font-size: 0.9375rem;
-  color: var(--omrs-color-ink-medium-contrast);
+  color: rgba(19, 19, 21, 0.6);
   letter-spacing: 0.0275rem;
   margin: 0.125rem 0.875rem;
 }
 
 .omrs-input-underlined>input:hover,
 .omrs-input-filled>input:hover {
-  background: var(--omrs-color-interaction-minus-two);
-  border-color: var(--omrs-color-ink-high-contrast);
+  background: rgba(73, 133, 224, 0.12);
+  border-color: #121212;
 }
 
 .omrs-input-underlined>input:focus+.omrs-input-label,
@@ -238,64 +238,22 @@ div.omrs-input-group {
 
 .omrs-input-underlined:not(.omrs-input-danger)>input:focus+.omrs-input-label,
 .omrs-input-filled:not(.omrs-input-danger)>input:focus+.omrs-input-label {
-  color: var(--omrs-color-interaction);
+  color: #1e4bd1;
 }
 
 .omrs-input-underlined:not(.omrs-input-danger)>input:focus,
 .omrs-input-filled:not(.omrs-input-danger)>input:focus {
-  border-color: var(--omrs-color-interaction);
+  border-color: #1e4bd1;
 }
 
 .omrs-input-underlined:not(.omrs-input-danger)>input:focus~svg,
 .omrs-input-filled:not(.omrs-input-danger)>input:focus~svg {
-  fill: var(--omrs-color-ink-high-contrast);
+  fill: #121212;
 }
 
 .omrs-input-label:hover {
     cursor:text;
   }
-
-/** DISABLED **/
-
-.omrs-input-underlined>input:disabled {
-  background: var(--omrs-color-bg-low-contrast);
-  cursor: not-allowed;
-}
-
-.omrs-input-underlined>input:disabled+.omrs-input-label,
-.omrs-input-underlined>input:disabled~.omrs-input-helper {
-  color: var(--omrs-color-ink-low-contrast);
-}
-
-.omrs-input-underlined>input:disabled~svg {
-  fill: var(--omrs-color-ink-low-contrast);
-}
-
-
-/** DANGER **/
-
-.omrs-input-underlined.omrs-input-danger>.omrs-input-label,
-.omrs-input-underlined.omrs-input-danger>.omrs-input-helper,
-.omrs-input-filled.omrs-input-danger>.omrs-input-label,
-.omrs-input-filled.omrs-input-danger>.omrs-input-helper {
-  color: var(--omrs-color-danger);
-}
-
-.omrs-input-danger>svg {
-  fill: var(--omrs-color-danger);
-}
-
-.omrs-input-danger>input {
-  border-color: var(--omrs-color-danger);
-}
-
-.omrs-input-underlined>input {
-  background: var(--omrs-color-bg-high-contrast);
-}
-
-.omrs-input-filled>input {
-  background: var(--omrs-color-bg-low-contrast);
-}
 
 /** Button */
 
@@ -325,6 +283,9 @@ button .arrow-wrapper {
 }
 
 button .arrow {
+  --arrow-width: 10px;
+  --arrow-stroke: 2px;
+  --primary-color: rgb(22, 144, 248);
   margin-top: 1px;
   width: var(--arrow-width);
   background: var(--primary-color);
@@ -334,6 +295,8 @@ button .arrow {
 }
 
 button .arrow::before {
+  --secondary-color: #fff;
+  --arrow-stroke: 2px;
   content: "";
   box-sizing: border-box;
   position: absolute;
