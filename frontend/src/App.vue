@@ -15,5 +15,6 @@ import HelloWorld from './components/HelloWorld.vue'
   body {
     margin: 0px;
     padding: 0px;
+    background-color: #edeff4;
   }
 </style>

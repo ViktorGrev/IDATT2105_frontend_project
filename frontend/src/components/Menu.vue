@@ -103,8 +103,8 @@ export default {
 
 .html,
 body {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   margin: 0px;
   padding: 0px;
   justify-content: center;
@@ -119,7 +119,7 @@ nav{
 }
 nav .wrapper{
   padding: 0px 30px;
-  height: 70px;
+  height: auto;
   line-height: 70px;
   margin: auto;
   margin-right: 7%;
