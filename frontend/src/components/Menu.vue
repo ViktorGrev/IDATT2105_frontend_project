@@ -1,14 +1,14 @@
 <template>
     <nav>
   <div class="wrapper">
-    <div class="logo"><a href="#"><img src = "../assets/trivium_logo.png">Trivium</a></div>
+    <div class="logo"><a href="#" @click="home"><img src = "../assets/trivium_logo.png">Trivium</a></div>
     <input type="radio" name="slider" id="menu-btn">
     <input type="radio" name="slider" id="close-btn">
     <ul class="nav-links">
       <label for="close-btn" class="btn close-btn"><i class="fas fa-times"></i></label>
-      <li><a href="#">Home</a></li>
+      <li><a href="#" @click="home">Home</a></li>
       <li><a href="#">Your Library</a></li>
-      <li><a href="#">Create</a></li>
+      <li><a href="#" @click="create">Create</a></li>
       <li>
         <a href="#" class="desktop-item">Mega Menu</a>
         <input type="checkbox" id="showMega">
@@ -80,6 +80,12 @@ export default {
     return {
       async login() {
         router.push({ name: 'login' });
+      },
+      home() {
+          router.push({ name: 'home' });
+      },
+      create() {
+          router.push({ name: 'create' });
       }
     };
   }
