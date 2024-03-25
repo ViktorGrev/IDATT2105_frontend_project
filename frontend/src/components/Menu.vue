@@ -49,7 +49,7 @@
         </div>
       </li>
       <li>
-        <a href="#" class="desktop-item">Login</a>
+        <a href="#" class="desktop-item" @click="login">Login</a>
         <input type="checkbox" id="showDrop">
         <label for="showDrop" class="mobile-item">Dropdown Menu</label>
         <ul class="drop-menu">
@@ -66,6 +66,25 @@
 
 
 </template>
+
+<script>
+import axios from 'axios';
+import { useUserStore } from '@/stores/counter';
+import { useRouter } from 'vue-router'; // Import useRouter from Vue Router
+
+export default {
+  setup() {
+    const router = useRouter(); // Use the useRouter composable to access the router instance
+
+    // Methods can be returned from setup()
+    return {
+      async login() {
+        router.push({ name: 'login' });
+      }
+    };
+  }
+}
+</script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
