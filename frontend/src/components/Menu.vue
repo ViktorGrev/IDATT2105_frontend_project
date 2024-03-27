@@ -53,7 +53,7 @@
         <input type="checkbox" id="showDrop">
         <label for="showDrop" class="mobile-item">Dropdown Menu</label>
         <ul class="drop-menu">
-          <li><a href="#">Settings</a></li>
+          <li><a href="#" @click="settings">Settings</a></li>
           <li><a href="#">Your Library</a></li>
           <li><a href="#">Profile</a></li>
           <li><a href="#">Log out</a></li>
@@ -86,6 +86,9 @@ export default {
       },
       create() {
           router.push({ name: 'create' });
+      },
+      settings() {
+          router.push({ name: 'play' });
       }
     };
   }
@@ -127,6 +130,7 @@ nav .wrapper{
   display: flex;
   align-items: center;
   justify-content: space-between;
+  white-space: nowrap;
 }
 
 .wrapper .logo img{
@@ -147,6 +151,8 @@ nav .wrapper{
 }
 .wrapper .nav-links{
   display: inline-flex;
+  flex-wrap: wrap;
+  display: flex;
 }
 .nav-links li{
   list-style: none;
