@@ -10,10 +10,10 @@ import Menu from '../components/Menu.vue';
                 <div class="picture"><img></div>
                 <div class="question">What color was Hitler?</div>
                 <div class ="answersBox">
-                    <div class="answer"><a href="#">Yellow</a></div>
-                    <div class="answer"><a href="#">Yellow</a></div>
-                    <div class="answer"><a href="#">Yellow</a></div>
-                    <div class="answer"><a href="#">Yellow</a></div>
+                    <button class="answer">Yellow</button>
+                    <button class="answer">Yellow</button>
+                    <button class="answer">Yellow</button>
+                    <button class="answer">Yellow</button>
                 </div>
             </div>
             <div class="progressBox">
@@ -41,12 +41,17 @@ import Menu from '../components/Menu.vue';
 
     .progressBox {
         width: 20%;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        font-size: 4rem;
     }
 
     .picture {
-        width: 100%;
-        height: 40%;
+        width: 80%;
+        height: 300px;
         border: 2px black solid;
+        margin: 30px;
     }
 
     .question {
@@ -54,8 +59,7 @@ import Menu from '../components/Menu.vue';
         justify-content: left;
         flex-direction: column;
         align-items: left;
-        font-family: hurme_no2-webfont, -apple-system, BlinkMacSystemFont, sans-serif;
-        white-space: nowrap;
+        font-family: sans-serif;
         font-weight: 700;
         font-size: 3rem;
         margin: 10px;
@@ -65,8 +69,23 @@ import Menu from '../components/Menu.vue';
     .answersBox {
         width: 100%;
         display: flex;
-        justify-content: center;
-        flex-direction: column;
+        justify-content: space-around;
+        flex-direction: row;
         align-items: center;
+        flex-wrap: wrap;
+        margin: 30px;
+    }
+
+    .answer {
+        min-width: 300px;
+        width: 40%;
+        padding: 20px;
+        text-align: center;
+        background-color: rgb(22, 144, 248);
+        margin-bottom: 2rem;
+        border-radius: 2rem;
+        cursor: pointer;
+        font-size: 1.3rem;
+        color: white;
     }
 </style>
