@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import Menu from '../components/Menu.vue'
+
+const router = useRouter()
+
+const navigateToTheQuiz = () => {
+  router.push({ name: 'quiz' })
+}
 </script>
 
 <template>
@@ -19,7 +26,7 @@ import Menu from '../components/Menu.vue'
             </div>
             <div class="contentBox">
                 <div class="playBox">
-                        <button class="playButton">START QUIZ</button>
+                        <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
                 </div>
                 <div class="content">
                     <div id="header">
@@ -80,6 +87,7 @@ main {
     width: 60%;
     height: 100%;
     margin: 30px;
+    margin-bottom: 4rem;
 }
 
 .header {
@@ -197,7 +205,7 @@ tr:not(:first-child):hover {
     box-shadow: 0px 5px 15px 8px #e4e7fb;
 }
 
-tr:nth-child(odd) {
+tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
@@ -244,7 +252,7 @@ td {
 
 .ribbon {
     width: 106%;
-    height: 5.5rem;
+    height: 7.5rem;
     top: -0.5rem;
     background-color: rgb(22, 144, 248);
     position: absolute;
@@ -318,7 +326,7 @@ td {
 
 .continue:hover {
     border-bottom: 0;
-    border-bottom: white;
+    border-bottom: white ;
 }
 
 .continue:active {
