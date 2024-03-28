@@ -56,7 +56,7 @@
           <li><a href="#" @click="settings">Settings</a></li>
           <li><a href="#">Your Library</a></li>
           <li><a href="#">Profile</a></li>
-          <li><a href="#">Log out</a></li>
+          <li><a href="#" @click="logout">Log out</a></li>
         </ul>
       </li>
     </ul>
@@ -89,6 +89,9 @@ export default {
       },
       settings() {
           router.push({ name: 'play' });
+      },
+      logout() {
+          router.push({ name: 'result' });
       }
     };
   }
