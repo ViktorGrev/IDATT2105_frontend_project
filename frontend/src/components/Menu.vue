@@ -43,7 +43,7 @@ export default {
         router.push({ name: 'login' });
       },
       home() {
-          router.push({ name: 'home' });
+          router.push({ name: 'home2' });
       },
       create() {
           router.push({ name: 'create' });
