@@ -84,7 +84,7 @@ const router = createRouter({
   ]
 })
 
-/**router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
   if (to.name === 'login') {
     next();
   }else if (to.name === 'signup') {
@@ -97,6 +97,6 @@ const router = createRouter({
       next({ name: 'login' });
     }
   }
-});**/
+});
 
 export default router
