@@ -69,14 +69,18 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  
-  /*
-  if (to.name === 'about') {
-    next({ name: 'home' });
-  }else {
-    next(); // Make sure to call next() to continue navigation for other routes
-  }*/
-  next();
+  if (to.name === 'login') {
+    next();
+  }else if (to.name === 'signup') {
+    next();
+  } else {
+    if(sessionStorage.getItem("userToken")){
+      next();
+    }
+    else {
+      next({ name: 'login' });
+    }
+  }
 });
 
 export default router

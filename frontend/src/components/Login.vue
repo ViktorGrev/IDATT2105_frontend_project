@@ -3,33 +3,35 @@
     <div id="box1" class="splitt">
       <div>
         <div class="textBox">
-          <p><strong>Login in to Your Account</strong> <br> Login in to Your account so you can continue .... <br> and
-            editing your onboarding flows</p>
+          <p><strong>Login to Your Account</strong><br>Login to your account so you can continue...<br>and editing your
+            onboarding flows</p>
         </div>
-        <form @submit.prevent="login">
+        <form @submit.prevent="attemptLogin" novalidate>
           <div class="omrs-input-group">
             <label class="omrs-input-underlined">
-              <input required oninvalid="this.setCustomValidity('Your custom message here')" oninput="this.setCustomValidity('')">
+              <input v-model="username" required oninvalid="this.setCustomValidity('Please enter your username')"
+                oninput="this.setCustomValidity('')">
               <span class="omrs-input-label">Username</span>
-              <span class="omrs-input-helper"></span>
+              <span class="omrs-input-helper" :style="{ 'color': alertColor }">{{ usernameError }}</span>
             </label>
           </div>
           <div class="omrs-input-group">
             <label class="omrs-input-underlined">
-              <input required type="password">
+              <input v-model="password" required type="password"
+                oninvalid="this.setCustomValidity('Please enter your password')" oninput="this.setCustomValidity('')">
               <span class="omrs-input-label">Password</span>
-              <span class="omrs-input-helper"></span>
+              <span class="omrs-input-helper" :style="{ 'color': alertColor }">{{ passwordError }}</span>
             </label>
           </div>
-          <div class = "buttonHolder">
-                <button @click="login">
-                LOGIN
-                <div class="arrow-wrapper">
-                    <div class="arrow"></div>
-                </div>
-                </button>
-                <p id = "loginText">Dont have an Account Yet? <a id = "loginLink" @click="redirectToPage">Sign up</a></p>
-            </div>
+          <div class="buttonHolder">
+            <button type="submit">
+              LOGIN
+              <div class="arrow-wrapper">
+                <div class="arrow"></div>
+              </div>
+            </button>
+            <p id="loginText">Don't have an Account Yet? <a id="loginLink" @click="redirectToPage">Sign up</a></p>
+          </div>
         </form>
       </div>
     </div>
@@ -39,33 +41,56 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref } from 'vue';
 import axios from 'axios';
-import { useUserStore } from '@/stores/counter';
-import { useRouter } from 'vue-router'; // Import useRouter from Vue Router
+import { useRouter } from 'vue-router';
 
-export default {
-  setup() {
-    const router = useRouter(); // Use the useRouter composable to access the router instance
+const router = useRouter();
+const username = ref('');
+const password = ref('');
 
-    // Methods can be returned from setup()
-    return {
-      async login() {
-        router.push({ name: 'home' });
-      },
-      redirectToPage() {
-        router.push({ name: 'signup' }); // Use router.push to navigate to another route
+const alertColor = ref("red"); // Initialize dynamicColor with ref and default color
+const usernameError = ref("");
+const passwordError = ref("");
+
+const attemptLogin = async () => {
+  if (username.value === "" || password.value === "") {
+    console.log("Hallo");
+    if (username.value === "") { usernameError.value = "Username is empty"; } else { usernameError.value = "";}
+    if (password.value === "") { passwordError.value = "Password is empty"; } else { passwordError.value = "";}
+  }
+  else {
+      await login();
+  }
+
+};
+
+const login = async () => {
+  try {
+    const response = await axios.post('http://localhost:8080/api/auth/login', {
+      username: username.value,
+      password: password.value
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
       }
-    };
-  },
-  data() {
-    return {
-      credentials: {
-        username: '',
-        password: '',
-      },
-    };
-  },
+    });
+
+    if (response.data && response.data.token) {
+      sessionStorage.setItem('userToken', response.data.token);
+      router.push({ name: 'home' });
+    } else {
+      console.error('Login failed: No token received');
+    }
+  } catch (error) {
+    passwordError.value = error.response.data.message;
+    console.log('Login error:', error.response.data.message);
+  }
+};
+
+const redirectToPage = () => {
+  router.push({ name: 'signup' });
 };
 </script>
 
@@ -142,18 +167,18 @@ h4.title {
 }
 
 .buttonHolder {
-    display: flex;
-    flex-direction: row;
-  }
+  display: flex;
+  flex-direction: row;
+}
 
 #loginText {
-    margin-left: 10px;
-  }
+  margin-left: 10px;
+}
 
 #loginLink {
-    color: blue;
-    cursor: pointer;
-  }
+  color: blue;
+  cursor: pointer;
+}
 
 :root {
   --omrs-color-ink-lowest-contrast: rgba(47, 60, 85, 0.18);
@@ -252,8 +277,8 @@ div.omrs-input-group {
 }
 
 .omrs-input-label:hover {
-    cursor:text;
-  }
+  cursor: text;
+}
 
 /** Button */
 
