@@ -55,7 +55,7 @@
         <ul class="drop-menu">
           <li><a href="#" @click="settings">Settings</a></li>
           <li><a href="#">Your Library</a></li>
-          <li><a href="#">Profile</a></li>
+          <li><a href="#" @click="user">Profile</a></li>
           <li><a href="#" @click="logout">Log out</a></li>
         </ul>
       </li>
@@ -92,6 +92,9 @@ export default {
       },
       logout() {
           router.push({ name: 'result' });
+      },
+      user() {
+          router.push({ name: 'user' });
       }
     };
   }

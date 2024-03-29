@@ -138,7 +138,7 @@ const showDatabase = async () => {
 
     .choice:hover {
     border: 0.1rem solid rgb(22, 144, 248);
-}
+    }
 
     /*leaderboard*/
 
