@@ -64,11 +64,27 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/UserView.vue')
+    },
+    {
+      path: '/home2',
+      name: 'home2',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/HomeView2.vue')
+    },
+    {
+      path: '/search',
+      name: 'search',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/searchView.vue')
     }
   ]
 })
 
-router.beforeEach((to, from, next) => {
+/**router.beforeEach((to, from, next) => {
   if (to.name === 'login') {
     next();
   }else if (to.name === 'signup') {
@@ -81,6 +97,6 @@ router.beforeEach((to, from, next) => {
       next({ name: 'login' });
     }
   }
-});
+});**/
 
 export default router
