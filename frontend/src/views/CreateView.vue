@@ -1,57 +1,142 @@
 <script setup lang="ts">
-import Menu from '../components/Menu.vue'
+import { ref, reactive } from 'vue';
+import Menu from '../components/Menu.vue';
+
+// A reactive array to store each question and its details
+const questions = reactive([
+    {
+        id: 1,
+        questionText: '',
+        answers: ['', '', '', ''],
+        correctAnswerIndex: null,
+    }
+]);
+
+// Currently selected question
+const currentQuestionId = ref(questions[0].id);
+
+// Method to add a new question
+const addQuestion = () => {
+    // Find the highest ID and add 1 to it to ensure uniqueness
+    const nextId = questions.length === 0 ? 1 : Math.max(...questions.map(q => q.id)) + 1;
+    questions.push({
+        id: nextId,
+        questionText: '',
+        answers: ['', '', '', ''],
+        correctAnswerIndex: null,
+    });
+    currentQuestionId.value = nextId; // Select the new question
+};
+
+// Method to select an existing question
+const selectQuestion = (id) => {
+    console.log(`Selecting question with id: ${id}`);
+    currentQuestionId.value = id;
+};
+
+// Find the question object by ID
+const findQuestionById = (id) => {
+    return questions.find(q => q.id === id);
+};
+
+// Method to get the current question object
+const currentQuestion = () => {
+    return findQuestionById(currentQuestionId.value);
+};
+
+// Method to delete a question
+const deleteQuestion = (id) => {
+    console.log(`Deleting question with id: ${id}`);
+    const index = questions.findIndex(q => q.id === id);
+    if (index !== -1) {
+        questions.splice(index, 1);
+        // If the current question is deleted, select the first question or null if no questions are left
+        if (currentQuestionId.value === id) {
+            currentQuestionId.value = questions.length > 0 ? questions[0].id : null;
+        }
+    }
+};
+
+// Method to set the correct answer for a question
+const setCorrectAnswer = (questionId, answerIndex) => {
+    const question = findQuestionById(questionId);
+    if (question) {
+        question.correctAnswerIndex = question.correctAnswerIndex === answerIndex ? null : answerIndex;
+    }
+};
+
+// Add here other methods as needed, such as for saving the quiz data, etc.
+
+const createQuiz = () => {
+    console.log(questions);
+};
+
 </script>
+
 
 <template>
     <main>
         <Menu></Menu>
         <div class="box">
             <div class="title">
-                <h1>Create a new Study Set</h1>
+                <div class="createtitle">
+                    <h1>Create a new Study Set</h1> <button @click="createQuiz" class="createButton">Create</button>
+                </div>
                 <input aria-label="Title" class="titleInput" maxlength="255"
                     placeholder="Enter a title, like “Fullstack - Chapter 9: Jwt-Token”" type="text" value="">
                 <div class=titleButtons>
                     <button class="titleButton">+ Import</button>
                     <button class="titleButton">Visibility: Private</button>
+                    <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”">
                 </div>
+
             </div>
+
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionNr">
-                    <button class=number>1</button>
-                    <button class=number>2</button>
-                    <button class=number>3</button>
-                    <button class=new>+</button>
+                    <!-- Dynamically render number buttons and bind click event to selectQuestion -->
+                    <button class="number" v-for="question in questions" :key="question.id"
+                        :class="{ active: question.id === currentQuestionId }" @click="selectQuestion(question.id)">
+                        {{ question.id }}
+                    </button>
+                    <!-- Button to add a new question -->
+                    <button class="new" @click="addQuestion">+</button>
                 </div>
-                <div class="content">
-                    <div id=questionTitle>
-                        <div id = "someTitle">Question 1</div>
-                        <div id="questionType">
-                            <div class="sec-center">
-                                <input class="dropdown" type="checkbox" id="dropdown" name="dropdown" />
-                                <label class="for-dropdown" for="dropdown">Multiple Choice <i
-                                        class="uil uil-arrow-down"></i></label>
-                                <div class="section-dropdown">
-                                    <a href="#">Multiple Choice <i class="uil uil-arrow-right"></i></a>
-                                    <a href="#">True or False <i class="uil uil-arrow-right"></i></a>
-                                    <a href="#">Dropdown Link <i class="uil uil-arrow-right"></i></a>
-                                </div>
-                                <button class="questionButton">Image</button>
-                            <button class="questionButton">Delete</button>
-                            </div>
-                        </div>
+                <div class="content" v-if="currentQuestion()">
+                    <div class="titleHolder">
+                        <div id="someTitle">Current Question ID: {{ currentQuestionId }} </div>
+                        <button class="deleteButton" @click="deleteQuestion(currentQuestionId)">Delete</button>
                     </div>
 
                     <div class="questionContent">
-                        <div class="questionBox">The question: <input class="question" placeholder="Type in here"></div>
-                        <div class="questionBox">Answers: </div>
-                        <div class="answers">
-                            <input class="answersField" placeholder="Answer 1">
-                            <input class="answersField" placeholder="Answer 2">
-                            <input class="answersField" placeholder="Answer 3">
-                            <input class="answersField" placeholder="Answer 4">
+                        <!-- Bind the current question's properties to the form inputs -->
+                        <div class="questionBox">
+                            The question: <input class="question" v-model="currentQuestion().questionText"
+                                placeholder="Type in here">
                         </div>
+                        <div class="questionBox">Answers:</div>
+
+
+
+                        <div class="answers">
+                            <div v-for="(answer, index) in currentQuestion().answers" :key="index" class="answerRow">
+                                <input class="answersField" v-model="currentQuestion().answers[index]"
+                                    :placeholder="`Answer ${index + 1}`">
+                                <input type="radio" class="option-input radio" :name="`correctAnswer-${currentQuestionId}`" :id="`answer-${index}`"
+                                    :value="index" v-model="currentQuestion().correctAnswerIndex">
+                                <label :for="`answer-${index}`">Correct</label>
+                            </div>
+                        </div>
+awdawd   awdawdadadw
+awdawdaddawdad   adwawdawdawd
+awdawdawd   awdawdawd
+awdawdawd   awdawdad
                     </div>
+                </div>
+                <!-- You might want to handle the case where there are no questions left -->
+                <div class="content" v-else>
+                    <p id="someTitle">No questions to display. Add a new question.</p>
                 </div>
             </div>
         </div>
@@ -79,12 +164,13 @@ main {
     flex-direction: column;
     align-items: left;
     font-family: hurme_no2-webfont, -apple-system, BlinkMacSystemFont, sans-serif;
-    white-space: nowrap;
     font-weight: 700;
     font-size: 1.2rem;
     margin: 10px;
     color: #586380;
 }
+
+
 
 .titleInput {
     font-weight: 600;
@@ -111,10 +197,65 @@ main {
     border-bottom: 5px solid rgb(22, 144, 248);
 }
 
+.tagInput {
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: normal;
+    line-height: 1.5;
+    appearance: none;
+    border: none;
+    box-shadow: none;
+    cursor: text;
+    filter: none;
+    flex: 1 1 auto;
+    max-width: 60%;
+    background-color: initial;
+    padding-right: 1rem;
+    background-color: white;
+    height: 3rem;
+    border-radius: 10px;
+    color: #586380;
+}
+
+.tagInput:focus {
+    outline: none;
+    border-bottom: 5px solid rgb(22, 144, 248);
+}
+
+.createtitle {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.createButton {
+    padding: .5rem 3rem;
+    background: blue;
+    border-color: #d9dde8;
+    color: white;
+    font-weight: 600;
+    font-size: 3rem;
+    border: .125rem solid #58638063;
+    border-radius: .5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font: inherit;
+    margin-right: 1rem;
+    height: 3.5rem;
+}
+
+.createButton:hover {
+    border: .125rem solid #586380a8;
+}
+
 .titleButtons {
     margin-top: 2rem;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .titleButton {
@@ -137,6 +278,13 @@ main {
     border: .125rem solid #586380a8;
 }
 
+.titleHolder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 #questionsTitle {
     color: #586380;
     font-size: 2rem;
@@ -154,12 +302,19 @@ main {
 
 .questionNr {
     font-size: 30px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
 
+.questionHolder {
+    max-width: 90%;
 }
 
 .number {
     height: 60px;
     width: 60px;
+    min-width: 60px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
         0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
     margin-right: 10px;
@@ -187,6 +342,7 @@ main {
 .new {
     height: 60px;
     width: 60px;
+    min-width: 60px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
         0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
     margin-right: 10px;
@@ -246,7 +402,7 @@ main {
     justify-content: center;
     align-content: space-around;
     margin-top: 1rem;
-    margin-bottom: 6rem;
+    margin-bottom: 2rem;
 }
 
 .question {
@@ -278,8 +434,8 @@ main {
 
 .answersField {
     min-width: 250px;
-    max-width: 470px;
-    width: 40%;
+    max-width: 100px;
+    width: 50%;
     font-weight: 600;
     font-size: 1.2rem;
     letter-spacing: normal;
@@ -300,6 +456,10 @@ main {
     margin-right: 1rem;
 }
 
+.answerRow {
+    margin: 1.5rem;
+}
+
 .answersField:focus {
     outline: none;
     border-bottom: 5px solid rgb(22, 144, 248);
@@ -307,7 +467,6 @@ main {
 
 #questionType {
     width: auto;
-
     flex-direction: row;
     justify-content: start;
 }
@@ -330,6 +489,27 @@ main {
 
 .questionButton:hover {
     border: .125rem solid #586380a8;
+}
+
+.deleteButton {
+    padding: .375rem .875rem;
+    background: red;
+    border-color: #d9dde8;
+    color: white;
+    font-weight: 600;
+    font-size: 2rem;
+    border: .3rem solid red;
+    border-radius: .5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font: inherit;
+    margin-left: 1rem;
+    height: 2rem;
+}
+
+.deleteButton:hover {
+    border: .3rem solid red;
 }
 
 .questionBox {
@@ -740,5 +920,81 @@ a .uil {
         top: 20px;
         right: 20px;
     }
+}
+
+/*Radio*/
+.option-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  position: relative;
+  top: 13.33333px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 40px;
+  width: 40px;
+  transition: all 0.15s ease-out 0s;
+  background: #cbd1d8;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 0.5rem;
+  outline: none;
+  position: relative;
+  z-index: 1000;
+}
+.option-input:hover {
+  background: #9faab7;
+}
+.option-input:checked {
+  background: #40e0d0;
+}
+.option-input:checked::before {
+  width: 40px;
+  height: 40px;
+  display:flex;
+  content: '\f00c';
+  font-size: 25px;
+  font-weight:bold;
+  position: absolute;
+  align-items:center;
+  justify-content:center;
+  font-family:'Font Awesome 5 Free';
+}
+.option-input:checked::after {
+  -webkit-animation: click-wave 0.65s;
+  -moz-animation: click-wave 0.65s;
+  animation: click-wave 0.65s;
+  background: #40e0d0;
+  content: '';
+  display: block;
+  position: relative;
+  z-index: 100;
+}
+.option-input.radio {
+  border-radius: 50%;
+}
+.option-input.radio::after {
+  border-radius: 50%;
+}
+
+@keyframes click-wave {
+  0% {
+    height: 40px;
+    width: 40px;
+    opacity: 0.35;
+    position: relative;
+  }
+  100% {
+    height: 200px;
+    width: 200px;
+    margin-left: -80px;
+    margin-top: -80px;
+    opacity: 0;
+  }
 }
 </style>
