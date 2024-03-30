@@ -2,62 +2,58 @@
 import { ref, reactive } from 'vue';
 import Menu from '../components/Menu.vue';
 
-// A reactive array to store each question and its details
 const questions = reactive([
     {
         id: 1,
         questionText: '',
-        answers: ['', '', '', ''],
+        answers: ['', '', '', ''], // Default for multiple choice
         correctAnswerIndex: null,
+        type: 'multipleChoice' // Default question type
     }
 ]);
 
-// Currently selected question
 const currentQuestionId = ref(questions[0].id);
 
-// Method to add a new question
-const addQuestion = () => {
-    // Find the highest ID and add 1 to it to ensure uniqueness
+const addQuestion = (type = 'multipleChoice') => {
     const nextId = questions.length === 0 ? 1 : Math.max(...questions.map(q => q.id)) + 1;
+    let answers = ['', '', '', ''];
+    if (type === 'trueFalse') {
+        answers = ['True', 'False']; // Initialize with 'True' and 'False' for trueFalse type questions
+    }
     questions.push({
         id: nextId,
         questionText: '',
-        answers: ['', '', '', ''],
+        answers: answers,
         correctAnswerIndex: null,
+        type: type // Use the type parameter to set the question type
     });
-    currentQuestionId.value = nextId; // Select the new question
+    currentQuestionId.value = nextId;
 };
 
-// Method to select an existing question
 const selectQuestion = (id) => {
     console.log(`Selecting question with id: ${id}`);
     currentQuestionId.value = id;
 };
 
-// Find the question object by ID
 const findQuestionById = (id) => {
     return questions.find(q => q.id === id);
 };
 
-// Method to get the current question object
 const currentQuestion = () => {
     return findQuestionById(currentQuestionId.value);
 };
 
-// Method to delete a question
 const deleteQuestion = (id) => {
     console.log(`Deleting question with id: ${id}`);
     const index = questions.findIndex(q => q.id === id);
     if (index !== -1) {
         questions.splice(index, 1);
-        // If the current question is deleted, select the first question or null if no questions are left
         if (currentQuestionId.value === id) {
             currentQuestionId.value = questions.length > 0 ? questions[0].id : null;
         }
     }
 };
 
-// Method to set the correct answer for a question
 const setCorrectAnswer = (questionId, answerIndex) => {
     const question = findQuestionById(questionId);
     if (question) {
@@ -65,12 +61,9 @@ const setCorrectAnswer = (questionId, answerIndex) => {
     }
 };
 
-// Add here other methods as needed, such as for saving the quiz data, etc.
-
 const createQuiz = () => {
     console.log(questions);
 };
-
 </script>
 
 
@@ -105,33 +98,51 @@ const createQuiz = () => {
                 </div>
                 <div class="content" v-if="currentQuestion()">
                     <div class="titleHolder">
-                        <div id="someTitle">Current Question ID: {{ currentQuestionId }} </div>
+                        <div id="someTitle">Current Question ID: {{ currentQuestionId }}</div>
                         <button class="deleteButton" @click="deleteQuestion(currentQuestionId)">Delete</button>
                     </div>
 
                     <div class="questionContent">
-                        <!-- Bind the current question's properties to the form inputs -->
                         <div class="questionBox">
                             The question: <input class="question" v-model="currentQuestion().questionText"
                                 placeholder="Type in here">
                         </div>
-                        <div class="questionBox">Answers:</div>
+                        <!-- Dropdown menu for selecting question type -->
+                        <div class="questionTypeSelector">
+                            Question Type:
+                            <select v-model="currentQuestion().type">
+                                <option value="multipleChoice">Multiple Choice</option>
+                                <option value="trueFalse">True / False</option>
+                            </select>
+                        </div>
 
-
-
-                        <div class="answers">
+                        <!-- Render inputs based on question type -->
+                        <div class="answers" v-if="currentQuestion().type === 'multipleChoice'">
                             <div v-for="(answer, index) in currentQuestion().answers" :key="index" class="answerRow">
                                 <input class="answersField" v-model="currentQuestion().answers[index]"
                                     :placeholder="`Answer ${index + 1}`">
-                                <input type="radio" class="option-input radio" :name="`correctAnswer-${currentQuestionId}`" :id="`answer-${index}`"
-                                    :value="index" v-model="currentQuestion().correctAnswerIndex">
+                                <input type="radio" class="option-input radio"
+                                    :name="`correctAnswer-${currentQuestionId}`" :id="`answer-${index}`" :value="index"
+                                    v-model="currentQuestion().correctAnswerIndex">
                                 <label :for="`answer-${index}`">Correct</label>
                             </div>
                         </div>
-awdawd   awdawdadadw
-awdawdaddawdad   adwawdawdawd
-awdawdawd   awdawdawd
-awdawdawd   awdawdad
+
+                        <!-- True/False answers -->
+                        <div class="answers" v-if="currentQuestion().type === 'trueFalse'">
+                            <div class="answerRow">
+                                <label>True</label>
+                                <input type="radio" class="option-input radio"
+                                    :name="`correctAnswer-${currentQuestionId}`" value="0"
+                                    v-model="currentQuestion().correctAnswerIndex">
+                            </div>
+                            <div class="answerRow">
+                                <label>False</label>
+                                <input type="radio" class="option-input radio"
+                                    :name="`correctAnswer-${currentQuestionId}`" value="1"
+                                    v-model="currentQuestion().correctAnswerIndex">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- You might want to handle the case where there are no questions left -->
@@ -924,77 +935,84 @@ a .uil {
 
 /*Radio*/
 .option-input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  -ms-appearance: none;
-  -o-appearance: none;
-  appearance: none;
-  position: relative;
-  top: 13.33333px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 40px;
-  width: 40px;
-  transition: all 0.15s ease-out 0s;
-  background: #cbd1d8;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  display: inline-block;
-  margin-right: 0.5rem;
-  outline: none;
-  position: relative;
-  z-index: 1000;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    position: relative;
+    top: 13.33333px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    width: 40px;
+    transition: all 0.15s ease-out 0s;
+    background: #cbd1d8;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 0.5rem;
+    outline: none;
+    position: relative;
+    z-index: 1000;
 }
+
 .option-input:hover {
-  background: #9faab7;
+    background: #9faab7;
 }
+
 .option-input:checked {
-  background: #40e0d0;
+    background: #40e0d0;
 }
+
 .option-input:checked::before {
-  width: 40px;
-  height: 40px;
-  display:flex;
-  content: '\f00c';
-  font-size: 25px;
-  font-weight:bold;
-  position: absolute;
-  align-items:center;
-  justify-content:center;
-  font-family:'Font Awesome 5 Free';
+    width: 40px;
+    height: 40px;
+    display: flex;
+    content: '\f00c';
+    font-size: 25px;
+    font-weight: bold;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Font Awesome 5 Free';
 }
+
 .option-input:checked::after {
-  -webkit-animation: click-wave 0.65s;
-  -moz-animation: click-wave 0.65s;
-  animation: click-wave 0.65s;
-  background: #40e0d0;
-  content: '';
-  display: block;
-  position: relative;
-  z-index: 100;
+    -webkit-animation: click-wave 0.65s;
+    -moz-animation: click-wave 0.65s;
+    animation: click-wave 0.65s;
+    background: #40e0d0;
+    content: '';
+    display: block;
+    position: relative;
+    z-index: 100;
 }
+
 .option-input.radio {
-  border-radius: 50%;
+    border-radius: 50%;
 }
+
 .option-input.radio::after {
-  border-radius: 50%;
+    border-radius: 50%;
 }
 
 @keyframes click-wave {
-  0% {
-    height: 40px;
-    width: 40px;
-    opacity: 0.35;
-    position: relative;
-  }
-  100% {
-    height: 200px;
-    width: 200px;
-    margin-left: -80px;
-    margin-top: -80px;
-    opacity: 0;
-  }
+    0% {
+        height: 40px;
+        width: 40px;
+        opacity: 0.35;
+        position: relative;
+    }
+
+    100% {
+        height: 200px;
+        width: 200px;
+        margin-left: -80px;
+        margin-top: -80px;
+        opacity: 0;
+    }
 }
 </style>
