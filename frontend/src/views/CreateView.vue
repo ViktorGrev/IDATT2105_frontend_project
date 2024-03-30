@@ -2,6 +2,10 @@
 import { ref, reactive } from 'vue';
 import Menu from '../components/Menu.vue';
 
+const quizTitle = ref('');
+const quizTags = ref('');
+const quizDescription = ref('');
+
 const questions = reactive([
     {
         id: 1,
@@ -18,14 +22,17 @@ const addQuestion = (type = 'multipleChoice') => {
     const nextId = questions.length === 0 ? 1 : Math.max(...questions.map(q => q.id)) + 1;
     let answers = ['', '', '', ''];
     if (type === 'trueFalse') {
-        answers = ['True', 'False']; // Initialize with 'True' and 'False' for trueFalse type questions
+        answers = ['True', 'False'];
+    } else if (type === 'fillInBlank') {
+        // For fill-in-the-blank, initialize with a single empty string for the correct answer
+        answers = [''];
     }
     questions.push({
         id: nextId,
         questionText: '',
         answers: answers,
-        correctAnswerIndex: null,
-        type: type // Use the type parameter to set the question type
+        correctAnswerIndex: 0, // For fill-in-the-blank, the first index will always be the correct answer
+        type: type
     });
     currentQuestionId.value = nextId;
 };
@@ -62,7 +69,42 @@ const setCorrectAnswer = (questionId, answerIndex) => {
 };
 
 const createQuiz = () => {
-    console.log(questions);
+  const formattedQuestions = questions.map((q) => {
+    switch (q.type) {
+      case 'multipleChoice':
+        return {
+          text: q.questionText,
+          options: q.answers.map((answer, index) => ({
+            optionText: answer,
+            correct: index === q.correctAnswerIndex,
+          })),
+          type: 'MULTIPLE_CHOICE',
+        };
+      case 'trueFalse':
+        return {
+          text: q.questionText,
+          true: q.correctAnswerIndex === 0, // Assuming 0 is for 'True' and 1 is for 'False'
+          type: 'TRUE_FALSE',
+        };
+      case 'fillInBlank':
+        return {
+          text: q.questionText,
+          solution: q.answers[0], // Assuming the first entry in the answers array is the solution
+          type: 'FILL_IN_THE_BLANK',
+        };
+      default:
+        return {}; // Fallback for unrecognized question types
+    }
+  });
+
+  const quiz = {
+    title: quizTitle.value,
+    description: quizDescription.value,
+    tag: quizTags.value,
+    questions: formattedQuestions,
+  };
+
+  console.log(JSON.stringify(quiz, null, 2));
 };
 </script>
 
@@ -76,13 +118,16 @@ const createQuiz = () => {
                     <h1>Create a new Study Set</h1> <button @click="createQuiz" class="createButton">Create</button>
                 </div>
                 <input aria-label="Title" class="titleInput" maxlength="255"
-                    placeholder="Enter a title, like “Fullstack - Chapter 9: Jwt-Token”" type="text" value="">
+                    placeholder="Enter a title, like “Fullstack - Chapter 9: Jwt-Token”" type="text"
+                    v-model="quizTitle">
                 <div class=titleButtons>
                     <button class="titleButton">+ Import</button>
                     <button class="titleButton">Visibility: Private</button>
-                    <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”">
+                    <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”" v-model="quizTags">
+                    
                 </div>
-
+                <input aria-label="Description" class="titleInput" maxlength="255"
+       placeholder="Enter a description for the quiz" type="text" v-model="quizDescription">
             </div>
 
             <div class="contentCreation">
@@ -110,10 +155,13 @@ const createQuiz = () => {
                         <!-- Dropdown menu for selecting question type -->
                         <div class="questionTypeSelector">
                             Question Type:
-                            <select v-model="currentQuestion().type">
-                                <option value="multipleChoice">Multiple Choice</option>
-                                <option value="trueFalse">True / False</option>
-                            </select>
+                            <label class="select">
+                                <select v-model="currentQuestion().type">
+                                    <option value="multipleChoice">Multiple Choice</option>
+                                    <option value="trueFalse">True / False</option>
+                                    <option value="fillInBlank">Fill in the Blank</option>
+                                </select>
+                            </label>
                         </div>
 
                         <!-- Render inputs based on question type -->
@@ -141,6 +189,14 @@ const createQuiz = () => {
                                 <input type="radio" class="option-input radio"
                                     :name="`correctAnswer-${currentQuestionId}`" value="1"
                                     v-model="currentQuestion().correctAnswerIndex">
+                            </div>
+                        </div>
+
+                        <!-- Fill-in-the-Blank answer -->
+                        <div class="answers" v-if="currentQuestion().type === 'fillInBlank'">
+                            <div class="answerRow">
+                                <input class="answersField" v-model="currentQuestion().answers[0]"
+                                    placeholder="Correct Answer">
                             </div>
                         </div>
                     </div>
@@ -267,6 +323,7 @@ main {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    margin-bottom: 2rem;
 }
 
 .titleButton {
@@ -441,6 +498,12 @@ main {
 .question:focus {
     outline: none;
     border-bottom: 5px solid rgb(22, 144, 248);
+}
+
+.questionTypeSelector {
+    width: 100%;
+    color: #586380;
+    font-size: 1.5rem;
 }
 
 .answersField {
@@ -1014,5 +1077,81 @@ a .uil {
         margin-top: -80px;
         opacity: 0;
     }
+}
+
+/*Dropdown*/
+
+.questionTypeSelector {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+select {
+    appearance: none;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: inherit;
+    box-shadow: none;
+    color: #586380;
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: normal;
+    line-height: 1.5;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+/* Custom Select wrapper */
+.select {
+    position: relative;
+    display: flex;
+    width: min(20rem, 90vw);
+    background: linear-gradient(to left, white 3rem, white 3rem);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    color: #586380;
+    font-size: 2rem;
+    margin-left: 1rem;
+
+    select {
+        flex: 1;
+        padding: 1em;
+        cursor: pointer;
+    }
+
+    &::after {
+        content: "\25BC";
+        position: absolute;
+        right: 1rem;
+        transition: 0.25s all ease;
+        pointer-events: none;
+    }
+
+    &:hover::after {
+        color: #f39c12;
+        animation: bounce 0.5s infinite;
+    }
+}
+
+@keyframes bounce {
+    25% {
+        transform: translatey(5px);
+    }
+
+    75% {
+        transform: translatey(-5px);
+    }
+}
+
+option {
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: normal;
+    line-height: 1.5;
 }
 </style>
