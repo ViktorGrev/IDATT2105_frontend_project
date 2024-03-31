@@ -14,9 +14,10 @@
           <input type="checkbox" id="showDrop">
           <label for="showDrop" class="mobile-item">Dropdown Menu</label>
           <ul class="drop-menu">
-            <li><a href="#" @click="settings">Settings</a></li>
-            <li><a href="#">Your Library</a></li>
             <li><a href="#" @click="user">Profile</a></li>
+            <li><a href="#">Your Library</a></li>
+            <li><a href="#" @click="feedback">Feedback</a></li>
+            <li><a href="#" @click="settings">Settings</a></li>
             <li><a href="#" @click="logout">Log out</a></li>
           </ul>
         </li>
@@ -65,6 +66,9 @@ export default {
       },
       user() {
         router.push({ name: 'user' }); 
+      },
+      feedback() {
+        router.push({ name: 'feedback' }); 
       },
       isLoggedIn
     };

@@ -53,6 +53,12 @@ const routes = [
     name: 'search',
     component: () => import('../views/searchView.vue'),
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/feedback',
+    name: 'feedback',
+    component: () => import('../views/FeedbackView.vue'),
+    meta: { requiresAuth: true },
   }
 ];
 
@@ -69,8 +75,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   console.log(sessionStorage.getItem("userToken"));
   const isLoggedIn = () => !!sessionStorage.getItem("userToken");
-  console.log(isLoggedIn());
-  console.log(!!sessionStorage.getItem("userToken"));
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   if (requiresAuth && !isLoggedIn()) {
     next({ name: 'login', query: { redirect: to.fullPath } });
