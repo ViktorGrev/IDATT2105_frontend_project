@@ -3,7 +3,8 @@ import { ref, reactive, nextTick } from 'vue';
 import Menu from '../components/Menu.vue';
 
 const quizTitle = ref('');
-const quizTags = ref('');
+const quizTags = ref([]); // Array to hold tags
+const quizTagInput = ref(''); // New ref for the tag input field
 const quizDescription = ref('');
 
 const questions = reactive([
@@ -61,6 +62,19 @@ const deleteQuestion = (id) => {
     }
 };
 
+const addTag = () => {
+    // Prevent adding duplicate or empty tags
+    if (!quizTags.value.includes(quizTagInput.value) && quizTagInput.value.trim() !== '') {
+        quizTags.value.push(quizTagInput.value.trim());
+        quizTagInput.value = ''; // Clear the input field after adding the tag
+    }
+};
+
+// Method to remove a tag
+const removeTag = (tagToRemove) => {
+    quizTags.value = quizTags.value.filter(tag => tag !== tagToRemove);
+};
+
 const setCorrectAnswer = (questionId, answerIndex) => {
     const question = findQuestionById(questionId);
     if (question) {
@@ -100,7 +114,7 @@ const createQuiz = () => {
     const quiz = {
         title: quizTitle.value,
         description: quizDescription.value,
-        tag: quizTags.value,
+        tags: quizTags.value,
         questions: formattedQuestions,
     };
 
@@ -120,70 +134,70 @@ const triggerFileInput = () => {
 import Papa from 'papaparse';
 
 const importQuiz = (event) => {
-  const files = event.target.files;
-  if (files.length > 0) {
-    const file = files[0];
-    Papa.parse(file, {
-      complete: (result) => {
-        console.log('Parsed:', result);
-        if (result.data.length > 1) {
-          // Clear existing quiz data
-          quizTitle.value = result.data[1][0];
-          quizDescription.value = result.data[1][1];
-          quizTags.value = result.data[1][2];
-          questions.splice(0, questions.length); // Remove all existing questions
-          
-          // Skip the first 3 rows (column headers and quiz metadata)
-          const questionRows = result.data.slice(3);
-          
-          questionRows.forEach((row, index) => {
-            if (row.length === 0 || row[0] === '') return; // Skip empty rows
-            const rawType = row[0].toLowerCase().replace(/[^a-zA-Z]+/g, '');
-            const questionText = row[1];
-            let answers = [];
-            let correctAnswerIndex = null;
-            let type;
+    const files = event.target.files;
+    if (files.length > 0) {
+        const file = files[0];
+        Papa.parse(file, {
+            complete: (result) => {
+                console.log('Parsed:', result);
+                if (result.data.length > 1) {
+                    // Clear existing quiz data
+                    quizTitle.value = result.data[1][0];
+                    quizDescription.value = result.data[1][1];
+                    quizTags.value = result.data[1][2].split(',').map(tag => tag.trim());
+                    questions.splice(0, questions.length); // Remove all existing questions
 
-            // Map the normalized type to the component's expected type values
-            switch (rawType) {
-              case "multiplechoice":
-                type = "multipleChoice";
-                answers = row.slice(3);
-                correctAnswerIndex = answers.indexOf(row[2]);
-                break;
-              case "truefalse":
-                type = "trueFalse";
-                answers = ['True', 'False'];
-                correctAnswerIndex = row[2].toLowerCase() === "true" ? 0 : 1;
-                break;
-              case "fillintheblank":
-                type = "fillInBlank";
-                answers = [row[2]];
-                correctAnswerIndex = 0; // The first and only answer is the correct one
-                break;
-              default:
-                // Unsupported question type, you might want to handle this case.
-                return;
-            }
+                    // Skip the first 3 rows (column headers and quiz metadata)
+                    const questionRows = result.data.slice(3);
 
-            questions.push({
-              id: questions.length + 1, // Adjust ID to be the next in sequence
-              questionText,
-              answers,
-              correctAnswerIndex,
-              type // Use the mapped type
-            });
-          });
+                    questionRows.forEach((row, index) => {
+                        if (row.length === 0 || row[0] === '') return; // Skip empty rows
+                        const rawType = row[0].toLowerCase().replace(/[^a-zA-Z]+/g, '');
+                        const questionText = row[1];
+                        let answers = [];
+                        let correctAnswerIndex = null;
+                        let type;
 
-          // Automatically select the first question after import
-          if (questions.length > 0) {
-            currentQuestionId.value = questions[0].id;
-          }
-        }
-      },
-      header: false
-    });
-  }
+                        // Map the normalized type to the component's expected type values
+                        switch (rawType) {
+                            case "multiplechoice":
+                                type = "multipleChoice";
+                                answers = row.slice(3);
+                                correctAnswerIndex = answers.indexOf(row[2]);
+                                break;
+                            case "truefalse":
+                                type = "trueFalse";
+                                answers = ['True', 'False'];
+                                correctAnswerIndex = row[2].toLowerCase() === "true" ? 0 : 1;
+                                break;
+                            case "fillintheblank":
+                                type = "fillInBlank";
+                                answers = [row[2]];
+                                correctAnswerIndex = 0; // The first and only answer is the correct one
+                                break;
+                            default:
+                                // Unsupported question type, you might want to handle this case.
+                                return;
+                        }
+
+                        questions.push({
+                            id: questions.length + 1, // Adjust ID to be the next in sequence
+                            questionText,
+                            answers,
+                            correctAnswerIndex,
+                            type // Use the mapped type
+                        });
+                    });
+
+                    // Automatically select the first question after import
+                    if (questions.length > 0) {
+                        currentQuestionId.value = questions[0].id;
+                    }
+                }
+            },
+            header: false
+        });
+    }
 };
 
 
@@ -208,7 +222,16 @@ const importQuiz = (event) => {
                     <button class="titleButton" @click="triggerFileInput">+ Import</button>
                     <input type="file" ref="fileInput" @change="importQuiz" style="display:none">
                     <button class="titleButton">Visibility: Private</button>
-                    <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”" v-model="quizTags">
+                    <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”"
+                        v-model="quizTagInput">
+                    <button @click="addTag">Apply</button>
+                    <!-- Display added tags -->
+                    <div class="tagsDisplay">
+                        <span v-for="(tag, index) in quizTags" :key="index" class="tag">
+                            {{ tag }}
+                            <button @click="removeTag(tag)">x</button>
+                        </span>
+                    </div>
 
                 </div>
                 <input aria-label="Description" class="titleInput" maxlength="255"
@@ -1238,5 +1261,27 @@ option {
     font-size: 1.2rem;
     letter-spacing: normal;
     line-height: 1.5;
+}
+
+
+
+.tagsDisplay {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.tag {
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #efefef;
+    border-radius: 15px;
+}
+
+.tag button {
+    margin-left: 5px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
 }
 </style>
