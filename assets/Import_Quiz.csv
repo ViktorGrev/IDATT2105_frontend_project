@@ -1,0 +1,6 @@
+﻿Quiz Title;Quiz Description;Tags;;;;
+Sample Quiz;This is a simple quiz to demonstrate the import feature;sample;;;;
+Quiz Type;Quiz Question;Answer(s);;;;
+MULTIPLE_CHOICE;What is the capital of France?;Berlin;Paris;Berlin;Rome;Madrid
+TRUE_FALSE;The sky is blue.;True;;;;
+FILL_IN_THE_BLANK;___ is the chemical symbol for gold.;Au;;;;
