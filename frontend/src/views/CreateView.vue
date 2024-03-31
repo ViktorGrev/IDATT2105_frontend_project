@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, nextTick } from 'vue';
 import Menu from '../components/Menu.vue';
 
 const quizTitle = ref('');
@@ -69,43 +69,127 @@ const setCorrectAnswer = (questionId, answerIndex) => {
 };
 
 const createQuiz = () => {
-  const formattedQuestions = questions.map((q) => {
-    switch (q.type) {
-      case 'multipleChoice':
-        return {
-          text: q.questionText,
-          options: q.answers.map((answer, index) => ({
-            optionText: answer,
-            correct: index === q.correctAnswerIndex,
-          })),
-          type: 'MULTIPLE_CHOICE',
-        };
-      case 'trueFalse':
-        return {
-          text: q.questionText,
-          true: q.correctAnswerIndex === 0, // Assuming 0 is for 'True' and 1 is for 'False'
-          type: 'TRUE_FALSE',
-        };
-      case 'fillInBlank':
-        return {
-          text: q.questionText,
-          solution: q.answers[0], // Assuming the first entry in the answers array is the solution
-          type: 'FILL_IN_THE_BLANK',
-        };
-      default:
-        return {}; // Fallback for unrecognized question types
-    }
-  });
+    const formattedQuestions = questions.map((q) => {
+        switch (q.type) {
+            case 'multipleChoice':
+                return {
+                    text: q.questionText,
+                    options: q.answers.map((answer, index) => ({
+                        optionText: answer,
+                        correct: index === q.correctAnswerIndex,
+                    })),
+                    type: 'MULTIPLE_CHOICE',
+                };
+            case 'trueFalse':
+                return {
+                    text: q.questionText,
+                    true: q.correctAnswerIndex === 0, // Assuming 0 is for 'True' and 1 is for 'False'
+                    type: 'TRUE_FALSE',
+                };
+            case 'fillInBlank':
+                return {
+                    text: q.questionText,
+                    solution: q.answers[0], // Assuming the first entry in the answers array is the solution
+                    type: 'FILL_IN_THE_BLANK',
+                };
+            default:
+                return {}; // Fallback for unrecognized question types
+        }
+    });
 
-  const quiz = {
-    title: quizTitle.value,
-    description: quizDescription.value,
-    tag: quizTags.value,
-    questions: formattedQuestions,
-  };
+    const quiz = {
+        title: quizTitle.value,
+        description: quizDescription.value,
+        tag: quizTags.value,
+        questions: formattedQuestions,
+    };
 
-  console.log(JSON.stringify(quiz, null, 2));
+    console.log(JSON.stringify(quiz, null, 2));
 };
+
+
+
+
+
+const fileInput = ref(null);
+
+const triggerFileInput = () => {
+    fileInput.value.click();
+};
+
+import Papa from 'papaparse';
+
+const importQuiz = (event) => {
+  const files = event.target.files;
+  if (files.length > 0) {
+    const file = files[0];
+    Papa.parse(file, {
+      complete: (result) => {
+        console.log('Parsed:', result);
+        if (result.data.length > 1) {
+          // Clear existing quiz data
+          quizTitle.value = result.data[1][0];
+          quizDescription.value = result.data[1][1];
+          quizTags.value = result.data[1][2];
+          questions.splice(0, questions.length); // Remove all existing questions
+          
+          // Skip the first 3 rows (column headers and quiz metadata)
+          const questionRows = result.data.slice(3);
+          
+          questionRows.forEach((row, index) => {
+            if (row.length === 0 || row[0] === '') return; // Skip empty rows
+            const rawType = row[0].toLowerCase().replace(/[^a-zA-Z]+/g, '');
+            const questionText = row[1];
+            let answers = [];
+            let correctAnswerIndex = null;
+            let type;
+
+            // Map the normalized type to the component's expected type values
+            switch (rawType) {
+              case "multiplechoice":
+                type = "multipleChoice";
+                answers = row.slice(3);
+                correctAnswerIndex = answers.indexOf(row[2]);
+                break;
+              case "truefalse":
+                type = "trueFalse";
+                answers = ['True', 'False'];
+                correctAnswerIndex = row[2].toLowerCase() === "true" ? 0 : 1;
+                break;
+              case "fillintheblank":
+                type = "fillInBlank";
+                answers = [row[2]];
+                correctAnswerIndex = 0; // The first and only answer is the correct one
+                break;
+              default:
+                // Unsupported question type, you might want to handle this case.
+                return;
+            }
+
+            questions.push({
+              id: questions.length + 1, // Adjust ID to be the next in sequence
+              questionText,
+              answers,
+              correctAnswerIndex,
+              type // Use the mapped type
+            });
+          });
+
+          // Automatically select the first question after import
+          if (questions.length > 0) {
+            currentQuestionId.value = questions[0].id;
+          }
+        }
+      },
+      header: false
+    });
+  }
+};
+
+
+
+
+
 </script>
 
 
@@ -121,13 +205,14 @@ const createQuiz = () => {
                     placeholder="Enter a title, like “Fullstack - Chapter 9: Jwt-Token”" type="text"
                     v-model="quizTitle">
                 <div class=titleButtons>
-                    <button class="titleButton">+ Import</button>
+                    <button class="titleButton" @click="triggerFileInput">+ Import</button>
+                    <input type="file" ref="fileInput" @change="importQuiz" style="display:none">
                     <button class="titleButton">Visibility: Private</button>
                     <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”" v-model="quizTags">
-                    
+
                 </div>
                 <input aria-label="Description" class="titleInput" maxlength="255"
-       placeholder="Enter a description for the quiz" type="text" v-model="quizDescription">
+                    placeholder="Enter a description for the quiz" type="text" v-model="quizDescription">
             </div>
 
             <div class="contentCreation">
