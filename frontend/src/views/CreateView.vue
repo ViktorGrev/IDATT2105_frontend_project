@@ -7,6 +7,7 @@ const quizTags = ref([]); // Array to hold tags
 const quizTagInput = ref(''); // New ref for the tag input field
 const quizDescription = ref('');
 const quizCategory = ref(''); // Default category is empty
+const quizRandomization = ref(false);
 
 const questions = reactive([
     {
@@ -14,7 +15,8 @@ const questions = reactive([
         questionText: '',
         answers: ['', '', '', ''], // Default for multiple choice
         correctAnswerIndex: null,
-        type: 'multipleChoice' // Default question type
+        type: 'multipleChoice', // Default question type
+        image: null,
     }
 ]);
 
@@ -76,6 +78,28 @@ const removeTag = (tagToRemove) => {
     quizTags.value = quizTags.value.filter(tag => tag !== tagToRemove);
 };
 
+const toggleRandomization = () => {
+    quizRandomization.value = !quizRandomization.value;
+};
+
+const randomizationLabel = () => {
+    return quizRandomization.value ? "On" : "Off";
+};
+
+const handleImageUpload = (event, questionId) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const question = findQuestionById(questionId);
+            if (question) {
+                question.image = e.target.result; // Assign the base64 string to the question's image property
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
 const setCorrectAnswer = (questionId, answerIndex) => {
     const question = findQuestionById(questionId);
     if (question) {
@@ -94,22 +118,26 @@ const createQuiz = () => {
                         correct: index === q.correctAnswerIndex,
                     })),
                     type: 'MULTIPLE_CHOICE',
+                    image: q.image,
                 };
             case 'trueFalse':
                 return {
                     text: q.questionText,
                     true: q.correctAnswerIndex === 0, // Assuming 0 is for 'True' and 1 is for 'False'
                     type: 'TRUE_FALSE',
+                    image: q.image,
                 };
             case 'fillInBlank':
                 return {
                     text: q.questionText,
                     solution: q.answers[0], // Assuming the first entry in the answers array is the solution
                     type: 'FILL_IN_THE_BLANK',
+                    image: q.image,
                 };
             default:
                 return {}; // Fallback for unrecognized question types
         }
+        
     });
 
     const quiz = {
@@ -117,6 +145,7 @@ const createQuiz = () => {
         category: quizCategory.value,
         description: quizDescription.value,
         tags: quizTags.value,
+        random: quizRandomization.value,
         questions: formattedQuestions,
     };
 
@@ -148,6 +177,8 @@ const importQuiz = (event) => {
                     quizDescription.value = result.data[1][1];
                     quizTags.value = result.data[1][2].split(',').map(tag => tag.trim());
                     quizCategory.value = result.data[1][3];
+                    quizCategory.value = result.data[1][3];
+                    quizRandomization.value = result.data[1][4].toLowerCase() === 'yes';
                     questions.splice(0, questions.length); // Remove all existing questions
 
                     // Skip the first 3 rows (column headers and quiz metadata)
@@ -188,6 +219,7 @@ const importQuiz = (event) => {
                             questionText,
                             answers,
                             correctAnswerIndex,
+                            image: null, 
                             type // Use the mapped type
                         });
                     });
@@ -223,7 +255,7 @@ const importQuiz = (event) => {
                     v-model="quizTitle">
 
                 <div class="categoryBox">
-                    Quiz Category: 
+                    Quiz Category:
                     <select v-model="quizCategory" class="category">
                         <option disabled value="">Select a category</option>
                         <option>Science</option>
@@ -233,25 +265,31 @@ const importQuiz = (event) => {
                         <option>Art</option>
                     </select>
                 </div>
-
-                <div class=titleButtons>
-                    <button class="titleButton" @click="triggerFileInput">+ Import</button>
-                    <input type="file" ref="fileInput" @change="importQuiz" style="display:none">
-                    <button class="titleButton">Visibility: Private</button>
-                    <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”"
-                        v-model="quizTagInput">
-                    <button class="titleButton" @click="addTag">Apply Tag</button>
-                    <!-- Display added tags -->
+                <div class="tagHolder">
+                    <div>
+                        <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”"
+                            v-model="quizTagInput">
+                        <button class="titleButton" @click="addTag">Apply Tag</button>
+                        <!-- Display added tags -->
+                    </div>
                     <div class="tagsDisplay">
                         <span v-for="(tag, index) in quizTags" :key="index" class="tag">
                             {{ tag }}
                             <button @click="removeTag(tag)">x</button>
                         </span>
                     </div>
-
                 </div>
                 <input aria-label="Description" class="titleInput" maxlength="255"
                     placeholder="Enter a description for the quiz" type="text" v-model="quizDescription">
+                
+                <div class=titleButtons>
+                    <button class="titleButton" @click="triggerFileInput">+ Import</button>
+                    <input type="file" ref="fileInput" @change="importQuiz" style="display:none">
+
+                    <button @click="toggleRandomization" class="titleButton">
+                        Randomize Answers: {{ randomizationLabel() }}
+                    </button>
+                </div>
             </div>
 
             <div class="contentCreation">
@@ -275,7 +313,12 @@ const importQuiz = (event) => {
                         <div class="questionBox">
                             The question: <input class="question" v-model="currentQuestion().questionText"
                                 placeholder="Type in here">
+                            
                         </div>
+                        <div>
+    <input type="file" @change="event => handleImageUpload(event, currentQuestion().id)" hidden ref="questionImageInput">
+    <button @click="$refs.questionImageInput.click()">Upload Image</button>
+</div>
                         <!-- Dropdown menu for selecting question type -->
                         <div class="questionTypeSelector">
                             Question Type:
@@ -399,7 +442,6 @@ main {
     cursor: text;
     filter: none;
     flex: 1 1 auto;
-    max-width: 60%;
     background-color: initial;
     padding-right: 1rem;
     background-color: white;
@@ -407,6 +449,7 @@ main {
     border-radius: 10px;
     color: #586380;
     margin-right: 1rem;
+    width: 400px;
 }
 
 .tagInput:focus {
@@ -1323,5 +1366,13 @@ option {
     border: none;
     background-color: transparent;
     cursor: pointer;
+}
+
+.tagHolder {
+    width: 100%;
+    display: flex;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
 }
 </style>
