@@ -1,66 +1,77 @@
 <template>
-    <nav>
-  <div class="wrapper">
-    <div class="logo"><a href="#" @click="home"><img src = "../assets/trivium_logo.png">Trivium</a></div>
-    <input type="radio" name="slider" id="menu-btn">
-    <input type="radio" name="slider" id="close-btn">
-    <ul class="nav-links">
-      <label for="close-btn" class="btn close-btn"><i class="fas fa-times"></i></label>
-      <li><a href="#" @click="home">Home</a></li>
-      <li><a href="#">Your Library</a></li>
-      <li><a href="#" @click="create">Create</a></li>
-      <li>
-        <a href="#" class="desktop-item" @click="login">Login</a>
-        <input type="checkbox" id="showDrop">
-        <label for="showDrop" class="mobile-item">Dropdown Menu</label>
-        <ul class="drop-menu">
-          <li><a href="#" @click="settings">Settings</a></li>
-          <li><a href="#">Your Library</a></li>
-          <li><a href="#" @click="user">Profile</a></li>
-          <li><a href="#" @click="logout">Log out</a></li>
-        </ul>
-      </li>
-    </ul>
-    <label for="menu-btn" class="btn menu-btn"><i class="fas fa-bars"></i></label>
-  </div>
-</nav>
-
-
+  <nav>
+    <div class="wrapper">
+      <div class="logo"><a href="#" @click="home"><img src="../assets/trivium_logo.png">Trivium</a></div>
+      <input type="radio" name="slider" id="menu-btn">
+      <input type="radio" name="slider" id="close-btn">
+      <ul class="nav-links">
+        <label for="close-btn" class="btn close-btn"><i class="fas fa-times"></i></label>
+        <li><a href="#" @click="home">Home</a></li>
+        <li><a href="#">Your Library</a></li>
+        <li><a href="#" @click="create">Create</a></li>
+        <li v-if="isLoggedIn">
+          <a href="#" class="desktop-item">User</a>
+          <input type="checkbox" id="showDrop">
+          <label for="showDrop" class="mobile-item">Dropdown Menu</label>
+          <ul class="drop-menu">
+            <li><a href="#" @click="settings">Settings</a></li>
+            <li><a href="#">Your Library</a></li>
+            <li><a href="#" @click="user">Profile</a></li>
+            <li><a href="#" @click="logout">Log out</a></li>
+          </ul>
+        </li>
+        <li v-else>
+          <a href="#" @click="login">Login</a>
+          <a href="#" @click="signup">Sign up</a>
+        </li>
+      </ul>
+      <label for="menu-btn" class="btn menu-btn"><i class="fas fa-bars"></i></label>
+    </div>
+  </nav>
 </template>
 
 <script>
 import axios from 'axios';
-import { useUserStore } from '@/stores/counter';
-import { useRouter } from 'vue-router'; // Import useRouter from Vue Router
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
-    const router = useRouter(); // Use the useRouter composable to access the router instance
+    const router = useRouter();
 
-    // Methods can be returned from setup()
+    const isLoggedIn = computed(() => {
+      return sessionStorage.getItem("userToken") !== null;
+    });
+
     return {
-      async login() {
+      login() {
         router.push({ name: 'login' });
       },
+      signup() {
+        router.push({ name: 'signup' });
+      },
       home() {
-          router.push({ name: 'home2' });
+        router.push({ name: 'home' });
       },
       create() {
-          router.push({ name: 'create' });
+        router.push({ name: 'create' });
       },
       settings() {
-          router.push({ name: 'play' });
+        router.push({ name: 'play' });
       },
       logout() {
-          router.push({ name: 'result' });
+        sessionStorage.removeItem("userToken");
+        router.push({ name: 'login' });
       },
       user() {
-          router.push({ name: 'user' });
-      }
+        router.push({ name: 'user' }); 
+      },
+      isLoggedIn
     };
   }
 }
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');

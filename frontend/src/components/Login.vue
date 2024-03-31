@@ -45,6 +45,9 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+//import { useUserInfoStore } from '@/stores/UserStore';
+
+//const userStore = useUserInfoStore();
 
 const router = useRouter();
 const username = ref('');
