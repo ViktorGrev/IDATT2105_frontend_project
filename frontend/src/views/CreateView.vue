@@ -137,7 +137,7 @@ const createQuiz = () => {
             default:
                 return {}; // Fallback for unrecognized question types
         }
-        
+
     });
 
     const quiz = {
@@ -219,7 +219,7 @@ const importQuiz = (event) => {
                             questionText,
                             answers,
                             correctAnswerIndex,
-                            image: null, 
+                            image: null,
                             type // Use the mapped type
                         });
                     });
@@ -281,10 +281,10 @@ const importQuiz = (event) => {
                 </div>
                 <input aria-label="Description" class="titleInput" maxlength="255"
                     placeholder="Enter a description for the quiz" type="text" v-model="quizDescription">
-                
+
                 <div class=titleButtons>
                     <button class="titleButton" @click="triggerFileInput">+ Import</button>
-                    <input type="file" ref="fileInput" @change="importQuiz" style="display:none">
+                    <input type="file" ref="fileInput" @change="importQuiz" accept=".csv" style="display:none">
 
                     <button @click="toggleRandomization" class="titleButton">
                         Randomize Answers: {{ randomizationLabel() }}
@@ -313,12 +313,14 @@ const importQuiz = (event) => {
                         <div class="questionBox">
                             The question: <input class="question" v-model="currentQuestion().questionText"
                                 placeholder="Type in here">
-                            
+
                         </div>
-                        <div>
-    <input type="file" @change="event => handleImageUpload(event, currentQuestion().id)" hidden ref="questionImageInput">
-    <button @click="$refs.questionImageInput.click()">Upload Image</button>
-</div>
+                        <div class="imageHolder">
+                            Import image:   '    
+                            <input type="file" @change="event => handleImageUpload(event, currentQuestion().id)" hidden
+                                ref="questionImageInput">
+                            <button class="titleButton" @click="$refs.questionImageInput.click()">Upload Image</button>
+                        </div>
                         <!-- Dropdown menu for selecting question type -->
                         <div class="questionTypeSelector">
                             Question Type:
@@ -1374,5 +1376,14 @@ option {
     margin-bottom: 1rem;
     margin-top: 1rem;
     flex-wrap: wrap;
+}
+
+.imageHolder {
+    display: flex;
+    justify-content: start;
+    width: 100%;
+    color: #586380;
+    font-size: 1.5rem;
+margin-bottom: 1rem;
 }
 </style>
