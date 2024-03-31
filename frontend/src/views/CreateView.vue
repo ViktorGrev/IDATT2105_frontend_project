@@ -6,6 +6,7 @@ const quizTitle = ref('');
 const quizTags = ref([]); // Array to hold tags
 const quizTagInput = ref(''); // New ref for the tag input field
 const quizDescription = ref('');
+const quizCategory = ref(''); // Default category is empty
 
 const questions = reactive([
     {
@@ -113,6 +114,7 @@ const createQuiz = () => {
 
     const quiz = {
         title: quizTitle.value,
+        category: quizCategory.value,
         description: quizDescription.value,
         tags: quizTags.value,
         questions: formattedQuestions,
@@ -145,6 +147,7 @@ const importQuiz = (event) => {
                     quizTitle.value = result.data[1][0];
                     quizDescription.value = result.data[1][1];
                     quizTags.value = result.data[1][2].split(',').map(tag => tag.trim());
+                    quizCategory.value = result.data[1][3];
                     questions.splice(0, questions.length); // Remove all existing questions
 
                     // Skip the first 3 rows (column headers and quiz metadata)
@@ -218,13 +221,26 @@ const importQuiz = (event) => {
                 <input aria-label="Title" class="titleInput" maxlength="255"
                     placeholder="Enter a title, like “Fullstack - Chapter 9: Jwt-Token”" type="text"
                     v-model="quizTitle">
+
+                <div class="categoryBox">
+                    Quiz Category: 
+                    <select v-model="quizCategory" class="category">
+                        <option disabled value="">Select a category</option>
+                        <option>Science</option>
+                        <option>Math</option>
+                        <option>History</option>
+                        <option>Literature</option>
+                        <option>Art</option>
+                    </select>
+                </div>
+
                 <div class=titleButtons>
                     <button class="titleButton" @click="triggerFileInput">+ Import</button>
                     <input type="file" ref="fileInput" @change="importQuiz" style="display:none">
                     <button class="titleButton">Visibility: Private</button>
                     <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”"
                         v-model="quizTagInput">
-                    <button @click="addTag">Apply</button>
+                    <button class="titleButton" @click="addTag">Apply Tag</button>
                     <!-- Display added tags -->
                     <div class="tagsDisplay">
                         <span v-for="(tag, index) in quizTags" :key="index" class="tag">
@@ -390,6 +406,7 @@ main {
     height: 3rem;
     border-radius: 10px;
     color: #586380;
+    margin-right: 1rem;
 }
 
 .tagInput:focus {
@@ -541,6 +558,29 @@ main {
 
 .new:hover {
     background-color: #127934;
+}
+
+.categoryBox {
+    margin-top: 1rem;
+}
+
+.category {
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: normal;
+    line-height: 1.5;
+    appearance: none;
+    border: none;
+    box-shadow: none;
+    cursor: text;
+    filter: none;
+    flex: 1 1 auto;
+    background-color: initial;
+    padding-right: 1rem;
+    background-color: white;
+    height: 3rem;
+    border-radius: 10px;
+    color: #586380;
 }
 
 .content {
