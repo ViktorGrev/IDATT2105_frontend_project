@@ -4,7 +4,7 @@
         <h1>{{ quiz.title }}</h1>
       </div>
       <form @submit.prevent="submitQuiz">
-        <div class="card" v-for="(question, index) in quiz.questions" :key="index">
+        <div class="card" v-for="(question, index) in quiz.questions" :key="index" :data-index="index">
           <div class="card-header">
             <h2>{{ question.text }}</h2>
             <h3>{{ index + 1 }} / {{ quiz.questions.length }}</h3>
@@ -46,7 +46,7 @@
   </template>
 
 <script setup lang="ts">
-import { ref, reactive, provide } from 'vue';
+import { ref, reactive, provide, nextTick } from 'vue';
 import MultipleChoiceButton from './MultipleChoiceButton.vue';
 import TFButton from './TFButton.vue';
 import BlankInput from './BlankInput.vue';
@@ -100,7 +100,35 @@ let quiz = reactive({
       "text": "___ is the chemical symbol for gold.",
       "type": "FILLINBLANK",
       "solution": "Au"
-    },
+    }
+    ,
+    {
+      "id": 10, // Question ID
+      "text": "___ is the chemical symbol for gold.",
+      "type": "FILLINBLANK",
+      "solution": "Au"
+    }
+    ,
+    {
+      "id": 11, // Question ID
+      "text": "___ is the chemical symbol for gold.",
+      "type": "FILLINBLANK",
+      "solution": "Au"
+    }
+    ,
+    {
+      "id": 12, // Question ID
+      "text": "___ is the chemical symbol for gold.",
+      "type": "FILLINBLANK",
+      "solution": "Au"
+    }
+    ,
+    {
+      "id": 13, // Question ID
+      "text": "___ is the chemical symbol for gold.",
+      "type": "FILLINBLANK",
+      "solution": "Au"
+    }
     // Add more questions with unique IDs and their options/solutions if necessary
   ]
 });
@@ -137,7 +165,21 @@ function submitQuiz() {
 
 function selectAnswer(questionIndex, optionIndex) {
   selectedAnswers[questionIndex] = optionIndex;
+  scrollToNextQuestion(questionIndex);
 }
+
+function scrollToNextQuestion(index) {
+  nextTick().then(() => {
+    // Increment index to target the next question
+    const nextIndex = index;
+    // Use a query selector to find the next question card based on the data-index attribute
+    const nextQuestionCard = document.querySelector(`.card[data-index="${nextIndex}"]`);
+    if (nextQuestionCard) {
+      nextQuestionCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+}
+
 </script>
 
 <style scoped>
