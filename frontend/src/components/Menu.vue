@@ -7,8 +7,9 @@
       <ul class="nav-links">
         <label for="close-btn" class="btn close-btn"><i class="fas fa-times"></i></label>
         <li><a href="#" @click="home">Home</a></li>
-        <li><a href="#">Your Library</a></li>
+        <li><a href="#" @click="yourLibrary">Your Library</a></li>
         <li><a href="#" @click="create">Create</a></li>
+        <li><a href="#" @click="search">Search</a></li>
         <li v-if="isLoggedIn">
           <a href="#" class="desktop-item">User</a>
           <input type="checkbox" id="showDrop">
@@ -58,7 +59,7 @@ export default {
         router.push({ name: 'create' });
       },
       settings() {
-        router.push({ name: 'play' });
+        router.push({ name: 'settings' });
       },
       logout() {
         sessionStorage.removeItem("userToken");
@@ -69,6 +70,12 @@ export default {
       },
       feedback() {
         router.push({ name: 'feedback' }); 
+      },
+      yourLibrary() {
+        router.push({ name: 'feedback' }); 
+      },
+      search() {
+        router.push({ name: 'seach' }); 
       },
       isLoggedIn
     };
