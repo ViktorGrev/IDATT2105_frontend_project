@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Update to Node.js 20
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3  # Changed from v4 to v3
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
@@ -46,10 +46,10 @@ jobs:
     needs: install
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Update to Node.js 20
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3  # Changed from v4 to v3
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
@@ -61,10 +61,10 @@ jobs:
     needs: install
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Update to Node.js 20
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3  # Changed from v4 to v3
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
