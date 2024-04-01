@@ -1,6 +1,7 @@
 <script setup>
 import Menu from '../components/Menu.vue';
 import { ref, computed } from "vue";
+import debounce from 'lodash/debounce';
 
 const searchQuery = ref('');
 
@@ -20,12 +21,25 @@ const quizzes = [
     { title: 'Quizz: 7' },
 ];
 
-const filteredQuizzes = computed(() => {
-    //Henter ut quizzer fra listen som for å fylle siden
-    return quizzes.filter(quiz => {
+// Filtered quizzes based on search query
+const filteredQuizzes = ref([]);
+
+// Function to update filtered quizzes
+const updateFilteredQuizzes = () => {
+    filteredQuizzes.value = quizzes.filter(quiz => {
         return quiz.title.toLowerCase().includes(searchQuery.value.toLowerCase());
-    }).slice(0, 10); //Passer på at siden ikke blir overfylt, og at max 10 quizzer kommer på siden
-});
+    }).slice(0, 10);
+};
+
+// Debounce the update function to improve performance
+const debouncedUpdate = debounce(updateFilteredQuizzes, 500);
+
+// Handle keyup event to update search results only when Enter is pressed
+const handleKeyUp = (event) => {
+    if (event.key === 'Enter') {
+        debouncedUpdate();
+    }
+};
 
 const generateQuizLink = (title) => {
     //Generere linker til korrekt 
@@ -47,7 +61,7 @@ const getQuizzes = (title, link) => {
         <div class="Search">
             <!-- Design: https://codepen.io/AlbertFeynman -->
             <div class="container">
-                <input type="text" v-model="searchQuery" placeholder="Search...">
+                <input type="text" v-model="searchQuery" placeholder="Search..." @keyup="handleKeyUp">
                 <div class="search"></div>
             </div>
         </div>
