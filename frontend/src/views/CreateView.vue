@@ -109,48 +109,52 @@ const setCorrectAnswer = (questionId, answerIndex) => {
 
 const createQuiz = () => {
     const formattedQuestions = questions.map((q) => {
+        // Construct the base question object without the image property
+        let question = {
+            text: q.questionText,
+            type: q.type.toUpperCase().replace('multipleChoice', 'MULTIPLE_CHOICE')
+                                        .replace('trueFalse', 'TRUE_FALSE')
+                                        .replace('fillInBlank', 'FILL_IN_THE_BLANK'),
+        };
+
+        // Add question-specific properties
         switch (q.type) {
             case 'multipleChoice':
-                return {
-                    text: q.questionText,
-                    options: q.answers.map((answer, index) => ({
-                        optionText: answer,
-                        correct: index === q.correctAnswerIndex,
-                    })),
-                    type: 'MULTIPLE_CHOICE',
-                    image: q.image,
-                };
+                question.options = q.answers.map((answer, index) => ({
+                    optionText: answer,
+                    correct: index === q.correctAnswerIndex,
+                }));
+                break;
             case 'trueFalse':
-                return {
-                    text: q.questionText,
-                    true: q.correctAnswerIndex === 0, // Assuming 0 is for 'True' and 1 is for 'False'
-                    type: 'TRUE_FALSE',
-                    image: q.image,
-                };
+                question.true = q.correctAnswerIndex === 0; // Assuming 0 is for 'True' and 1 is for 'False'
+                break;
             case 'fillInBlank':
-                return {
-                    text: q.questionText,
-                    solution: q.answers[0], // Assuming the first entry in the answers array is the solution
-                    type: 'FILL_IN_THE_BLANK',
-                    image: q.image,
-                };
+                question.solution = q.answers[0]; // Assuming the first entry in the answers array is the solution
+                break;
             default:
-                return {}; // Fallback for unrecognized question types
+                // Optionally handle unrecognized question types or leave as is
         }
 
+        // Conditionally add the image property if it exists
+        if (q.image) {
+            question.image = q.image;
+        }
+
+        return question;
     });
 
     const quiz = {
         title: quizTitle.value,
         category: quizCategory.value,
         description: quizDescription.value,
-        tags: quizTags.value,
-        random: quizRandomization.value,
+        tags: quizTags.value, // Assuming you want to split tags by commas into an array
+        random: quizRandomization.value, // Assuming this is a checkbox and you want a boolean value
         questions: formattedQuestions,
     };
 
     console.log(JSON.stringify(quiz, null, 2));
 };
+
 
 
 
