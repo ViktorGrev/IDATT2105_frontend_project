@@ -1,4 +1,4 @@
-# Book That Room
+# Trivium
 
 <p align="center">
   <img src="assets\ReadmePicture.webp" width="500">
