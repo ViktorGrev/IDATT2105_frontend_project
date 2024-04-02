@@ -108,27 +108,7 @@ let quiz = reactive({
       "type": "FILLINBLANK",
       "solution": "Au"
     }
-    ,
-    {
-      "id": 11, // Question ID
-      "text": "___ is the chemical symbol for gold.",
-      "type": "FILLINBLANK",
-      "solution": "Au"
-    }
-    ,
-    {
-      "id": 12, // Question ID
-      "text": "___ is the chemical symbol for gold.",
-      "type": "FILLINBLANK",
-      "solution": "Au"
-    }
-    ,
-    {
-      "id": 13, // Question ID
-      "text": "___ is the chemical symbol for gold.",
-      "type": "FILLINBLANK",
-      "solution": "Au"
-    }
+
     // Add more questions with unique IDs and their options/solutions if necessary
   ]
 });
@@ -149,14 +129,15 @@ function submitQuiz() {
       } else if (question.type === 'TRUEFALSE') {
         answer = selectedAnswers[index]; // Boolean value
       } else if (question.type === 'FILLINBLANK') {
-        answer = userInputs[index].trim(); // User's input text
+        // Directly use userInputs without filtering
+        answer = userInputs[index]; // User's input text
       }
 
       return {
         "id": question.id, // Question ID
-        "answer": answer // Answer
+        "answer": answer // Answer or null if unanswered
       };
-    })
+    }).filter(answer => answer.answer !== null && answer.answer !== '') // Filter out completely unanswered questions
   };
 
   quizCompleted.value = true;
