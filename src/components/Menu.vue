@@ -75,7 +75,7 @@ export default {
         router.push({ name: 'feedback' }); 
       },
       search() {
-        router.push({ name: 'seach' }); 
+        router.push({ name: 'search' }); 
       },
       isLoggedIn
     };
