@@ -47,10 +47,12 @@
   </template>
 
 <script setup lang="ts">
+import axios from 'axios';
 import { ref, reactive, provide, nextTick } from 'vue';
 import MultipleChoiceButton from './MultipleChoiceButton.vue';
 import TFButton from './TFButton.vue';
 import BlankInput from './BlankInput.vue';
+
 
 let quiz = reactive({
   "id": 1, // Quiz ID
