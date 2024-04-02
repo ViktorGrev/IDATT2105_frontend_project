@@ -1,7 +1,7 @@
 <template>
   <button
     :class="{ selected: isSelected }"
-    @click="$emit('select', value)">
+    @click="$emit('select', value)" type="button">
     {{ value ? 'True' : 'False' }}
   </button>
 </template>

@@ -24,7 +24,7 @@
             </div>
             <BlankInput v-if="question.type === 'FILL_IN_THE_BLANK'" :questionIndex="index" />
           </div>
-          <button @click="skipQuestion(index)" class="skip-btn">Don't know?</button>
+          <button @click="skipQuestion(index)" class="skip-btn" type="button">Don't know?</button>
         </div>
       </div>
       <button type="submit" class="submit-btn">Submit Quiz</button>
@@ -107,7 +107,6 @@ function selectAnswer(questionIndex, optionIndex) {
   selectedAnswers.value[questionIndex] = optionIndex;
   selectedAnswers.value = [...selectedAnswers.value];
   scrollToNextQuestion(questionIndex);
-  console.log("Yoyoyoyo");
 }
 
 function scrollToNextQuestion(index) {
