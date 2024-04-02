@@ -12,12 +12,6 @@
     }
   ],
   "compilerOptions": {
-    "module": "NodeNext",
-    "allowJs": true,
-    "target": "es6",
-    "lib": ["dom", "es2015"]
-  },
-  "include": [
-    "src/**/*"
-  ]
+    "module": "NodeNext"
+  }
 }
