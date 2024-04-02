@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, nextTick } from 'vue';
+import QuestionEditBox from './QuestionEditBox.vue';
 
 const quizTitle = ref('');
 const quizTags = ref([]); // Array to hold tags
@@ -145,7 +146,12 @@ const createQuiz = () => {
     console.log(JSON.stringify(quiz, null, 2));
 };
 
-
+const handleUpdateQuestion = (updatedQuestion) => {
+  const questionIndex = questions.findIndex(q => q.id === updatedQuestion.id);
+  if (questionIndex !== -1) {
+    questions[questionIndex] = updatedQuestion;
+  }
+};
 
 
 
@@ -254,7 +260,8 @@ const importQuiz = (event) => {
                     <div class="discriptionHolder">
                         <label for="descriptionDiv" class="titleLabel>">Description:</label>
                         <textarea aria-label="Description" class="descriptionInput"
-                    placeholder="Enter a description for the quiz" type="text" v-model="quizDescription"></textarea>
+                            placeholder="Enter a description for the quiz" type="text"
+                            v-model="quizDescription"></textarea>
                     </div>
                     <div class="optionHolder">
                         <label for="categoryDiv" class="titleLabel">Category:</label>
@@ -300,69 +307,9 @@ const importQuiz = (event) => {
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionsList">
-                    <div v-for="(question, index) in questions" :key="question.id" class="questionEditBox">
-                        <div class="titleHolder">
-                            <div>Question {{ index + 1 }}</div>
-                            <button class="deleteButton" @click="deleteQuestion(question.id)">Delete</button>
-                        </div>
-
-                        <div class="questionContent">
-                            <div class="questionBox">
-                                The question:
-                                <input class="question" v-model="question.questionText" placeholder="Type in here">
-                                <input type="file" @change="event => handleImageUpload(event, question.id)" hidden
-                                    ref="questionImageInput">
-                                <button class="titleButton" @click="$refs.questionImageInput.click()">+Image</button>
-                            </div>
-
-                            <div class="questionTypeSelector">
-                                <select v-model="question.type">
-                                    <option value="multipleChoice">Multiple Choice</option>
-                                    <option value="trueFalse">True / False</option>
-                                    <option value="fillInBlank">Fill in the Blank</option>
-
-                                </select>
-                            </div>
-
-                            <!-- Dynamically render answer inputs based on question type directly for each question -->
-                            <!-- The section for rendering answers goes here, make sure to bind inputs directly to the question's properties like question.answers[index] -->
-                            <div class="answers" v-if="question.type === 'multipleChoice'">
-                                <div v-for="(answer, ansIndex) in question.answers" :key="`ans-${index}-${ansIndex}`"
-                                    class="answerRow">
-                                    <input class="answersField" v-model="question.answers[ansIndex]"
-                                        :placeholder="`Answer ${ansIndex + 1}`">
-                                    <input type="radio" class="option-input radio"
-                                        :name="`correctAnswer-${question.id}`" :value="ansIndex"
-                                        v-model="question.correctAnswerIndex">
-                                    <label :for="`answer-${ansIndex}`">Correct</label>
-                                </div>
-                            </div>
-
-                            <!-- True/False answers -->
-                            <div class="answers" v-if="question.type === 'trueFalse'">
-                                <div class="answerRow">
-                                    <label>True</label>
-                                    <input type="radio" class="option-input radio"
-                                        :name="`correctAnswer-${question.id}`" value="0"
-                                        v-model="question.correctAnswerIndex">
-                                </div>
-                                <div class="answerRow">
-                                    <label>False</label>
-                                    <input type="radio" class="option-input radio"
-                                        :name="`correctAnswer-${question.id}`" value="1"
-                                        v-model="question.correctAnswerIndex">
-                                </div>
-                            </div>
-
-                            <!-- Fill-in-the-Blank answer -->
-                            <div class="answers" v-if="question.type === 'fillInBlank'">
-                                <div class="answerRow">
-                                    <input class="answersField" v-model="question.answers[0]"
-                                        placeholder="Correct Answer">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <QuestionEditBox v-for="(question, index) in questions" :key="question.id" :question="question"
+                        :index="index" @updateQuestion="handleUpdateQuestion" @deleteQuestion="deleteQuestion"
+                        @setCorrectAnswer="setCorrectAnswer" @handleImageUpload="handleImageUpload" />
                     <button class="addQuestionButton" @click="addQuestion">+ Add Question</button>
                 </div>
             </div>
@@ -609,17 +556,7 @@ main {
     box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.3);
 }
 
-.questionContent {
-    background-color: #edeff4;
-    width: 100%;
-    border-radius: 20px;
-    margin-top: 20px;
-    color: #586380;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+
 
 #someTitle {
     color: #586380;

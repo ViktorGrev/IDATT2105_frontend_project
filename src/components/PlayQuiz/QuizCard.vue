@@ -38,6 +38,7 @@
                 :questionIndex="index"
               />
             </div>
+            <button @click="skipQuestion(index)" class="skip-btn">Don't know?</button>
           </div>
         </div>
         <button type="submit" class="submit-btn">Submit Quiz</button>
@@ -125,24 +126,33 @@ function submitQuiz() {
       let answer = null;
 
       if (question.type === 'MULTIPLECHOICE') {
-        answer = question.options[selectedAnswers[index]]?.id; // Option ID
+        // Ensure that selectedAnswers[index] is not null before accessing the option
+        if (selectedAnswers[index] !== null && question.options[selectedAnswers[index]] !== undefined) {
+          answer = question.options[selectedAnswers[index]].id; // Option ID
+        }
       } else if (question.type === 'TRUEFALSE') {
-        answer = selectedAnswers[index]; // Boolean value
+        // For TRUEFALSE, answer is directly the boolean value, which can be false, so check for null specifically
+        if (selectedAnswers[index] !== null) {
+          answer = selectedAnswers[index]; // Boolean value
+        }
       } else if (question.type === 'FILLINBLANK') {
-        // Directly use userInputs without filtering
-        answer = userInputs[index]; // User's input text
+        // Directly use userInputs without filtering for empty, as we already filter for non-empty answers below
+        if (userInputs[index].trim() !== '') {
+          answer = userInputs[index]; // User's input text
+        }
       }
 
       return {
         "id": question.id, // Question ID
-        "answer": answer // Answer or null if unanswered
+        "answer": answer // Answer, null if unanswered, or undefined if not applicable
       };
-    }).filter(answer => answer.answer !== null && answer.answer !== '') // Filter out completely unanswered questions
+    }).filter(answer => answer.answer !== null && answer.answer !== undefined) // Filter out unanswered questions
   };
 
   quizCompleted.value = true;
   console.log(results); // Typically, send `results` to a server or elsewhere.
 }
+
 
 function selectAnswer(questionIndex, optionIndex) {
   selectedAnswers[questionIndex] = optionIndex;
@@ -152,7 +162,7 @@ function selectAnswer(questionIndex, optionIndex) {
 function scrollToNextQuestion(index) {
   nextTick().then(() => {
     // Increment index to target the next question
-    const nextIndex = index;
+    const nextIndex = index + 1; // Correctly increment the index here
     // Use a query selector to find the next question card based on the data-index attribute
     const nextQuestionCard = document.querySelector(`.card[data-index="${nextIndex}"]`);
     if (nextQuestionCard) {
@@ -160,6 +170,15 @@ function scrollToNextQuestion(index) {
     }
   });
 }
+
+function skipQuestion(index) {
+  // Unmark the selected answer for the current question
+  selectedAnswers[index] = null;
+  userInputs[index] = ''; // Clear user input if it's a fill-in-the-blank question
+  // Scroll to the next question
+  scrollToNextQuestion(index);
+}
+
 
 </script>
 
@@ -223,4 +242,25 @@ function scrollToNextQuestion(index) {
 .submit-btn:focus {
   outline: none;
 }
+
+.skip-btn {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  margin-top: 10px;
+}
+
+.skip-btn:hover {
+  background-color: #e2e6ea;
+}
+
+.skip-btn:focus {
+  outline: none;
+}
+
 </style>
