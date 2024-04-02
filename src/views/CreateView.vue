@@ -8,6 +8,7 @@ const quizTagInput = ref(''); // New ref for the tag input field
 const quizDescription = ref('');
 const quizCategory = ref(''); // Default category is empty
 const quizRandomization = ref(false);
+defineProps(['question']);
 
 const questions = reactive([
     {
@@ -28,7 +29,6 @@ const addQuestion = (type = 'multipleChoice') => {
     if (type === 'trueFalse') {
         answers = ['True', 'False'];
     } else if (type === 'fillInBlank') {
-        // For fill-in-the-blank, initialize with a single empty string for the correct answer
         answers = [''];
     }
     questions.push({
@@ -36,22 +36,13 @@ const addQuestion = (type = 'multipleChoice') => {
         questionText: '',
         answers: answers,
         correctAnswerIndex: 0, // For fill-in-the-blank, the first index will always be the correct answer
-        type: type
+        type: 'multipleChoice'
     });
     currentQuestionId.value = nextId;
 };
 
-const selectQuestion = (id) => {
-    console.log(`Selecting question with id: ${id}`);
-    currentQuestionId.value = id;
-};
-
 const findQuestionById = (id) => {
     return questions.find(q => q.id === id);
-};
-
-const currentQuestion = () => {
-    return findQuestionById(currentQuestionId.value);
 };
 
 const deleteQuestion = (id) => {
@@ -112,9 +103,9 @@ const createQuiz = () => {
         // Construct the base question object without the image property
         let question = {
             text: q.questionText,
-            type: q.type.toUpperCase().replace('multipleChoice', 'MULTIPLE_CHOICE')
-                                        .replace('trueFalse', 'TRUE_FALSE')
-                                        .replace('fillInBlank', 'FILL_IN_THE_BLANK'),
+            type: q.type.replace('multipleChoice', 'MULTIPLE_CHOICE')
+                .replace('trueFalse', 'TRUE_FALSE')
+                .replace('fillInBlank', 'FILL_IN_THE_BLANK'),
         };
 
         // Add question-specific properties
@@ -132,7 +123,7 @@ const createQuiz = () => {
                 question.solution = q.answers[0]; // Assuming the first entry in the answers array is the solution
                 break;
             default:
-                // Optionally handle unrecognized question types or leave as is
+            // Optionally handle unrecognized question types or leave as is
         }
 
         // Conditionally add the image property if it exists
@@ -196,35 +187,37 @@ const importQuiz = (event) => {
                         let correctAnswerIndex = null;
                         let type;
 
-                        // Map the normalized type to the component's expected type values
                         switch (rawType) {
                             case "multiplechoice":
                                 type = "multipleChoice";
-                                answers = row.slice(3);
-                                correctAnswerIndex = answers.indexOf(row[2]);
+                                answers = row.slice(3); // Adjusted to start from the 4th column for answers
+                                correctAnswerIndex = answers.indexOf(row[2]); // Correct answer is in the 3rd column
+                                if (correctAnswerIndex === -1) { // Handle cases where the correct answer might not match due to case sensitivity or trimming issues
+                                    correctAnswerIndex = answers.findIndex(answer => answer.trim().toLowerCase() === row[2].trim().toLowerCase());
+                                }
                                 break;
                             case "truefalse":
                                 type = "trueFalse";
                                 answers = ['True', 'False'];
-                                correctAnswerIndex = row[2].toLowerCase() === "true" ? 0 : 1;
+                                correctAnswerIndex = row[2].trim().toLowerCase() === "true" ? 0 : 1;
                                 break;
                             case "fillintheblank":
                                 type = "fillInBlank";
-                                answers = [row[2]];
-                                correctAnswerIndex = 0; // The first and only answer is the correct one
+                                answers = [row[2]]; // Correctly assigns the direct answer for fill-in-the-blank
+                                correctAnswerIndex = 0; // Only one correct answer for fill-in-the-blank
                                 break;
                             default:
-                                // Unsupported question type, you might want to handle this case.
+                                // Optionally handle other cases or unsupported types
                                 return;
                         }
 
                         questions.push({
-                            id: questions.length + 1, // Adjust ID to be the next in sequence
+                            id: questions.length + 1,
                             questionText,
                             answers,
                             correctAnswerIndex,
                             image: null,
-                            type // Use the mapped type
+                            type
                         });
                     });
 
@@ -254,37 +247,47 @@ const importQuiz = (event) => {
                 <div class="createtitle">
                     <h1>Create a new Study Set</h1> <button @click="createQuiz" class="createButton">Create</button>
                 </div>
-                <input aria-label="Title" class="titleInput" maxlength="255"
+                <label for="quizTitle" class="titleLabel">Quiz Title:</label>
+                <input id="quizTitle" aria-label="Title" class="titleInput" maxlength="255"
                     placeholder="Enter a title, like “Fullstack - Chapter 9: Jwt-Token”" type="text"
                     v-model="quizTitle">
 
-                <div class="categoryBox">
-                    Quiz Category:
-                    <select v-model="quizCategory" class="category">
-                        <option disabled value="">Select a category</option>
-                        <option>Science</option>
-                        <option>Math</option>
-                        <option>History</option>
-                        <option>Literature</option>
-                        <option>Art</option>
-                    </select>
-                </div>
-                <div class="tagHolder">
-                    <div>
-                        <input class="tagInput" placeholder="Add a tag for the Quiz, like “IDATT2105”"
-                            v-model="quizTagInput">
-                        <button class="titleButton" @click="addTag">Apply Tag</button>
-                        <!-- Display added tags -->
+                <div class="inputHeaders">
+                    <div class="discriptionHolder">
+                        <label for="descriptionDiv" class="titleLabel>">Description:</label>
+                        <textarea aria-label="Description" class="descriptionInput"
+                    placeholder="Enter a description for the quiz" type="text" v-model="quizDescription"></textarea>
                     </div>
-                    <div class="tagsDisplay">
-                        <span v-for="(tag, index) in quizTags" :key="index" class="tag">
-                            {{ tag }}
-                            <button @click="removeTag(tag)">x</button>
-                        </span>
+                    <div class="optionHolder">
+                        <label for="categoryDiv" class="titleLabel">Category:</label>
+                        <div class="categoryBox" id="categoryDiv">
+                            <select v-model="quizCategory" class="category">
+                                <option disabled value="">Select a category</option>
+                                <option>Science</option>
+                                <option>Math</option>
+                                <option>History</option>
+                                <option>Literature</option>
+                                <option>Art</option>
+                            </select>
+                        </div>
+                        <div class="tagHolder">
+                            <label for="tagInput" class="tagLabel">Tag:</label>
+                            <div>
+                                <input id="tagInput" class="tagInput"
+                                    placeholder="Add a tag for the Quiz, like “IDATT2105”" v-model="quizTagInput">
+
+                                <button class="titleButton" @click="addTag">Apply Tag</button>
+                                <!-- Display added tags -->
+                            </div>
+                            <div class="tagsDisplay">
+                                <span v-for="(tag, index) in quizTags" :key="index" class="tag">
+                                    {{ tag }}
+                                    <button @click="removeTag(tag)">x</button>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <input aria-label="Description" class="titleInput" maxlength="255"
-                    placeholder="Enter a description for the quiz" type="text" v-model="quizDescription">
 
                 <div class=titleButtons>
                     <button class="titleButton" @click="triggerFileInput">+ Import</button>
@@ -298,85 +301,71 @@ const importQuiz = (event) => {
 
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
-                <div class="questionNr">
-                    <!-- Dynamically render number buttons and bind click event to selectQuestion -->
-                    <button class="number" v-for="question in questions" :key="question.id"
-                        :class="{ active: question.id === currentQuestionId }" @click="selectQuestion(question.id)">
-                        {{ question.id }}
-                    </button>
-                    <!-- Button to add a new question -->
-                    <button class="new" @click="addQuestion">+</button>
-                </div>
-                <div class="content" v-if="currentQuestion()">
-                    <div class="titleHolder">
-                        <div id="someTitle">Current Question ID: {{ currentQuestionId }}</div>
-                        <button class="deleteButton" @click="deleteQuestion(currentQuestionId)">Delete</button>
-                    </div>
-
-                    <div class="questionContent">
-                        <div class="questionBox">
-                            The question: <input class="question" v-model="currentQuestion().questionText"
-                                placeholder="Type in here">
-
+                <div class="questionsList">
+                    <div v-for="(question, index) in questions" :key="question.id" class="questionEditBox">
+                        <div class="titleHolder">
+                            <div>Question {{ index + 1 }}</div>
+                            <button class="deleteButton" @click="deleteQuestion(question.id)">Delete</button>
                         </div>
-                        <div class="imageHolder">
-                            Import image:   '    
-                            <input type="file" @change="event => handleImageUpload(event, currentQuestion().id)" hidden
-                                ref="questionImageInput">
-                            <button class="titleButton" @click="$refs.questionImageInput.click()">Upload Image</button>
-                        </div>
-                        <!-- Dropdown menu for selecting question type -->
-                        <div class="questionTypeSelector">
-                            Question Type:
-                            <label class="select">
-                                <select v-model="currentQuestion().type">
+
+                        <div class="questionContent">
+                            <div class="questionBox">
+                                The question:
+                                <input class="question" v-model="question.questionText" placeholder="Type in here">
+                                <input type="file" @change="event => handleImageUpload(event, question.id)" hidden
+                                    ref="questionImageInput">
+                                <button class="titleButton" @click="$refs.questionImageInput.click()">+Image</button>
+                            </div>
+
+                            <div class="questionTypeSelector">
+                                <select v-model="question.type">
                                     <option value="multipleChoice">Multiple Choice</option>
                                     <option value="trueFalse">True / False</option>
                                     <option value="fillInBlank">Fill in the Blank</option>
+
                                 </select>
-                            </label>
-                        </div>
-
-                        <!-- Render inputs based on question type -->
-                        <div class="answers" v-if="currentQuestion().type === 'multipleChoice'">
-                            <div v-for="(answer, index) in currentQuestion().answers" :key="index" class="answerRow">
-                                <input class="answersField" v-model="currentQuestion().answers[index]"
-                                    :placeholder="`Answer ${index + 1}`">
-                                <input type="radio" class="option-input radio"
-                                    :name="`correctAnswer-${currentQuestionId}`" :id="`answer-${index}`" :value="index"
-                                    v-model="currentQuestion().correctAnswerIndex">
-                                <label :for="`answer-${index}`">Correct</label>
                             </div>
-                        </div>
 
-                        <!-- True/False answers -->
-                        <div class="answers" v-if="currentQuestion().type === 'trueFalse'">
-                            <div class="answerRow">
-                                <label>True</label>
-                                <input type="radio" class="option-input radio"
-                                    :name="`correctAnswer-${currentQuestionId}`" value="0"
-                                    v-model="currentQuestion().correctAnswerIndex">
+                            <!-- Dynamically render answer inputs based on question type directly for each question -->
+                            <!-- The section for rendering answers goes here, make sure to bind inputs directly to the question's properties like question.answers[index] -->
+                            <div class="answers" v-if="question.type === 'multipleChoice'">
+                                <div v-for="(answer, ansIndex) in question.answers" :key="`ans-${index}-${ansIndex}`"
+                                    class="answerRow">
+                                    <input class="answersField" v-model="question.answers[ansIndex]"
+                                        :placeholder="`Answer ${ansIndex + 1}`">
+                                    <input type="radio" class="option-input radio"
+                                        :name="`correctAnswer-${question.id}`" :value="ansIndex"
+                                        v-model="question.correctAnswerIndex">
+                                    <label :for="`answer-${ansIndex}`">Correct</label>
+                                </div>
                             </div>
-                            <div class="answerRow">
-                                <label>False</label>
-                                <input type="radio" class="option-input radio"
-                                    :name="`correctAnswer-${currentQuestionId}`" value="1"
-                                    v-model="currentQuestion().correctAnswerIndex">
-                            </div>
-                        </div>
 
-                        <!-- Fill-in-the-Blank answer -->
-                        <div class="answers" v-if="currentQuestion().type === 'fillInBlank'">
-                            <div class="answerRow">
-                                <input class="answersField" v-model="currentQuestion().answers[0]"
-                                    placeholder="Correct Answer">
+                            <!-- True/False answers -->
+                            <div class="answers" v-if="question.type === 'trueFalse'">
+                                <div class="answerRow">
+                                    <label>True</label>
+                                    <input type="radio" class="option-input radio"
+                                        :name="`correctAnswer-${question.id}`" value="0"
+                                        v-model="question.correctAnswerIndex">
+                                </div>
+                                <div class="answerRow">
+                                    <label>False</label>
+                                    <input type="radio" class="option-input radio"
+                                        :name="`correctAnswer-${question.id}`" value="1"
+                                        v-model="question.correctAnswerIndex">
+                                </div>
+                            </div>
+
+                            <!-- Fill-in-the-Blank answer -->
+                            <div class="answers" v-if="question.type === 'fillInBlank'">
+                                <div class="answerRow">
+                                    <input class="answersField" v-model="question.answers[0]"
+                                        placeholder="Correct Answer">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- You might want to handle the case where there are no questions left -->
-                <div class="content" v-else>
-                    <p id="someTitle">No questions to display. Add a new question.</p>
+                    <button class="addQuestionButton" @click="addQuestion">+ Add Question</button>
                 </div>
             </div>
         </div>
@@ -396,6 +385,7 @@ main {
 
 .box {
     width: 60%;
+    margin-bottom: 7rem;
 }
 
 .title {
@@ -455,12 +445,45 @@ main {
     border-radius: 10px;
     color: #586380;
     margin-right: 1rem;
-    width: 400px;
+    width: 100%;
+    min-width: 160px;
+    margin-bottom: 0.5rem;
 }
 
 .tagInput:focus {
     outline: none;
     border-bottom: 5px solid rgb(22, 144, 248);
+}
+
+.descriptionInput {
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: normal;
+    line-height: 1.5;
+    appearance: none;
+    border: none;
+    box-shadow: none;
+    cursor: text;
+    background-color: initial;
+    background-color: white;
+    height: 3rem;
+    border-radius: 10px;
+    color: #586380;
+    height: 12rem;
+    text-align: start;
+    resize: none;
+    width: 100%;
+}
+
+.inputHeaders {
+    width: 100%;
+    display: flex;
+    margin-top: 1.1rem;
+}
+
+.discriptionHolder {
+    width: 45%;
+    margin-right: 1rem;
 }
 
 .createtitle {
@@ -469,6 +492,10 @@ main {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+}
+
+.optionHolder {
+    width: 45%;
 }
 
 .createButton {
@@ -493,11 +520,9 @@ main {
 }
 
 .titleButtons {
-    margin-top: 2rem;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    margin-bottom: 2rem;
 }
 
 .titleButton {
@@ -513,7 +538,7 @@ main {
     display: flex;
     align-items: center;
     font: inherit;
-    margin-right: 1rem;
+    margin-right: 2rem;
 }
 
 .titleButton:hover {
@@ -553,62 +578,6 @@ main {
     max-width: 90%;
 }
 
-.number {
-    height: 60px;
-    width: 60px;
-    min-width: 60px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-        0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-    margin-right: 10px;
-    padding: 0;
-    border: none;
-    font: inherit;
-    color: inherit;
-    background-color: transparent;
-    cursor: pointer;
-}
-
-.number:focus {
-    outline: 0;
-}
-
-.number {
-    background-color: #50d8d7;
-    border-radius: 50%;
-}
-
-.number:hover {
-    background-color: #6bf3f3;
-}
-
-.new {
-    height: 60px;
-    width: 60px;
-    min-width: 60px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-        0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-    margin-right: 10px;
-    padding: 0;
-    border: none;
-    font: inherit;
-    color: inherit;
-    background-color: transparent;
-    cursor: pointer;
-}
-
-.new:focus {
-    outline: 0;
-}
-
-.new {
-    background-color: #1eb332;
-    border-radius: 50%;
-}
-
-.new:hover {
-    background-color: #127934;
-}
-
 .categoryBox {
     margin-top: 1rem;
 }
@@ -625,6 +594,7 @@ main {
     filter: none;
     flex: 1 1 auto;
     background-color: initial;
+    padding: 0px;
     padding-right: 1rem;
     background-color: white;
     height: 3rem;
@@ -690,6 +660,7 @@ main {
     color: #586380;
     margin-bottom: 1rem;
     margin-left: 1rem;
+    margin-right: 1rem;
 }
 
 .question:focus {
@@ -704,9 +675,9 @@ main {
 }
 
 .answersField {
-    min-width: 250px;
-    max-width: 100px;
     width: 50%;
+    min-width: 180px;
+    max-width: 200px;
     font-weight: 600;
     font-size: 1.2rem;
     letter-spacing: normal;
@@ -787,6 +758,9 @@ main {
     width: 100%;
     color: #586380;
     font-size: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 
@@ -1289,7 +1263,7 @@ select {
     appearance: none;
     border: 0;
     outline: 0;
-    background: none;
+    background-color: white;
     color: inherit;
     box-shadow: none;
     color: #586380;
@@ -1297,6 +1271,7 @@ select {
     font-size: 1.2rem;
     letter-spacing: normal;
     line-height: 1.5;
+    padding: 1rem;
 }
 
 select::-ms-expand {
@@ -1380,6 +1355,7 @@ option {
     margin-bottom: 1rem;
     margin-top: 1rem;
     flex-wrap: wrap;
+    flex-direction: column;
 }
 
 .imageHolder {
@@ -1388,6 +1364,39 @@ option {
     width: 100%;
     color: #586380;
     font-size: 1.5rem;
-margin-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.questionEditBox {
+    border: 2px solid #586380;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    padding: 1.5rem;
+    color: #586380;
+    width: 100%;
+}
+
+.addQuestionButton {
+    padding: 1rem 3rem;
+    background: rgb(46, 165, 46);
+    border: none;
+    border-color: #d9dde8;
+    color: white;
+    font-weight: 600;
+    font-size: 1.3rem;
+    border-bottom: 5px solid #58638063;
+    border-radius: .5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+.questionsList {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 </style>
