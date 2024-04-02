@@ -146,8 +146,6 @@ const createQuiz = async () => {
 
     console.log(JSON.stringify(quiz, null, 2));
 
-    const stringJSON = JSON.stringify(quiz, null, 2);
-
     const response = await axios.post('http://localhost:8080/api/quiz', 
       quiz
     , {

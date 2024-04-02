@@ -11,7 +11,7 @@ const props = defineProps({
 const userInputs = inject('userInputs');
 
 const userInput = computed({
-  get: () => userInputs[props.questionIndex],
-  set: (value) => { userInputs[props.questionIndex] = value; }
+  get: () => userInputs.value[props.questionIndex],
+  set: (value) => { userInputs.value[props.questionIndex] = value; }
 });
 </script>

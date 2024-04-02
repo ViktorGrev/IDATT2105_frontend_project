@@ -32,7 +32,7 @@ const showDatabase = async () => {
                                 <div class="container">
                                     <form>
                                         <div class="form-group">
-                                            <label for="fullName">Username</label>
+                                            <label for="fullName">Edit Username:</label>
                                             <input type="text" class="form-control" id="fullName">
                                         </div>
                                         <button type="button" class="btn btn-primary btn-block">Save Changes</button>
@@ -78,6 +78,7 @@ h2 {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    font-size: 3rem;
 }
 
 form {
@@ -123,12 +124,23 @@ p {
 .btn.btn-default {
     background: #ebebeb;
     color: #8f9096;
+    cursor: pointer;
 }
 
 .btn.btn-primary {
     margin: 1rem;
     background: rgb(22, 144, 248);
     color: white;
+    cursor: pointer;
+}
+
+.btn.btn-primary:hover {
+    border: 2px solid rgb(0, 0, 0);
+}
+
+.btn.btn-primary:active {
+    border-bottom: 5px solid rgb(0, 0, 0);
+    border-right: 5px solid rgb(0, 0, 0);
 }
 
 @media screen and (max-width:768px) {

@@ -1,147 +1,94 @@
 <template>
-    <div>
-      <div class="title">
-        <h1>{{ quiz.title }}</h1>
-      </div>
-      <form @submit.prevent="submitQuiz">
-        <div class="card" v-for="(question, index) in quiz.questions" :key="index" :data-index="index">
-          <div class="card-header">
-            <h2>{{ question.text }}</h2>
-            <h3>{{ index + 1 }} / {{ quiz.questions.length }}</h3>
-          </div>
-          <div class="card-body">
-            <h3>Choose an answer</h3>
-            <div class="answers">
-              <MultipleChoiceButton
-                v-if="question.type === 'MULTIPLECHOICE'"
-                v-for="(option, optionIndex) in question.options"
-                :key="optionIndex"
-                :optionText="option.optionText"
-                :optionIndex="optionIndex"
-                :isSelected="selectedAnswers[index] === optionIndex"
-                @select="selectAnswer(index, optionIndex)"
-              />
-              <div v-if="question.type === 'TRUEFALSE'">
-                <TFButton
-                  :value="true"
-                  :isSelected="selectedAnswers[index] === true"
-                  @select="selectAnswer(index, true)"
-                />
-                <TFButton
-                  :value="false"
-                  :isSelected="selectedAnswers[index] === false"
-                  @select="selectAnswer(index, false)"
-                />
-              </div>
-              <BlankInput
-                v-if="question.type === 'FILLINBLANK'"
-                :questionIndex="index"
-              />
-            </div>
-            <button @click="skipQuestion(index)" class="skip-btn">Don't know?</button>
-          </div>
-        </div>
-        <button type="submit" class="submit-btn">Submit Quiz</button>
-      </form>
+  <div v-if="quiz">
+    <div class="title">
+      <h1>{{ quiz.title }}</h1>
     </div>
-  </template>
+    <form @submit.prevent="submitQuiz">
+      <div class="card" v-for="(question, index) in quiz.questions" :key="index" :data-index="index">
+        <div class="card-header">
+          <h2>{{ question.text }}</h2>
+          <h3>{{ index + 1 }} / {{ quiz.questions.length }}</h3>
+        </div>
+        <div class="card-body">
+          <h3>Choose an answer</h3>
+          <div class="answers">
+            <MultipleChoiceButton v-if="question.type === 'MULTIPLE_CHOICE'"
+              v-for="(option, optionIndex) in question.options" :key="optionIndex" :optionText="option.optionText"
+              :optionIndex="optionIndex" :isSelected="selectedAnswers[index] === optionIndex"
+              @select="selectAnswer(index, optionIndex)" />
+            <div v-if="question.type === 'TRUE_FALSE'">
+              <TFButton :value="true" :isSelected="selectedAnswers[index] === true"
+                @select="selectAnswer(index, true)" />
+              <TFButton :value="false" :isSelected="selectedAnswers[index] === false"
+                @select="selectAnswer(index, false)" />
+            </div>
+            <BlankInput v-if="question.type === 'FILL_IN_THE_BLANK'" :questionIndex="index" />
+          </div>
+          <button @click="skipQuestion(index)" class="skip-btn">Don't know?</button>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn">Submit Quiz</button>
+    </form>
+  </div>
+  <div v-else>
+    Loading quiz...
+  </div>
+</template>
 
 <script setup lang="ts">
 import axios from 'axios';
-import { ref, reactive, provide, nextTick } from 'vue';
+import { ref, reactive, onMounted, provide, nextTick } from 'vue';
 import MultipleChoiceButton from './MultipleChoiceButton.vue';
 import TFButton from './TFButton.vue';
 import BlankInput from './BlankInput.vue';
 
-
-let quiz = reactive({
-  "id": 1, // Quiz ID
-  "title": "Sample Quiz",
-  "category": "Art",
-  "description": "This is a simple quiz to test your knowledge",
-  "tags": [
-    "Geography",
-    "General Knowledge"
-  ],
-  "random": true,
-  "questions": [
-    {
-      "id": 7, // Question ID
-      "text": "What is the capital of France?",
-      "type": "MULTIPLECHOICE",
-      "options": [
-        {
-          "id": 1, // Option ID
-          "optionText": "Paris",
-          "correct": true
-        },
-        {
-          "id": 2,
-          "optionText": "Berlin",
-          "correct": false
-        },
-        {
-          "id": 3,
-          "optionText": "Rome",
-          "correct": false
-        },
-        {
-          "id": 4,
-          "optionText": "Madrid",
-          "correct": false
-        }
-      ]
-    },
-    {
-      "id": 8, // Question ID
-      "text": "The sky is blue.",
-      "type": "TRUEFALSE",
-      "true": true
-    },
-    {
-      "id": 9, // Question ID
-      "text": "___ is the chemical symbol for gold.",
-      "type": "FILLINBLANK",
-      "solution": "Au"
-    }
-    ,
-    {
-      "id": 10, // Question ID
-      "text": "___ is the chemical symbol for gold.",
-      "type": "FILLINBLANK",
-      "solution": "Au"
-    }
-
-    // Add more questions with unique IDs and their options/solutions if necessary
-  ]
-});
-
-let selectedAnswers = reactive(quiz.questions.map(() => null));
-let userInputs = reactive(new Array(quiz.questions.length).fill(''));
+let quiz = ref(null); // Use `ref` for async data
+let selectedAnswers = ref([]);
+let userInputs = ref([]);
 provide('userInputs', userInputs);
+
 let quizCompleted = ref(false);
+
+// Function to fetch quiz data
+async function fetchQuizData(quizId) {
+  try {
+    const response = await axios.get('http://localhost:8080/api/quiz/10', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
+      }
+    });
+    quiz.value = response.data;
+    console.log(JSON.stringify(quiz.value, null, 2));
+    selectedAnswers.value = quiz.value.questions.map(() => null);
+    userInputs.value = new Array(quiz.value.questions.length).fill('');
+  } catch (error) {
+    console.error("Failed to fetch quiz data:", error);
+  }
+}
+
+// Fetch quiz data when component mounts
+onMounted(() => {
+  fetchQuizData(10); // Fetch quiz with ID 10
+});
 
 function submitQuiz() {
   let results = {
-    "id": quiz.id, // Quiz ID
-    "answers": quiz.questions.map((question, index) => {
+  "id": quiz.value.id, // Corrected
+  "answers": quiz.value.questions.map((question, index) => {
       let answer = null;
 
-      if (question.type === 'MULTIPLECHOICE') {
-        // Ensure that selectedAnswers[index] is not null before accessing the option
-        if (selectedAnswers[index] !== null && question.options[selectedAnswers[index]] !== undefined) {
-          answer = question.options[selectedAnswers[index]].id; // Option ID
+      if (question.type === 'MULTIPLE_CHOICE') {
+        if (selectedAnswers.value[index] !== null) {
+          const selectedOption = question.options[selectedAnswers.value[index]];
+          answer = selectedOption ? selectedOption.optionText : null; // Adjust according to what needs to be submitted
         }
-      } else if (question.type === 'TRUEFALSE') {
-        // For TRUEFALSE, answer is directly the boolean value, which can be false, so check for null specifically
-        if (selectedAnswers[index] !== null) {
-          answer = selectedAnswers[index]; // Boolean value
-        }
-      } else if (question.type === 'FILLINBLANK') {
+      } else if (question.type === 'TRUE_FALSE') {
+        // TRUE_FALSE selections are directly the boolean value
+        answer = selectedAnswers.value[index] !== null ? selectedAnswers.value[index] : null;
+      } else if (question.type === 'FILL_IN_THE_BLANK') {
         // Directly use userInputs without filtering for empty, as we already filter for non-empty answers below
-        if (userInputs[index].trim() !== '') {
-          answer = userInputs[index]; // User's input text
-        }
+        answer = userInputs.value[index] && userInputs.value[index].trim() !== '' ? userInputs.value[index].trim() : null;
       }
 
       return {
@@ -157,8 +104,10 @@ function submitQuiz() {
 
 
 function selectAnswer(questionIndex, optionIndex) {
-  selectedAnswers[questionIndex] = optionIndex;
+  selectedAnswers.value[questionIndex] = optionIndex;
+  selectedAnswers.value = [...selectedAnswers.value];
   scrollToNextQuestion(questionIndex);
+  console.log("Yoyoyoyo");
 }
 
 function scrollToNextQuestion(index) {
@@ -175,8 +124,8 @@ function scrollToNextQuestion(index) {
 
 function skipQuestion(index) {
   // Unmark the selected answer for the current question
-  selectedAnswers[index] = null;
-  userInputs[index] = ''; // Clear user input if it's a fill-in-the-blank question
+  selectedAnswers.value[index] = null;
+  userInputs.value[index] = ''; // Clear user input if it's a fill-in-the-blank question
   // Scroll to the next question
   scrollToNextQuestion(index);
 }
@@ -264,5 +213,4 @@ function skipQuestion(index) {
 .skip-btn:focus {
   outline: none;
 }
-
 </style>
