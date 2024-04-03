@@ -67,6 +67,8 @@ main {
 import { Carousel, Navigation, Slide, Pagination } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import HistoryBox from '../components/HistoryBoxComponent.vue'
+import axios from 'axios';
+import { ref, reactive, onMounted } from 'vue';
 
 export default {
   components: {
@@ -88,4 +90,6 @@ export default {
     };
   }
 };
+
+
 </script>
