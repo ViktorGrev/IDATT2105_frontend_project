@@ -25,13 +25,13 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/play',
+    path: '/play/:id',
     name: 'play',
     component: () => import('../views/PlayView.vue'),
     meta: { requiresAuth: true },
   },
   {
-    path: '/quiz',
+    path: '/quiz/:id',
     name: 'quiz',
     component: () => import('../views/QuizView.vue'),
     meta: { requiresAuth: true },

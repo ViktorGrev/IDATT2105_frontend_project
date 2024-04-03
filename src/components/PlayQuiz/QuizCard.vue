@@ -37,6 +37,7 @@
 
 <script setup lang="ts">
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 import { ref, reactive, onMounted, provide, nextTick } from 'vue';
 import MultipleChoiceButton from './MultipleChoiceButton.vue';
 import TFButton from './TFButton.vue';
@@ -49,10 +50,13 @@ provide('userInputs', userInputs);
 
 let quizCompleted = ref(false);
 
+const route = useRoute();
+
 // Function to fetch quiz data
-async function fetchQuizData(quizId) {
+async function fetchQuizData() {
+  const quizId = route.params.id;
   try {
-    const response = await axios.get('http://localhost:8080/api/quiz/10', {
+    const response = await axios.get('http://localhost:8080/api/quiz/' + quizId, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
@@ -69,19 +73,18 @@ async function fetchQuizData(quizId) {
 
 // Fetch quiz data when component mounts
 onMounted(() => {
-  fetchQuizData(10); // Fetch quiz with ID 10
+  fetchQuizData(); // Fetch quiz with ID 10
 });
 
-function submitQuiz() {
+async function submitQuiz() {
   let results = {
-  "id": quiz.value.id, // Corrected
   "answers": quiz.value.questions.map((question, index) => {
       let answer = null;
 
       if (question.type === 'MULTIPLE_CHOICE') {
         if (selectedAnswers.value[index] !== null) {
           const selectedOption = question.options[selectedAnswers.value[index]];
-          answer = selectedOption ? selectedOption.optionText : null; // Adjust according to what needs to be submitted
+          answer = selectedOption ? selectedOption.id : null; // Adjust according to what needs to be submitted
         }
       } else if (question.type === 'TRUE_FALSE') {
         // TRUE_FALSE selections are directly the boolean value
@@ -92,14 +95,24 @@ function submitQuiz() {
       }
 
       return {
-        "id": question.id, // Question ID
+        "question": question.id,
         "answer": answer // Answer, null if unanswered, or undefined if not applicable
       };
     }).filter(answer => answer.answer !== null && answer.answer !== undefined) // Filter out unanswered questions
   };
 
   quizCompleted.value = true;
-  console.log(results); // Typically, send `results` to a server or elsewhere.
+  console.log(results.answers);
+  const response = await axios.post('http://localhost:8080/api/quiz/10/answers',
+    results.answers, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
+      }
+    });
+    console.log(response.data);
+
+   // Typically, send `results` to a server or elsewhere.
 }
 
 
