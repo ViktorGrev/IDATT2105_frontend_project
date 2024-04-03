@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import Footer from './components/Footer.vue'
+import BasePage from './components/BaseComponent/BasePage.vue'
 </script>
 
 <template>
   <main>
-    <div>
-      <RouterView />
-    </div>
-    <Footer></Footer>
+      <BasePage></BasePage>
   </main>
 </template>
 
