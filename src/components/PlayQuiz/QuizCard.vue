@@ -52,9 +52,13 @@ let quizCompleted = ref(false);
 
 const route = useRoute();
 
+let qId = ref(0);
+
+
 // Function to fetch quiz data
 async function fetchQuizData() {
   const quizId = route.params.id;
+  qId = quizId;
   try {
     const response = await axios.get('http://localhost:8080/api/quiz/' + quizId, {
       headers: {
@@ -103,7 +107,7 @@ async function submitQuiz() {
 
   quizCompleted.value = true;
   console.log(results.answers);
-  const response = await axios.post('http://localhost:8080/api/quiz/10/answers',
+  const response = await axios.post('http://localhost:8080/api/quiz/' + qId + '/answers',
     results.answers, {
       headers: {
         'Content-Type': 'application/json',

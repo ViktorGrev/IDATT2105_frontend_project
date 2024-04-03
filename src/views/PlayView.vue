@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import Menu from '../components/Menu.vue'
 
 const router = useRouter()
+const route = useRoute() // Use useRoute to access the current route details
+
+const quizId = route.params.id; // Access route parameters with useRoute
 
 const navigateToTheQuiz = () => {
-    router.push({ name: 'quiz', params: { id: 10 } });
+    router.push({ name: 'quiz', params: { id: quizId } });
 }
 </script>
 
