@@ -1,7 +1,7 @@
 <template>
   <nav>
     <div class="wrapper">
-      <div class="logo"><a href="#" @click="home"><img src="../assets/trivium_logo.png">Trivium</a></div>
+      <div class="logo"><a href="#" @click="home"><img src="../assets/rizzletRpng.png">Rizzlet</a></div>
       <input type="radio" name="slider" id="menu-btn">
       <input type="radio" name="slider" id="close-btn">
       <ul class="nav-links">
@@ -123,9 +123,8 @@ nav .wrapper{
 }
 
 .wrapper .logo img{
-    height: 50px;
-    widows: 50px;
-    margin-top: 10px;
+    height: 70px;
+    widows: 70px;
     margin-right: 5px;
 }
 
