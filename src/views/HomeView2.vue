@@ -11,7 +11,7 @@ let quizzInfo3 = ref(null);
 // Function to fetch quiz data
 async function fetchQuizData(quizId) {
   try {
-    const response = await axios.get('http://localhost:8080/api/quiz/10', {
+    const response = await axios.get('http://localhost:8080/api/quiz/1', {
       headers: {
         'Content-Type': 'application/json',
         'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
@@ -23,39 +23,9 @@ async function fetchQuizData(quizId) {
   }
 }
 
-async function fetchQuizData2(quizId) {
-  try {
-    const response = await axios.get('http://localhost:8080/api/quiz/3', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
-      }
-    });
-    quizzInfo2.value = response.data;
-  } catch (error) {
-    console.error("Failed to fetch quiz data:", error);
-  }
-}
-
-async function fetchQuizData3(quizId) {
-  try {
-    const response = await axios.get('http://localhost:8080/api/quiz/1', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
-      }
-    });
-    quizzInfo3.value = response.data;
-  } catch (error) {
-    console.error("Failed to fetch quiz data:", error);
-  }
-}
-
 // Fetch quiz data when component mounts
 onMounted(() => {
   fetchQuizData(10); // Fetch quiz with ID 10
-  fetchQuizData2(10);
-  fetchQuizData3(10);
 });
 </script>
 
@@ -78,28 +48,14 @@ onMounted(() => {
       <div id="contentSpace"></div>
       <div id="quizID">
         <div id="recent">
-            <div class="container">
-                <!--<div class="largeQuizzContainer">
-                    <img src="https://www.leonardodavincischool.org/sites/main/files/imagecache/lightbox/main-images/camera_lense_0.jpeg" alt="test">
-                    <div class="centerText">Quizz 1</div>
-                    <p style="margin-left: 15px; font-size: 30px;">You have played these quizzes recently</p>
-                </div>
-                <div class="smallQuizzContainer">
-                    <div class="topSmallQuizzContainer">
-                        <img src="https://wallpapers.com/images/hd/wooden-cottage-sea-high-resolution-d7fahhz6phtkdveh.jpg" alt="test">
-                        <div class="topText">Quizz 2</div>
-                    </div>
-                    <div class="bottomSmallQuizzContainer">
-                        <img src="https://static.photocdn.pt/images/articles/2017/11/29/articles/2017_8/iStock-641093712-min-1.webp" alt="test">
-                        <div class="bottomText">Quizz 3</div>
-                    </div>
-                </div>-->
+          <h2 style="color: #586380;">Recent quizz attemps</h2>
+            <div>
                 <history></history>
             </div>
         </div>
         
         <div id="topContent">
-          <h3>Top 10</h3>
+          <h2 style="color: #586380;">Top 10</h2>
           <div class="container">
             <div class="smallQuizzContainer">
                 <div class="topSmallQuizzContainer">
@@ -120,7 +76,7 @@ onMounted(() => {
         </div>
         
         <div id="triviumContent">
-          <h3>Trivium verified</h3>
+          <h2 style="color: #586380;">Trivium verified</h2>
           <div class="container">
             <div class="quizContainerV1" v-if="quizzInfo">
               <div class="quizContainerV1Top">
@@ -144,8 +100,8 @@ onMounted(() => {
 
               </div>
               <div class="quizContainerV2Bottom">
-                <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo2.title }} </p>
-                <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo2.description }}</p>
+                <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo.title }} </p>
+                <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo.description }}</p>
               </div>
             </div>
             <div v-else>
@@ -161,8 +117,8 @@ onMounted(() => {
 
               </div>
               <div class="quizContainerV1Bottom">
-                <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo3.title }} </p>
-                <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo3.description }}</p>
+                <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo.title }} </p>
+                <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo.description }}</p>
               </div>
             </div>
             <div v-else>
@@ -176,7 +132,7 @@ onMounted(() => {
           </div>
         </div>
         <div id="idatt2105Content">
-        <h3>IDATT2105</h3>
+          <h2 style="color: #586380;">IDATT2105</h2>
           
         </div>
       </div>
@@ -246,6 +202,7 @@ main {
     margin-top: 2rem;
     flex-direction: row;
     justify-content: center;
+    max-width: 100%;
 }
 
 @media only screen and (max-width: 600px) {
