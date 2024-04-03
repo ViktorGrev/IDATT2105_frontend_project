@@ -1,6 +1,11 @@
 <script setup lang="ts">
+import { ref, computed } from "vue";
 import axios from 'axios';
 import Menu from '../components/Menu.vue';
+import History from '../components/history.vue';
+import LongTermHistoryComponent from '@/components/LongTermHistoryComponent.vue';
+
+const username = ref('Viktor');
 
 const showDatabase = async () => {
     let username = "Viktor";
@@ -15,14 +20,14 @@ const showDatabase = async () => {
         <Menu></Menu>
         <div class = "wrapper">
             <div class ="contentBox">
-                <div class ="title">Viktor</div>
+                <div class ="Name">{{ username }}</div>
                 <div class = "buttonBox">
                     <button class = "buttonStyle">Add friend</button>
                     <button class = "buttonStyle">Remove freind</button>
                 </div>
-                <div class = "libraryTitle">Viktors quiz library</div>
                 <div class = "libraryList">
-
+                    <History></History>
+                    <LongTermHistoryComponent></LongTermHistoryComponent>
                 </div>
             </div>
         </div>
@@ -46,7 +51,7 @@ const showDatabase = async () => {
         margin:3rem;
     }
 
-    .title {
+    .Name {
         display: flex;
         justify-content: left;
         flex-direction: column;
@@ -91,7 +96,7 @@ const showDatabase = async () => {
     }
 
     .buttonStyle:hover {
-    border: 0.1rem solid rgb(22, 144, 248);
+        box-shadow: rgba(87, 174, 250, 0.65) 0px 0px 0px 2px, rgba(87, 174, 250, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
 }
     
 </style>
