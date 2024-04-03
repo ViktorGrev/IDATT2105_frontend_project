@@ -4,6 +4,10 @@ import history from '@/components/history.vue';
 import axios from 'axios';
 import { ref, reactive, onMounted } from 'vue';
 
+let quizzInfo = ref(null);
+let quizzInfo2 = ref(null);
+let quizzInfo3 = ref(null);
+
 // Function to fetch quiz data
 async function fetchQuizData(quizId) {
   try {
@@ -13,7 +17,35 @@ async function fetchQuizData(quizId) {
         'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
       }
     });
-    
+    quizzInfo.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch quiz data:", error);
+  }
+}
+
+async function fetchQuizData2(quizId) {
+  try {
+    const response = await axios.get('http://localhost:8080/api/quiz/3', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
+      }
+    });
+    quizzInfo2.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch quiz data:", error);
+  }
+}
+
+async function fetchQuizData3(quizId) {
+  try {
+    const response = await axios.get('http://localhost:8080/api/quiz/1', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
+      }
+    });
+    quizzInfo3.value = response.data;
   } catch (error) {
     console.error("Failed to fetch quiz data:", error);
   }
@@ -22,6 +54,8 @@ async function fetchQuizData(quizId) {
 // Fetch quiz data when component mounts
 onMounted(() => {
   fetchQuizData(10); // Fetch quiz with ID 10
+  fetchQuizData2(10);
+  fetchQuizData3(10);
 });
 </script>
 
@@ -88,31 +122,55 @@ onMounted(() => {
         <div id="triviumContent">
           <h3>Trivium verified</h3>
           <div class="container">
-            <div class="quizContainerV1">
+            <div class="quizContainerV1" v-if="quizzInfo">
               <div class="quizContainerV1Top">
 
               </div>
               <div class="quizContainerV1Bottom">
-                <p style="font-size: 25px; margin: 0; margin-top: 5px;">Quizz 1</p>
-                <p style="font-size: 15px; margin: 0; margin-top: 5px;">Quizz 1: About pearl harbor</p>
+                <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo.title }} </p>
+                <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo.description }}</p>
               </div>
             </div>
-            <div class="quizContainerV2">
+            <div v-else>
+              <div class="quizContainerV1Top">
+
+              </div>
+              <div class="quizContainerV1Bottom">
+                
+              </div>
+            </div>
+            <div class="quizContainerV2" v-if="quizzInfo">
               <div class="quizContainerV2Top">
 
               </div>
               <div class="quizContainerV2Bottom">
-                <p style="font-size: 25px; margin: 0; margin-top: 5px;">Quizz 2</p>
-                <p style="font-size: 15px; margin: 0; margin-top: 5px;">Quizz 2: About killing</p>
+                <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo2.title }} </p>
+                <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo2.description }}</p>
               </div>
             </div>
-            <div class="quizContainerV1">
+            <div v-else>
               <div class="quizContainerV1Top">
 
               </div>
               <div class="quizContainerV1Bottom">
-                <p style="font-size: 25px; margin: 0; margin-top: 5px;">Quizz 3</p>
-                <p style="font-size: 15px; margin: 0; margin-top: 5px;">Quizz 3: About murder</p>
+                
+              </div>
+            </div>
+            <div class="quizContainerV1" v-if="quizzInfo">
+              <div class="quizContainerV1Top">
+
+              </div>
+              <div class="quizContainerV1Bottom">
+                <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo3.title }} </p>
+                <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo3.description }}</p>
+              </div>
+            </div>
+            <div v-else>
+              <div class="quizContainerV1Top">
+
+              </div>
+              <div class="quizContainerV1Bottom">
+                
               </div>
             </div>
           </div>
