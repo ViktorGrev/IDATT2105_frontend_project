@@ -1,5 +1,6 @@
 <template>
 <main>
+  <h2 style="color: #586380;">Recent quizz attemps</h2>
         <div class="slideShow">
             <Carousel>
                 <Slide v-for="slide in slides" :key="slide.id">
@@ -29,8 +30,6 @@
 <style scoped>
 main {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
   scroll-behavior: smooth;
   font-family: 'Poppins', sans-serif;
@@ -65,7 +64,6 @@ main {
 </style>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
 import { Carousel, Navigation, Slide, Pagination } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import HistoryBox from '../components/HistoryBoxComponent.vue'
