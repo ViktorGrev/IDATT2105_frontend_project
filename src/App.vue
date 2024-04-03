@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BasePage from './components/BaseComponent/BasePage.vue'
+import BasePage from './components/BaseComponents/BasePage.vue'
 </script>
 
 <template>
