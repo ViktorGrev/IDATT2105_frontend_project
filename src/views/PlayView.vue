@@ -1,16 +1,46 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router'
-import Menu from '../components/Menu.vue'
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import Menu from '../components/Menu.vue';
 
-const router = useRouter()
-const route = useRoute() // Use useRoute to access the current route details
+const router = useRouter();
+const route = useRoute();
 
-const quizId = route.params.id; // Access route parameters with useRoute
+let playId = ref(0);
+let leaderboard = ref([]);
 
 const navigateToTheQuiz = () => {
-    router.push({ name: 'quiz', params: { id: quizId } });
+    router.push({ name: 'quiz', params: { id: playId.value } });
+};
+
+async function fetchQuizData() {
+    const quizId = route.params.id;
+    playId.value = Number(quizId);
+    try {
+        const response = await axios.get(`http://localhost:8080/api/quiz/${quizId}/leaderboard`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization ': `Bearer ${sessionStorage.getItem("userToken")}`
+            }
+        });
+        leaderboard.value = response.data;
+        console.log(leaderboard.value);
+    } catch (error) {
+        console.error("Failed to fetch quiz data:", error);
+    }
 }
+
+// Define the navigateToUserProfile method
+const navigateToUserProfile = (userId) => {
+    console.log(userId);
+    router.push({ name: 'user', params: { id: userId } });
+};
+
+onMounted(fetchQuizData);
 </script>
+
+
 
 <template>
     <main>
@@ -29,7 +59,7 @@ const navigateToTheQuiz = () => {
             </div>
             <div class="contentBox">
                 <div class="playBox">
-                        <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
+                    <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
                 </div>
                 <div class="content">
                     <div id="header">
@@ -38,34 +68,16 @@ const navigateToTheQuiz = () => {
                     <div id="leaderboard">
                         <div class="ribbon"></div>
                         <table>
-                            <tr>
-                                <td class="number">1</td>
-                                <td class="name">Lee Taeyong</td>
+                            <tr v-for="(entry, index) in leaderboard" :key="entry.user.id">
+                                <td class="number">{{ index + 1 }}</td>
+                                <td class="name" @click="navigateToUserProfile(entry.user.id)">{{ entry.user.username }}
+                                </td>
                                 <td class="points">
-                                    258.244 <img class="gold-medal"
+                                    {{ entry.score }}
+                                    <img v-if="index === 0" class="gold-medal"
                                         src="https://github.com/malunaridev/Challenges-iCodeThis/blob/master/4-leaderboard/assets/gold-medal.png?raw=true"
                                         alt="gold medal" />
                                 </td>
-                            </tr>
-                            <tr>
-                                <td class="number">2</td>
-                                <td class="name">Mark Lee</td>
-                                <td class="points">258.242</td>
-                            </tr>
-                            <tr>
-                                <td class="number">3</td>
-                                <td class="name">Xiao Dejun</td>
-                                <td class="points">258.223</td>
-                            </tr>
-                            <tr>
-                                <td class="number">4</td>
-                                <td class="name">Qian Kun</td>
-                                <td class="points">258.212</td>
-                            </tr>
-                            <tr>
-                                <td class="number">5</td>
-                                <td class="name">Johnny Suh</td>
-                                <td class="points">258.208</td>
                             </tr>
                         </table>
                         <div id="buttons">
@@ -234,6 +246,7 @@ td {
 .name {
     text-align: left;
     font-size: 1.3rem;
+    cursor: pointer;
 }
 
 .points {
@@ -329,7 +342,7 @@ td {
 
 .continue:hover {
     border-bottom: 0;
-    border-bottom: white ;
+    border-bottom: white;
 }
 
 .continue:active {
@@ -350,7 +363,7 @@ td {
 .playBox {
     width: 40%;
     display: flex;
-    
+
     align-items: start;
 }
 
@@ -371,14 +384,16 @@ td {
 }
 
 .playButton:hover {
-  transform: translateY(-4px) translateX(-2px);
-  box-shadow: 2px 5px 0 0 rgb(22, 144, 248);
-};
+    transform: translateY(-4px) translateX(-2px);
+    box-shadow: 2px 5px 0 0 rgb(22, 144, 248);
+}
+
+;
 
 .playButton:active {
-  transform: translateY(2px) translateX(1px);
-  box-shadow: 0 0 0 0 rgb(22, 144, 248);
-};
+    transform: translateY(2px) translateX(1px);
+    box-shadow: 0 0 0 0 rgb(22, 144, 248);
+}
 
-
+;
 </style>

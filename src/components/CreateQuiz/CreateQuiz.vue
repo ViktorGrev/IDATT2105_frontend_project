@@ -16,7 +16,7 @@ const questions = reactive([
         id: 1,
         questionText: '',
         answers: ['', '', '', ''], // Default for multiple choice
-        correctAnswerIndex: null,
+        correctAnswerIndex: 0,
         type: 'multipleChoice', // Default question type
         image: null,
     }
