@@ -1,30 +1,22 @@
 <template>
-<main>
-  <h2 style="color: #586380;">Recent quizz attemps</h2>
-        <div class="slideShow">
-            <Carousel>
-                <Slide v-for="slide in slides" :key="slide.id">
-                    <!-- Use the HistoryBox component inside the Slide -->
-                    <HistoryBox>
-                        <!-- Customize infoBoxContent slot -->
-                        <template #infoBoxContent>
-                        <p>{{ slide.info.title }}</p>
-                        <p>{{ slide.info.questions }} Questions</p>
-                        </template>
-                        <!-- Customize creatorBoxContent slot -->
-                        <template #creatorBoxContent>
-                        {{ slide.creator }}
-                        </template>
-                    </HistoryBox>
-                </Slide>
+<Carousel v-bind="settings" :breakpoints="breakpoints">
+    <Slide v-for="slide in quizzes" :key="slide.id">
+      <div class="carousel__item">
+        <div class="infoBox">
+          {{ slide.title }}
+          <br>
+          {{ slide.description }}
+        </div>
+        <div class="creatorBox">
+          {{ slide.creator.username }}
+        </div>
+      </div>
+    </Slide>
 
-                <template #addons>
-                <Navigation />
-                <Pagination />
-                </template>
-            </Carousel>
-        </div> 
-</main>
+    <template #addons>
+      <Navigation />
+    </template>
+  </Carousel>
 </template>
 
 <style scoped>
@@ -35,61 +27,112 @@ main {
   font-family: 'Poppins', sans-serif;
 }
 
-.historyBox {
-    padding: 10px;
-    box-shadow: rgba(87, 174, 250, 0.25) 0px 25px 50px -12px;
-    display: flex;
-    border-radius: 1em;
-    flex-direction: column;
-    width: 100%;
-    cursor: pointer;
+.slideShow {
+    padding: 20px;
+    max-width: 100%;
+}
+
+.carousel__item {
+  min-height: 200px;
+  width: 100%;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  font-size: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.carousel__slide {
+  padding: 10px;
+}
+
+.carousel__prev,
+.carousel__next {
+  box-sizing: content-box;
+  border: 5px solid white;
 }
 
 .infoBox {
     flex-direction: column;
     font-size: 20px;
+    height: 50%;
 }
 .creatorBox {
     color: rgb(21, 83, 137);
-}
-
-.test {
-    width: 1000px;
-    padding: 20px;
-}
-
-.slideShow {
-    padding: 20px;
+    height: 50%;
 }
 </style>
 
 <script lang="ts">
+import { defineComponent, ref, onMounted } from 'vue'
 import { Carousel, Navigation, Slide, Pagination } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import HistoryBox from '../components/HistoryBoxComponent.vue'
 import axios from 'axios';
-import { ref, reactive, onMounted } from 'vue';
 
-export default {
+
+export default defineComponent({
+  name: 'Breakpoints',
   components: {
     Carousel,
     Slide,
-    HistoryBox,
-    Navigation
+    Navigation,
   },
-  data() {
-    return {
-      slides: [
-        { id: 1, info: { title: "The art of war 1", questions: 25 }, creator: "Vekaste" },
-        { id: 2, info: { title: "The art of war 2", questions: 25 }, creator: "Vekaste" },
-        { id: 3, info: { title: "The art of war 3", questions: 25 }, creator: "Vekaste" },
-        { id: 4, info: { title: "The art of war 4", questions: 25 }, creator: "Vekaste" },
+  setup() {
+    const quizzes = ref([]);
+    // Define reactive properties
+    const settings = ref({
+      itemsToShow: 1,
+      snapAlign: 'center',
+    });
 
-        // Add more slide data as needed
-      ]
+    // breakpoints are mobile first
+    // any settings not specified will fallback to the carousel settings
+    const breakpoints = ref({
+      // 700px and up
+      700: {
+        itemsToShow: 2.5,
+        snapAlign: 'center',
+      },
+      // 1024 and up
+      1024: {
+        itemsToShow: 3.5,
+        snapAlign: 'start',
+      },
+    });
+
+    // Function to fetch quiz data
+    async function fetchQuizData() {
+      try {
+        const userToken = sessionStorage.getItem("userToken");
+        if (!userToken) {
+          throw new Error("User token not found in session storage.");
+        }
+
+        const response = await axios.get('http://localhost:8080/api/quiz/recent', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken.trim()}`
+          }
+        });
+        quizzes.value = response.data;
+        console.log(quizzes);
+        
+      } catch (error) {
+        console.error("Failed to fetch quiz data:", error);
+      }
+    }
+
+    onMounted(fetchQuizData)
+
+    return {
+      settings,
+      breakpoints,
+      quizzes,
     };
   }
-};
-
-
+})
 </script>
