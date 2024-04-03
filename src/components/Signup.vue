@@ -121,8 +121,8 @@ const redirectToPage = () => {
 <style scoped>
 .html,
 body {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   margin: -2px;
   padding: 0px;
   justify-content: center;
@@ -135,7 +135,7 @@ body {
   flex-direction: row;
   display: flex;
   width: 65%;
-  height: 80vh;
+  height: 80%;
   border-style: solid;
   border-width: 2px;
   border-color: rgba(19, 19, 21, 0.6);
@@ -147,7 +147,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50vw;
+  width: 50%;
   height: 100%;
 }
 
@@ -216,7 +216,7 @@ h4.title {
 div.omrs-input-group {
   margin-bottom: 1.5rem;
   position: relative;
-  width: 20.4375rem;
+  width: 100%;
 }
 
 /* Input*/
