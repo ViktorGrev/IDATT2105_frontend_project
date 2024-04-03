@@ -115,6 +115,7 @@ async function submitQuiz() {
       }
     });
     console.log(response.data);
+    console.log(JSON.stringify(response.data, null, 2));
 
    // Typically, send `results` to a server or elsewhere.
 }

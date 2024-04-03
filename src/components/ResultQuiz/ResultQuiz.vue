@@ -1,240 +1,205 @@
-<script setup lang="ts">
-import axios from 'axios';
-import Menu from '../Menu.vue';
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-
-const route = useRoute();
-const router = useRouter();
-
-
-
-</script>
-
 <template>
     <main>
         <Menu></Menu>
-        <div class = "wrapper">
-            <div class ="contentBox">
-                <div class ="title">History</div>
-                <div class="scoreText">You answerd:</div>
-                <div class="scoreText">3 correct </div>
-                <div class="scoreText">2 wrong</div>
-                <div class ="choiceButtons">
-                    <button class ="choice" id = "redo" @click = "showDatabase">Again</button>
-                    <button class ="choice" id = "leave">Leave</button>
+        <div class="wrapper">
+            <div class="contentBox">
+                <div class="title">{{ quiz.title }}</div>
+                <div class="scoreText">You answered:</div>
+                <div class="scoreText">{{ correctAnswers }} correct</div>
+                <div class="scoreText">{{ incorrectAnswers }} wrong</div>
+                <div class="choiceButtons">
+                    <button class="choice" id="redo">Again</button>
+                    <button class="choice" id="leave">Leave</button>
                 </div>
                 <div class="content">
-                    <div class=""></div>
+                    <div v-for="question in quiz.questions" :key="question.id" class="question">
+                        <div class="questionText">{{ question.text }}</div>
+                        <template v-if="question.type === 'FILL_IN_THE_BLANK'">
+                            <div class="userAnswer"
+                                :class="{ correct: isCorrectFillInBlank(question), incorrect: !isCorrectFillInBlank(question) }">
+                                Answer: {{ findAnswer(question.id) || "No answer provided" }}
+                                <span v-if="!isCorrectFillInBlank(question)" class="correctAnswer"> (Correct: {{
+                    question.solution }})</span>
+                            </div>
+                        </template>
+                        <template v-else-if="question.type === 'MULTIPLE_CHOICE'">
+                            <div v-for="option in question.options" :key="option.id"
+                                :class="{ correct: option.correct && isAnswered(question.id, option.id), incorrect: !option.correct && isAnswered(question.id, option.id) }">
+                                {{ option.optionText }}
+                            </div>
+                        </template>
+                        <template v-else-if="question.type === 'TRUE_FALSE'">
+                            <div
+                                :class="{ correct: question.true.toString() === 'true', incorrect: question.true.toString() !== 'true' && isIncorrectAnswer(question, 'true') }">
+                                True</div>
+                            <div
+                                :class="{ correct: question.true.toString() === 'false', incorrect: question.true.toString() !== 'false' && isIncorrectAnswer(question, 'false') }">
+                                False</div>
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 </template>
 
+
+<script setup lang="ts">
+import axios from 'axios';
+import Menu from '../Menu.vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+let quiz = ref({});
+let result = ref({});
+let correctAnswers = ref(0);
+let incorrectAnswers = ref(0);
+
+async function fetchResultData() {
+    const resultId = route.params.id;
+    try {
+        const response = await axios.get(`http://localhost:8080/api/quiz/results/${resultId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer " + sessionStorage.getItem("userToken")
+            }
+        });
+        result.value = response.data;
+        quiz.value = response.data.quiz;
+
+        calculateScore();
+    } catch (error) {
+        console.error("Failed to dddd ddd fetch quiz data:", error);
+    }
+}
+
+function calculateScore() {
+    correctAnswers.value = 0;
+    incorrectAnswers.value = 0;
+
+    quiz.value.questions.forEach(question => {
+        const userAnswerObj = result.value.answers.find(a => a.question === question.id);
+        if (userAnswerObj) {
+            let isCorrect = false;
+            if (question.type === 'MULTIPLE_CHOICE') {
+                const correctOption = question.options.find(o => o.correct);
+                isCorrect = String(correctOption.id) === userAnswerObj.answer;
+            } else if (question.type === 'TRUE_FALSE') {
+                isCorrect = question.true.toString().toLowerCase() === userAnswerObj.answer.toLowerCase();
+            } else if (question.type === 'FILL_IN_THE_BLANK') {
+                isCorrect = question.solution.toLowerCase() === userAnswerObj.answer.toLowerCase();
+            }
+
+            if (isCorrect) {
+                correctAnswers.value++;
+            } else {
+                incorrectAnswers.value++;
+            }
+        } else {
+            // Increment incorrectAnswers for unanswered questions
+            incorrectAnswers.value++;
+        }
+    });
+}
+
+function isAnswered(questionId, optionId) {
+    const answer = result.value.answers.find(a => a.question === questionId);
+    return answer && String(answer.answer) === String(optionId);
+}
+
+function findAnswer(questionId) {
+    const answerObj = result.value.answers.find(a => a.question === questionId);
+    return answerObj ? answerObj.answer : '';
+}
+
+function isCorrectFillInBlank(question) {
+    const userAnswer = findAnswer(question.id);
+    // Assuming that the fill-in-the-blank answers are not case-sensitive and whitespace is trimmed
+    return userAnswer.trim().toLowerCase() === question.solution.trim().toLowerCase();
+}
+
+// Adjust the existing isCorrectAnswer function to handle TRUE_FALSE correctly
+function isCorrectAnswer(question, answer) {
+    const userAnswer = findAnswer(question.id);
+    // For TRUE_FALSE, 'true' value is actually a boolean true, not string 'true'.
+    return question.true === (userAnswer.toLowerCase() === 'true');
+}
+
+function isIncorrectAnswer(question, answer) {
+    const userAnswer = findAnswer(question.id);
+    // The user's answer could be false, but it should be treated as a string here for comparison.
+    return userAnswer && userAnswer.toLowerCase() === answer && question.true.toString().toLowerCase() !== userAnswer.toLowerCase();
+}
+
+function checkAnswerCorrectness(question, userAnswer) {
+    if (question.type === 'TRUE_FALSE') {
+        return String(question.true).toLowerCase() === userAnswer.toLowerCase();
+    } else if (question.type === 'MULTIPLE_CHOICE') {
+        const correctOption = question.options.find(option => option.correct);
+        return String(correctOption.id) === userAnswer;
+    } else if (question.type === 'FILL_IN_THE_BLANK') {
+        return question.solution.toLowerCase() === userAnswer.toLowerCase();
+    }
+    return false;
+}
+
+onMounted(fetchResultData);
+</script>
+
+
+
 <style scoped>
-    .wrapper {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
-
-    .contentBox {
-        width: 60%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        margin:3rem;
-    }
-
-    .title {
-        display: flex;
-        justify-content: left;
-        flex-direction: column;
-        align-items: left;
-        font-family: sans-serif;
-        font-weight: 700;
-        font-size: 5rem;
-        margin: 10px;
-        color: #586380;
-    }
-
-    .scoreText {
-        display: flex;
-        justify-content: left;
-        flex-direction: column;
-        align-items: left;
-        font-family: sans-serif;
-        font-weight: 700;
-        font-size: 3rem;
-        margin: 10px;
-        color: #586380;
-    }
-
-    .score {
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        font-size: 4rem;
-        font-weight: 1000;
-    }
-
-    .choiceButtons {
-        
-    }
-
-    .choice {
-        width: 11rem;
-        height: 3rem;
-        font-family: "Rubik", sans-serif;
-        font-size: 1.3rem;
-        text-transform: uppercase;
-        color: #7e7f86;
-        border: 0;
-        background-color: #fff;
-        border-radius: 2rem;
-        cursor: pointer;
-        margin: 1rem;
-    }
-
-    .choice:hover {
-    border: 0.1rem solid rgb(22, 144, 248);
-    }
-
-    /*leaderboard*/
-
-    #header {
+.wrapper {
     width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1rem;
+    flex-direction: row;
+    justify-content: center;
 }
 
-h1 {
-    font-family: "Rubik", sans-serif;
-    font-size: 1.7rem;
-    color: #141a39;
-    text-transform: uppercase;
-    cursor: default;
-}
-
-#leaderboard {
-    width: 100%;
-    position: relative;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    color: #141a39;
-    cursor: default;
-}
-
-tr {
-    transition: all 0.2s ease-in-out;
-    border-radius: 0.2rem;
-}
-
-tr:not(:first-child):hover {
-    background-color: #fff;
-    transform: scale(1.1);
-    -webkit-box-shadow: 0px 5px 15px 8px #e4e7fb;
-    box-shadow: 0px 5px 15px 8px #e4e7fb;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:nth-child(1) {
-    color: #fff;
-}
-
-td {
-    height: 5rem;
-    font-family: "Rubik", sans-serif;
-    font-size: 1.4rem;
-    padding: 1rem 2rem;
-    position: relative;
-}
-
-.number {
-    width: 1rem;
-    font-size: 2.2rem;
-    font-weight: bold;
-    text-align: left;
-}
-
-.name {
-    text-align: left;
-    font-size: 1.3rem;
-}
-
-.points {
-    font-weight: bold;
-    font-size: 1.3rem;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.points:first-child {
-    width: 10rem;
-}
-
-.gold-medal {
-    height: 3rem;
-    margin-left: 1.5rem;
-}
-
-.ribbon {
-    width: 103%;
-    height: 7.5rem;
-    top: -0.5rem;
-    background-color: rgb(22, 144, 248);
-    position: absolute;
-    left: -1rem;
-    -webkit-box-shadow: 0px 15px 11px -6px #7a7a7d;
-    box-shadow: 0px 15px 11px -6px #7a7a7d;
-}
-
-.ribbon::before {
-    content: "";
-    height: 1.5rem;
-    width: 1.5rem;
-    bottom: -0.8rem;
-    left: 0.35rem;
-    transform: rotate(45deg);
-    background-color: #5c5be5;
-    position: absolute;
-    z-index: -1;
-}
-
-.ribbon::after {
-    content: "";
-    height: 1.5rem;
-    width: 1.5rem;
-    bottom: -0.8rem;
-    right: 0.35rem;
-    transform: rotate(45deg);
-    background-color: rgb(22, 144, 248);
-    position: absolute;
-    z-index: -1;
-}
-
-#buttons {
-    width: 100%;
-    margin-top: 3rem;
+.contentBox {
+    width: 60%;
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    align-items: center;
+    flex-direction: column;
+    margin: 3rem;
 }
 
-.exit {
+.title {
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    align-items: left;
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 5rem;
+    margin: 10px;
+    color: #586380;
+}
+
+.scoreText {
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    align-items: left;
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 3rem;
+    margin: 10px;
+    color: #586380;
+}
+
+.score {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 4rem;
+    font-weight: 1000;
+}
+
+.choice {
     width: 11rem;
     height: 3rem;
     font-family: "Rubik", sans-serif;
@@ -245,41 +210,94 @@ td {
     background-color: #fff;
     border-radius: 2rem;
     cursor: pointer;
+    margin: 1rem;
 }
 
-.exit:hover {
+.choice:hover {
     border: 0.1rem solid rgb(22, 144, 248);
 }
 
-.continue {
-    width: 11rem;
-    height: 3rem;
-    font-family: "Rubik", sans-serif;
-    font-size: 1.3rem;
-    color: #fff;
-    text-transform: uppercase;
-    background-color: rgb(22, 144, 248);
-    border: 0;
-    border-bottom: 0.2rem solid #3838b8;
-    border-radius: 2rem;
+
+
+
+.question {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.questionText {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Option Styling */
+.question div {
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.continue:hover {
-    border-bottom: 0;
-    border-bottom: white ;
+.correct {
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
 }
 
-.continue:active {
-    border-bottom: 0;
+.incorrect {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
 }
 
-@media (max-width: 1300px) {
+/* Enhancements for Correct and Incorrect Options */
+.correct:hover,
+.incorrect:hover {
+    opacity: 0.9;
+}
 
-    .number,
-    .name,
-    .points {
-        font-size: 1.1rem;
-    }
+/* Additional Styling for FILL_IN_THE_BLANK */
+.fill-in-the-blank {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fill-in-the-blank input[type="text"] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    width: 70%;
+}
+
+/* Correct and Incorrect Classes for FILL_IN_THE_BLANK */
+.fill-in-the-blank .correct,
+.fill-in-the-blank .incorrect {
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Adjusting the Correct and Incorrect Colors for Better Visibility */
+.correct,
+.fill-in-the-blank .correct {
+    background-color: #dff0d8;
+    /* Light green background */
+    color: #3c763d;
+    /* Dark green text */
+    border: 1px solid #d6e9c6;
+}
+
+.incorrect,
+.fill-in-the-blank .incorrect {
+    background-color: #f2dede;
+    /* Light red background */
+    color: #a94442;
+    /* Dark red text */
+    border: 1px solid #ebccd1;
 }
 </style>
