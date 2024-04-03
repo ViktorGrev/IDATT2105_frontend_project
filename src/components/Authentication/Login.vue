@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="splitt" id="box2">
-      <img src="../assets/rizzletRpng.png" width="100%" height="75%">
+      <img src="../../assets/rizzletRpng.png" width="100%" height="75%">
     </div>
   </div>
 </template>

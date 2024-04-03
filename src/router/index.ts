@@ -1,6 +1,6 @@
 // Import necessary dependencies from Vue Router and your views
 import { createRouter, createWebHistory } from 'vue-router';
-import LoginView from '../views/LoginView.vue';
+import LoginView from '../views/Authentication/LoginView.vue';
 
 const routes = [
   {
@@ -16,7 +16,7 @@ const routes = [
   {
     path: '/signup',
     name: 'signup',
-    component: () => import('../views/SignUpView.vue'),
+    component: () => import('../views/Authentication/SignUpView.vue'),
   },
   {
     path: '/create',
