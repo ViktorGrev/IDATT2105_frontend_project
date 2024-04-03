@@ -5,7 +5,7 @@ import Menu from '../components/Menu.vue'
 const router = useRouter()
 
 const navigateToTheQuiz = () => {
-  router.push({ name: 'quiz' })
+    router.push({ name: 'quiz', params: { id: 10 } });
 }
 </script>
 
