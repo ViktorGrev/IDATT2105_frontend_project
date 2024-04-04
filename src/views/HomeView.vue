@@ -20,13 +20,13 @@ import HomeNavlinks from '@/components/HomeComponents/HomeNav-linksComponent.vue
         <div id="topContent">
           <h2 style="color: #6d6e72;">Top 10 quizzes</h2>
           <HomeColorfullBoxes></HomeColorfullBoxes>
-          
         </div>
         
         <div id="triviumContent">
           <h2 style="color: #6d6e72;">Trivium verified</h2>
           <history></history>
         </div>
+        
         <div id="idatt2105Content">
           <h2 style="color: #6d6e72;">IDATT2105</h2>
           <HomeColorfullBoxes></HomeColorfullBoxes>
