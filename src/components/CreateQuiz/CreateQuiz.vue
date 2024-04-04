@@ -15,9 +15,9 @@ const questions = reactive([
     {
         id: 1,
         questionText: '',
-        answers: ['', '', '', ''], // Default for multiple choice
+        answers: ['', '', '', ''],
         correctAnswerIndex: 0,
-        type: 'multipleChoice', // Default question type
+        type: 'multipleChoice',
         image: null,
     }
 ]);
@@ -36,7 +36,7 @@ const addQuestion = (type = 'multipleChoice') => {
         id: nextId,
         questionText: '',
         answers: answers,
-        correctAnswerIndex: 0, // For fill-in-the-blank, the first index will always be the correct answer
+        correctAnswerIndex: 0,
         type: 'multipleChoice'
     });
     currentQuestionId.value = nextId;
@@ -58,14 +58,12 @@ const deleteQuestion = (id) => {
 };
 
 const addTag = () => {
-    // Prevent adding duplicate or empty tags
     if (!quizTags.value.includes(quizTagInput.value) && quizTagInput.value.trim() !== '') {
         quizTags.value.push(quizTagInput.value.trim());
         quizTagInput.value = ''; // Clear the input field after adding the tag
     }
 };
 
-// Method to remove a tag
 const removeTag = (tagToRemove) => {
     quizTags.value = quizTags.value.filter(tag => tag !== tagToRemove);
 };
@@ -146,14 +144,14 @@ const createQuiz = async () => {
 
     console.log(JSON.stringify(quiz, null, 2));
 
-    const response = await axios.post('http://localhost:8080/api/quiz', 
-      quiz
-    , {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
-      }
-    });
+    const response = await axios.post('http://localhost:8080/api/quiz',
+        quiz
+        , {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
+            }
+        });
 
     console.log(response.data);
 };
@@ -248,13 +246,7 @@ const importQuiz = (event) => {
         });
     }
 };
-
-
-
-
-
 </script>
-
 
 <template>
     <main>
@@ -305,7 +297,6 @@ const importQuiz = (event) => {
                         </div>
                     </div>
                 </div>
-
                 <div class=titleButtons>
                     <button class="titleButton" @click="triggerFileInput">+ Import</button>
                     <input type="file" ref="fileInput" @change="importQuiz" accept=".csv" style="display:none">
@@ -315,7 +306,6 @@ const importQuiz = (event) => {
                     </button>
                 </div>
             </div>
-
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionsList">
@@ -337,7 +327,6 @@ main {
     flex-direction: column;
     scroll-behavior: smooth;
     width: 100%;
-
 }
 
 .box {
@@ -362,8 +351,6 @@ main {
     margin: 10px;
     color: #586380;
 }
-
-
 
 .titleInput {
     font-weight: 600;
@@ -436,6 +423,7 @@ main {
     text-align: start;
     resize: none;
     width: 100%;
+    margin-top: 1rem;
 }
 
 .inputHeaders {
@@ -502,6 +490,7 @@ main {
     align-items: center;
     font: inherit;
     margin-right: 2rem;
+    margin-top: 1rem;
 }
 
 .titleButton:hover {
@@ -522,23 +511,11 @@ main {
 }
 
 .contentCreation {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     font-weight: 500;
     color: white;
     margin: 10px;
     margin-top: 2rem;
-}
-
-.questionNr {
-    font-size: 30px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
-.questionHolder {
-    max-width: 90%;
 }
 
 .categoryBox {
@@ -573,8 +550,6 @@ main {
     border-radius: 2rem;
     box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.3);
 }
-
-
 
 #someTitle {
     color: #586380;
@@ -621,16 +596,12 @@ main {
     border-bottom: 5px solid rgb(22, 144, 248);
 }
 
-.questionTypeSelector {
-    width: 100%;
-    color: #586380;
-    font-size: 1.5rem;
-}
-
-.answersField {
-    width: 50%;
-    min-width: 180px;
-    max-width: 200px;
+.answer {
+    width: 60%;
+    height: 100px;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
     font-weight: 600;
     font-size: 1.2rem;
     letter-spacing: normal;
@@ -644,290 +615,17 @@ main {
     background-color: initial;
     padding-right: 1rem;
     background-color: white;
-    height: 3rem;
     border-radius: 10px;
     color: #586380;
-    margin-bottom: 1rem;
-    margin-right: 1rem;
 }
 
-.answerRow {
-    margin: 1.5rem;
-}
-
-.answersField:focus {
+.answer:focus {
     outline: none;
     border-bottom: 5px solid rgb(22, 144, 248);
 }
 
-#questionType {
-    width: auto;
-    flex-direction: row;
-    justify-content: start;
-}
-
-.questionButton {
-    padding: .375rem .875rem;
-    background: white;
-    border-color: #d9dde8;
-    color: #586380;
-    font-weight: 600;
-    font-size: .875rem;
-    border: .125rem solid #58638063;
-    border-radius: .5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    font: inherit;
-    margin-left: 1rem;
-}
-
-.questionButton:hover {
-    border: .125rem solid #586380a8;
-}
-
-.deleteButton {
-    padding: .375rem .875rem;
-    background: red;
-    border-color: #d9dde8;
-    color: white;
-    font-weight: 600;
-    font-size: 2rem;
-    border: .3rem solid red;
-    border-radius: .5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    font: inherit;
-    margin-left: 1rem;
-    height: 2rem;
-}
-
-.deleteButton:hover {
-    border: .3rem solid red;
-}
-
-.questionBox {
-    width: 100%;
-    color: #586380;
-    font-size: 1.5rem;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
-
-/* Question type */
-
-
-/*Radio*/
-.option-input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -ms-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    position: relative;
-    top: 13.33333px;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 40px;
-    width: 40px;
-    transition: all 0.15s ease-out 0s;
-    background: #cbd1d8;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    margin-right: 0.5rem;
-    outline: none;
-    position: relative;
-    z-index: 1000;
-}
-
-.option-input:hover {
-    background: #9faab7;
-}
-
-.option-input:checked {
-    background: #40e0d0;
-}
-
-.option-input:checked::before {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    content: '\f00c';
-    font-size: 25px;
-    font-weight: bold;
-    position: absolute;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Font Awesome 5 Free';
-}
-
-.option-input:checked::after {
-    -webkit-animation: click-wave 0.65s;
-    -moz-animation: click-wave 0.65s;
-    animation: click-wave 0.65s;
-    background: #40e0d0;
-    content: '';
-    display: block;
-    position: relative;
-    z-index: 100;
-}
-
-.option-input.radio {
-    border-radius: 50%;
-}
-
-.option-input.radio::after {
-    border-radius: 50%;
-}
-
-@keyframes click-wave {
-    0% {
-        height: 40px;
-        width: 40px;
-        opacity: 0.35;
-        position: relative;
-    }
-
-    100% {
-        height: 200px;
-        width: 200px;
-        margin-left: -80px;
-        margin-top: -80px;
-        opacity: 0;
-    }
-}
-
-/*Dropdown*/
-
-.questionTypeSelector {
-    width: 100%;
-    display: flex;
-    justify-content: start;
-    align-items: center;
-}
-
-select {
-    appearance: none;
-    border: 0;
-    outline: 0;
-    background-color: white;
-    color: inherit;
-    box-shadow: none;
-    color: #586380;
-    font-weight: 600;
-    font-size: 1.2rem;
-    letter-spacing: normal;
-    line-height: 1.5;
-    padding: 1rem;
-}
-
-select::-ms-expand {
-    display: none;
-}
-
-/* Custom Select wrapper */
-.select {
-    position: relative;
-    display: flex;
-    width: min(20rem, 90vw);
-    background: linear-gradient(to left, white 3rem, white 3rem);
-    border-radius: 0.25rem;
-    overflow: hidden;
-    color: #586380;
-    font-size: 2rem;
-    margin-left: 1rem;
-
-    select {
-        flex: 1;
-        padding: 1em;
-        cursor: pointer;
-    }
-
-    &::after {
-        content: "\25BC";
-        position: absolute;
-        right: 1rem;
-        transition: 0.25s all ease;
-        pointer-events: none;
-    }
-
-    &:hover::after {
-        color: #f39c12;
-        animation: bounce 0.5s infinite;
-    }
-}
-
-@keyframes bounce {
-    25% {
-        transform: translatey(5px);
-    }
-
-    75% {
-        transform: translatey(-5px);
-    }
-}
-
-option {
-    font-weight: 600;
-    font-size: 1.2rem;
-    letter-spacing: normal;
-    line-height: 1.5;
-}
-
-
-
-.tagsDisplay {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.tag {
-    margin: 5px;
-    padding: 5px 10px;
-    background-color: #efefef;
-    border-radius: 15px;
-}
-
-.tag button {
-    margin-left: 5px;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-}
-
 .tagHolder {
-    width: 100%;
-    display: flex;
-    margin-bottom: 1rem;
     margin-top: 1rem;
-    flex-wrap: wrap;
-    flex-direction: column;
-}
-
-.imageHolder {
-    display: flex;
-    justify-content: start;
-    width: 100%;
-    color: #586380;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.questionEditBox {
-    border: 2px solid #586380;
-    border-radius: 1rem;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-    padding: 1.5rem;
-    color: #586380;
-    width: 100%;
 }
 
 .addQuestionButton {
@@ -949,7 +647,8 @@ option {
 .questionsList {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
 }
 </style>

@@ -47,7 +47,6 @@ let quiz = ref(null); // Use `ref` for async data
 let selectedAnswers = ref([]);
 let userInputs = ref([]);
 provide('userInputs', userInputs);
-
 let quizCompleted = ref(false);
 
 const route = useRoute();
@@ -55,8 +54,6 @@ const router = useRouter();
 
 let qId = ref(0);
 
-
-// Function to fetch quiz data
 async function fetchQuizData() {
   const quizId = route.params.id;
   qId = quizId;

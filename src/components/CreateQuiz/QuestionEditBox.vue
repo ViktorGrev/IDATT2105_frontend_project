@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 
-// Props received from parent
 const props = defineProps({
     question: Object,
     index: Number,
 });
 
-// Emits setup
 const emits = defineEmits(['updateQuestion', 'deleteQuestion', 'setCorrectAnswer', 'handleImageUpload']);
 
-// Methods to emit events
 const updateQuestionText = (text) => {
     emits('updateQuestion', { ...props.question, questionText: text });
 };
@@ -42,7 +39,6 @@ const uploadImage = (event) => {
                     ref="questionImageInput">
                 <button class="titleButton" @click="$refs.questionImageInput.click()">+Image</button>
             </div>
-
             <div class="questionTypeSelector">
                 <select v-model="question.type">
                     <option value="multipleChoice">Multiple Choice</option>
@@ -51,9 +47,6 @@ const uploadImage = (event) => {
 
                 </select>
             </div>
-
-            <!-- Dynamically render answer inputs based on question type directly for each question -->
-            <!-- The section for rendering answers goes here, make sure to bind inputs directly to the question's properties like question.answers[index] -->
             <div class="answers" v-if="question.type === 'multipleChoice'">
                 <div v-for="(answer, ansIndex) in question.answers" :key="`ans-${index}-${ansIndex}`" class="answerRow">
                     <input class="answersField" v-model="question.answers[ansIndex]"
@@ -65,8 +58,6 @@ const uploadImage = (event) => {
                     </div>
                 </div>
             </div>
-
-            <!-- True/False answers -->
             <div class="answers" v-if="question.type === 'trueFalse'">
                 <div class="answerRow">
                     <label>True</label>
@@ -79,8 +70,6 @@ const uploadImage = (event) => {
                         v-model="question.correctAnswerIndex">
                 </div>
             </div>
-
-            <!-- Fill-in-the-Blank answer -->
             <div class="answers" v-if="question.type === 'fillInBlank'">
                 <div class="answerRow">
                     <input class="answersField" v-model="question.answers[0]" placeholder="Correct Answer">
@@ -98,7 +87,6 @@ const uploadImage = (event) => {
     font-size: 1.5rem;
     padding: 1.5rem;
     color: #586380;
-    width: 100%;
 }
 
 .titleHolder {
