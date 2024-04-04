@@ -64,7 +64,7 @@ body {
   box-shadow: rgba(87, 174, 250, 0.65) 0px 0px 0px 2px, rgba(87, 174, 250, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
   margin: 25px;
   border-radius: 0em 0 1em 0;
-  background-image: linear-gradient(90deg, rgba(245,245,245,1) 78%, rgba(22,144,248,1) 100%);
+  
 }
 .list ul li:hover {
   left: 10px;
@@ -93,6 +93,7 @@ body {
   transform-origin: left;
   transition: 0.5s;
   border-radius: 0 0 1em 0;
+  box-shadow: rgba(22,144,248, 0.65) 0px 0px 0px 2px, rgba(22,144,248, 0.65) 0px 4px 6px -1px, rgba(22,144,248, 0.08) 0px 1px 0px inset;
 }
 .list ul li:hover:before {
   transform: scaleX(1);
