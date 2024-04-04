@@ -8,8 +8,8 @@
                 <div class="scoreText">{{ correctAnswers }} correct</div>
                 <div class="scoreText">{{ incorrectAnswers }} wrong</div>
                 <div class="choiceButtons">
-                    <button class="choice" id="redo">Again</button>
-                    <button class="choice" id="leave">Leave</button>
+                    <button class="choice" id="redo" @click="again">Again</button>
+                    <button class="choice" id="leave" @click="home">Leave</button>
                 </div>
                 <div class="content">
                     <div v-for="question in quiz.questions" :key="question.id" class="question">
@@ -23,8 +23,10 @@
                             </div>
                         </template>
                         <template v-else-if="question.type === 'MULTIPLE_CHOICE'">
-                            <div v-for="option in question.options" :key="option.id"
-                                :class="{ correct: option.correct && isAnswered(question.id, option.id), incorrect: !option.correct && isAnswered(question.id, option.id) }">
+                            <div v-for="option in question.options" :key="option.id" :class="{
+                    correct: option.correct,
+                    incorrect: !option.correct && option.id.toString() === userSelectedOption(question.id)
+                }">
                                 {{ option.optionText }}
                             </div>
                         </template>
@@ -48,9 +50,10 @@
 import axios from 'axios';
 import Menu from '../Menu.vue';
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
 let quiz = ref({});
 let result = ref({});
@@ -67,6 +70,7 @@ async function fetchResultData() {
             }
         });
         result.value = response.data;
+        console.log(JSON.stringify(result.value, null, 2));
         quiz.value = response.data.quiz;
 
         calculateScore();
@@ -145,7 +149,21 @@ function checkAnswerCorrectness(question, userAnswer) {
     return false;
 }
 
+function userSelectedOption(questionId) {
+    const answerObj = result.value.answers.find(a => a.question === questionId);
+    return answerObj ? answerObj.answer : null; // Make sure this matches the ID type (string or number)
+}
+
 onMounted(fetchResultData);
+
+
+function home() {
+    router.push({ name: 'home' });
+}
+
+function again() {
+    router.push({ name: 'play', params: { id: quiz.value.id } });
+}
 </script>
 
 

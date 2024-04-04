@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ref, reactive, onMounted, provide, nextTick } from 'vue';
 import MultipleChoiceButton from './MultipleChoiceButton.vue';
 import TFButton from './TFButton.vue';
@@ -51,6 +51,7 @@ provide('userInputs', userInputs);
 let quizCompleted = ref(false);
 
 const route = useRoute();
+const router = useRouter();
 
 let qId = ref(0);
 
@@ -117,7 +118,7 @@ async function submitQuiz() {
     console.log(response.data);
     console.log(JSON.stringify(response.data, null, 2));
 
-   // Typically, send `results` to a server or elsewhere.
+    router.push({ name: 'result', params: { id: response.data.id } });
 }
 
 

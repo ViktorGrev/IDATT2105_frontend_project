@@ -280,7 +280,7 @@ const importQuiz = (event) => {
                         <div class="categoryBox" id="categoryDiv">
                             <select v-model="quizCategory" class="category">
                                 <option disabled value="">Select a category</option>
-                                <option>Science</option>
+                                <option>CALCULUS</option>
                                 <option>MATH</option>
                                 <option>History</option>
                                 <option>Literature</option>
