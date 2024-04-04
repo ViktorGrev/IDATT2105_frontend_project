@@ -87,6 +87,7 @@ const uploadImage = (event) => {
     font-size: 1.5rem;
     padding: 1.5rem;
     color: #586380;
+    width: 100%;
 }
 
 .titleHolder {
