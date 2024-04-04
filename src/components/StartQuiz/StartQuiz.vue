@@ -47,6 +47,7 @@
       });
       leaderboard.value = response.data;
       console.log(leaderboard.value);
+      console.log(JSON.stringify(leaderboard.value, null, 2));
     } catch (error) {
       console.error("Failed to fetch quiz data:", error);
     }
