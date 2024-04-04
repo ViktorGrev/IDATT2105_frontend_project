@@ -185,28 +185,6 @@ nav .wrapper{
   font-weight: 400;
   border-radius: 0px;
 }
-.mega-box{
-  position: absolute;
-  left: 4%;
-  width: 90%;
-  padding: 0 0px;
-  top: 85px;
-  opacity: 0;
-  visibility: hidden;
-  padding-inline-start: 0px;
-}
-.mega-box .content{
-  background: rgb(22, 144, 248);
-  padding: 25px 20px;
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
-}
-.mega-box .content .row{
-  width: calc(25% - 30px);
-  line-height: 45px;
-}
 .content .row img{
   width: 100%;
   height: 100%;

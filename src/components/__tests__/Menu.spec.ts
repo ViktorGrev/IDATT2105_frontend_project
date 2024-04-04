@@ -1,7 +1,7 @@
 // src/components/__tests__/Menu.spec.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import Menu from '@/components/Menu.vue'; // Adjust your import path as necessary
+import Menu from '@/components/BaseComponents/Menu.vue'; // Adjust your import path as necessary
 
 // Mocking useRouter by providing a mock function for push
 vi.mock('vue-router', () => ({
