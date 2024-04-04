@@ -12,7 +12,7 @@
         <form @submit.prevent="attemptSignup" novalidate>
           <div class="omrs-input-group">
             <label class="omrs-input-underlined">
-              <input required v-model="username" oninvalid="this.setCustomValidity('Please enter a username')"
+              <input required v-model="username" id="username" oninvalid="this.setCustomValidity('Please enter a username')"
                 oninput="this.setCustomValidity('')">
               <span class="omrs-input-label">Username</span>
               <span class="omrs-input-helper" :style="{ 'color': alertColor }">{{ usernameError }}</span>
@@ -20,16 +20,16 @@
           </div>
           <div class="omrs-input-group">
             <label class="omrs-input-underlined">
-              <input required type="password" v-model="password" :style="{ 'border-bottom': dynamicColor }">
+              <input required type="password" v-model="password" id="password" :style="{ 'border-bottom': dynamicColor }">
               <span class="omrs-input-label">Password</span>
               <span class="omrs-input-helper" :style="{ 'color': alertColor }">{{ passwordError }}</span>
             </label>
           </div>
           <div class="omrs-input-group">
             <label class="omrs-input-underlined">
-              <input required type="password" v-model="confirmPassword" :style="{ 'border-bottom': dynamicColor }">
+              <input required type="password" v-model="confirmPassword" id="confirmPassword" :style="{ 'border-bottom': dynamicColor }">
               <span class="omrs-input-label">Confirm Password</span>
-              <span class="omrs-input-helper" :style="{ 'color': alertColor }">{{ confirmPasswordError }}</span>
+              <span class="omrs-input-helper" id="passwordError" :style="{ 'color': alertColor }">{{ confirmPasswordError }}</span>
             </label>
           </div>
           <div class="buttonHolder">
@@ -82,7 +82,7 @@ const attemptSignup = async () => {
       usernameError.value = "";
       passwordError.value = "";
       confirmPasswordError.value = "";
-      alertColor.value = "rgba(19, 19, 21, 0.6)";
+      alertColor.value = "red";
       await signup();
     }
   }
