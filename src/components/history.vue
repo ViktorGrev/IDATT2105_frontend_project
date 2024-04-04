@@ -35,7 +35,6 @@ main {
 .carousel__item {
   min-height: 200px;
   width: 100%;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   font-size: 20px;
   border-radius: 8px;
   display: flex;
@@ -44,6 +43,11 @@ main {
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  background-color: white;
+}
+
+.carousel__item:hover {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .carousel__slide {
