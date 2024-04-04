@@ -2,14 +2,12 @@
 import Menu from '../components/Menu.vue';
 import history from '@/components/history.vue';
 import axios from 'axios';
-import { ref, reactive, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 let quizzInfo = ref(null);
-let quizzInfo2 = ref(null);
-let quizzInfo3 = ref(null);
 
 // Function to fetch quiz data
-async function fetchQuizData(quizId) {
+async function fetchQuizData() {
   try {
     const response = await axios.get('http://localhost:8080/api/quiz/1', {
       headers: {
@@ -25,7 +23,7 @@ async function fetchQuizData(quizId) {
 
 // Fetch quiz data when component mounts
 onMounted(() => {
-  fetchQuizData(10); // Fetch quiz with ID 10
+  fetchQuizData(); 
 });
 </script>
 
@@ -45,34 +43,15 @@ onMounted(() => {
       </ul>
     </div>
     <div class="contentBox">
-      <div id="contentSpace"></div>
       <div id="quizID">
         <div id="recent">
           <h2 style="color: #586380;">Recent quizz attemps</h2>
-            <div>
-                <history></history>
-            </div>
+          <history></history>
         </div>
         
         <div id="topContent">
-          <h2 style="color: #586380;">Top 10</h2>
-          <div class="container">
-            <div class="smallQuizzContainer">
-                <div class="topSmallQuizzContainer">
-                    <img src="https://wallpapers.com/images/hd/wooden-cottage-sea-high-resolution-d7fahhz6phtkdveh.jpg" alt="test">
-                    <div class="topText">Quizz 2</div>
-                </div>
-                <div class="bottomSmallQuizzContainer">
-                    <img src="https://static.photocdn.pt/images/articles/2017/11/29/articles/2017_8/iStock-641093712-min-1.webp" alt="test">
-                    <div class="bottomText">Quizz 3</div>
-                </div>
-            </div>
-            <div class="largeQuizzContainer">
-                <img src="https://www.leonardodavincischool.org/sites/main/files/imagecache/lightbox/main-images/camera_lense_0.jpeg" alt="test">
-                <div class="centerText">Quizz 1</div>
-                <p style="margin-left: 15px; font-size: 30px;">These are the top 10 quizzes of the week</p>
-            </div>
-          </div>
+          <h2 style="color: #586380;">Top 10 quizzes</h2>
+          <history></history>
         </div>
         
         <div id="triviumContent">
@@ -136,7 +115,6 @@ onMounted(() => {
           
         </div>
       </div>
-      <div id="contentSpace"></div>
     </div>
   </main>
 </template>
@@ -180,10 +158,8 @@ main {
 }
 
 .contentBox {
-  width: 100%;
+  width: 90%;
   font-size: 25px;
-  display: flex;
-  flex-direction: row;
 }
 
 #contentSpace {
@@ -202,7 +178,6 @@ main {
     margin-top: 2rem;
     flex-direction: row;
     justify-content: center;
-    max-width: 100%;
 }
 
 @media only screen and (max-width: 600px) {
@@ -248,101 +223,6 @@ main {
     flex-direction: column;
     background-color: #FFE078;
 }
-}
-
-.largeQuizzContainer {
-    flex: 0 0 60%;
-    height: 100%;
-    position: relative; 
-}
-
-.largeQuizzContainer img {
-    width: 100%;
-    height: 100%;
-    border-radius: 1em;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.smallQuizzContainer {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    margin: 5px;
-}
-
-.topSmallQuizzContainer {
-    flex: 1;
-    margin: 5px;
-    position: relative; 
-}
-
-.bottomSmallQuizzContainer {
-    flex: 1;
-    margin: 5px;
-    position: relative; 
-}
-
-.smallQuizzContainer, img {
-    width: 100%;
-    height: 100%;
-    border-radius: 1em;
-    cursor: pointer;
-}
-
-.centerText,
-.topText, 
-.bottomText { 
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white; 
-    font-size: 40px; 
-    text-align: center;
-    font-weight: 600;
-}
-
-.quizz {
-    display: flex;
-    width: 100%;
-    box-shadow: 5px 5px 5px #88888845;
-    border-radius: 1em;
-    background-color: whitesmoke;
-    height: 150px;
-    justify-content: center;
-    text-align: left;
-}
-
-.quizzInfo {
-    flex: 0 0 45%;
-  font-size: 25px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-left: 30px;
-}
-.quizzExtendButton {
-    flex: 0 0 10%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-}
-
-.quizzPlay {
-    flex: 0 0 45%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    max-width: 100%;
-    max-height: 100%;
-}
-
-.quizzPlay img {
-    width: 15%;
-    height: 40%;
-    padding-right: 40px;
 }
 
 .quizContainerV1 {
