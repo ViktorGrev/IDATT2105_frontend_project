@@ -9,7 +9,7 @@
         <form @submit.prevent="attemptLogin" novalidate>
           <div class="omrs-input-group">
             <label class="omrs-input-underlined">
-              <input v-model="username" required oninvalid="this.setCustomValidity('Please enter your username')"
+              <input v-model="username" required id="username" oninvalid="this.setCustomValidity('Please enter your username')"
                 oninput="this.setCustomValidity('')">
               <span class="omrs-input-label">Username</span>
               <span class="omrs-input-helper" :style="{ 'color': alertColor }">{{ usernameError }}</span>
@@ -17,10 +17,10 @@
           </div>
           <div class="omrs-input-group">
             <label class="omrs-input-underlined">
-              <input v-model="password" required type="password"
+              <input v-model="password" required id="password" type="password"
                 oninvalid="this.setCustomValidity('Please enter your password')" oninput="this.setCustomValidity('')">
               <span class="omrs-input-label">Password</span>
-              <span class="omrs-input-helper" :style="{ 'color': alertColor }">{{ passwordError }}</span>
+              <span class="omrs-input-helper" id="passwordError" :style="{ 'color': alertColor }">{{ passwordError }}</span>
             </label>
           </div>
           <div class="buttonHolder">
