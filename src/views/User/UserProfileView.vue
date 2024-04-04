@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useRouter, useRoute } from 'vue-router'
+import { ref, onMounted } from "vue";
+import { useRoute } from 'vue-router'
 import axios from 'axios';
-import History from '../components/history.vue';
+import History from '../../components/history.vue';
 import LongTermHistoryComponent from '@/components/LongTermHistoryComponent.vue';
 
 const route = useRoute() // Use useRoute to access the current route details
@@ -57,11 +57,12 @@ onMounted(() => {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    text-align: center;
 }
 
 .contentBox {
-    width: 60%;
-    display: flex;
+    width: 80%;
+    
     justify-content: center;
     align-items: center;
     flex-direction: column;
