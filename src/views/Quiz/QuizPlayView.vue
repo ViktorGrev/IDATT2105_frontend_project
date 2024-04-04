@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import Menu from '../components/Menu.vue';
-import QuizCard from '../components/PlayQuiz/QuizCard.vue';
+import QuizCard from '../../components/PlayQuiz/QuizCard.vue';
 </script>
 
 <template>
     <main>
-        <Menu></Menu>
         <div class="wrapper">
             <QuizCard></QuizCard>
         </div>

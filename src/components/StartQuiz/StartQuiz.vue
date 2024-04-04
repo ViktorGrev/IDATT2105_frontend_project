@@ -2,7 +2,6 @@
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import Menu from '../../components/Menu.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -44,7 +43,6 @@ onMounted(fetchQuizData);
 
 <template>
     <main>
-        <Menu></Menu>
         <div class="wrapper">
             <div class="header">
                 <div class="topHeader">

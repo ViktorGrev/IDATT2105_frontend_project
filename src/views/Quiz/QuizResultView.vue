@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import ResultQuiz from '../components/ResultQuiz/ResultQuiz.vue';
+import ResultQuiz from '../../components/ResultQuiz/ResultQuiz.vue';
 </script>
 
 <template>

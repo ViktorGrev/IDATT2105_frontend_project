@@ -1,6 +1,5 @@
 <template>
     <main>
-        <Menu></Menu>
         <div class="wrapper">
             <div class="contentBox">
                 <div class="title">{{ quiz.title }}</div>
@@ -48,7 +47,6 @@
 
 <script setup lang="ts">
 import axios from 'axios';
-import Menu from '../Menu.vue';
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 

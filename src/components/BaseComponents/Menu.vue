@@ -1,7 +1,7 @@
 <template>
   <nav>
     <div class="wrapper">
-      <div class="logo"><a href="#" @click="home"><img src="../assets/rizzletRpng.png">Rizzlet</a></div>
+      <div class="logo"><a href="#" @click="home"><img src="../../assets/rizzletRpng.png">Rizzlet</a></div>
       <input type="radio" name="slider" id="menu-btn">
       <input type="radio" name="slider" id="close-btn">
       <ul class="nav-links">

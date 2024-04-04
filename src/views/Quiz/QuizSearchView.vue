@@ -1,5 +1,4 @@
 <script setup>
-import Menu from '../components/Menu.vue';
 import { ref, computed } from "vue";
 import debounce from 'lodash/debounce';
 
@@ -55,11 +54,9 @@ const getQuizzes = (title, link) => {
 
 <template>
 <main>
-    <Menu></Menu>
     <div>
         <div style="height: 20px;"></div>
         <div class="Search">
-            <!-- Design: https://codepen.io/AlbertFeynman -->
             <div class="container">
                 <input type="text" v-model="searchQuery" placeholder="Search..." @keyup="handleKeyUp">
                 <div class="search"></div>

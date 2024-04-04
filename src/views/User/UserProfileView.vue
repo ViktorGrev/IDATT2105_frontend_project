@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios';
-import Menu from '../components/Menu.vue';
 import History from '../components/history.vue';
 import LongTermHistoryComponent from '@/components/LongTermHistoryComponent.vue';
 
@@ -36,7 +35,6 @@ onMounted(() => {
 
 <template>
     <main>
-        <Menu></Menu>
         <div class="wrapper">
             <div class="contentBox">
                 <div class="Name">{{ username }}</div>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import axios from 'axios';
-import Menu from '../components/Menu.vue';
 
 const showDatabase = async () => {
     let username = "Viktor";
@@ -12,7 +11,6 @@ const showDatabase = async () => {
 
 <template>
     <main>
-        <Menu></Menu>
         <div class="wrapper">
             <div class="contentBox">
                 <div class="col-md-9">

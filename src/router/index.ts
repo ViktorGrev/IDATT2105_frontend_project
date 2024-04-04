@@ -6,7 +6,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: () => import('../views/HomeView2.vue'),
+    component: () => import('../views/HomeView.vue'),
   },
   {
     path: '/login',
@@ -21,49 +21,49 @@ const routes = [
   {
     path: '/create',
     name: 'create',
-    component: () => import('../views/CreateView.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/play/:id',
-    name: 'play',
-    component: () => import('../views/PlayView.vue'),
+    component: () => import('../views/Quiz/QuizCreateView.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/quiz/:id',
     name: 'quiz',
-    component: () => import('../views/QuizView.vue'),
+    component: () => import('../views/Quiz/QuizStartView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/play/:id',
+    name: 'play',
+    component: () => import('../views/Quiz/QuizPlayView.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/result/:id',
     name: 'result',
-    component: () => import('../views/ResultView.vue'),
+    component: () => import('../views/Quiz/QuizResultView.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/user/:id',
     name: 'user',
-    component: () => import('../views/UserView.vue'),
+    component: () => import('../views/User/UserProfileView.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/search',
     name: 'search',
-    component: () => import('../views/searchView.vue'),
+    component: () => import('../views/Quiz/QuizSearchView.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/feedback',
     name: 'feedback',
-    component: () => import('../views/FeedbackView.vue'),
+    component: () => import('../views/User/UserFeedbackView.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/settings',
     name: 'settings',
-    component: () => import('../views/SettingsView.vue'),
+    component: () => import('../views/User/UserSettingsView.vue'),
     meta: { requiresAuth: true },
   }
 ];

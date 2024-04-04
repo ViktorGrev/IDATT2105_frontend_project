@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import StartQuiz from '../components/StartQuiz/StartQuiz.vue'
+import StartQuiz from '../../components/StartQuiz/StartQuiz.vue'
 </script>
 
 

@@ -1,6 +1,5 @@
 <template>
   <main>
-    <Menu></Menu>
     <div class="wrapper">
     <div id="formFrame">
         <h1>Feedback</h1>
@@ -23,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import Menu from '../components/Menu.vue'
 import { ref, watch, computed } from 'vue';
 import { useFormStore } from '@/stores/counter';
 import FormInput from '@/components/FormInput.vue';
