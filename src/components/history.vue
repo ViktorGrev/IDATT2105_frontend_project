@@ -152,7 +152,6 @@ export default defineComponent({
           }
         });
         quizzes.value = response.data;
-        console.log(quizzes);
         
       } catch (error) {
         console.error("Failed to fetch quiz data:", error);
@@ -162,7 +161,7 @@ export default defineComponent({
     // Define the navigateToUserProfile method
     const navigateToUserProfile = (userId) => {
         console.log(userId);
-        router.push({ name: 'play', params: { id: userId } });
+        router.push({ name: 'quiz', params: { id: userId } });
     };
 
     onMounted(fetchQuizData)
