@@ -1,22 +1,48 @@
 <template>
-<Carousel v-bind="settings" :breakpoints="breakpoints">
-    <Slide v-for="slide in quizzes" :key="slide.id">
-      <div class="carousel__item" @click="navigateToUserProfile(slide.id)">
-        <div class="infoBox">
-          {{ slide.title }}
-          <br>
-          {{ slide.description }}
+  <!--If the quizzes are loaded in, this will show-->
+  <div v-if="quizzes">
+    <Carousel v-bind="settings" :breakpoints="breakpoints">
+      <Slide v-for="slide in quizzes" :key="slide.id">
+        <div class="carousel__item" @click="navigateToUserProfile(slide.id)">
+          <div class="infoBox">
+            {{ slide.title }}
+            <br>
+            {{ slide.description }}
+          </div>
+          <div class="creatorBox">
+            {{ slide.creator.username }}
+          </div>
         </div>
-        <div class="creatorBox">
-          {{ slide.creator.username }}
-        </div>
-      </div>
-    </Slide>
+      </Slide>
 
-    <template #addons>
-      <Navigation />
-    </template>
-  </Carousel>
+      <template #addons>
+        <Navigation />
+      </template>
+    </Carousel>
+  </div>
+
+  <!--If the quizzes are not loaded in, this will show-->
+  <div v-else>
+    <Carousel v-bind="settings" :breakpoints="breakpoints">
+      <Slide v-for="slide in 10" :key="slide">
+        <div class="carousel__item">
+          <div class="infoBox">
+            Loading
+            <br>
+            
+          </div>
+          <div class="creatorBox">
+            
+          </div>
+        </div>
+      </Slide>
+
+      <template #addons>
+        <Navigation />
+      </template>
+    </Carousel>
+</div>
+
 </template>
 
 <style scoped>
@@ -73,9 +99,8 @@ main {
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
-import { Carousel, Navigation, Slide, Pagination } from 'vue3-carousel'
+import { Carousel, Navigation, Slide } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
-import HistoryBox from '../components/HistoryBoxComponent.vue'
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -88,7 +113,7 @@ export default defineComponent({
     Navigation,
   },
   setup() {
-    const quizzes = ref([]);
+    const quizzes = ref(null);
     const router = useRouter();
     const route = useRoute();
     // Define reactive properties
