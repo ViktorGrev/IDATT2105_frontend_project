@@ -1,0 +1,175 @@
+<template>
+    <main>
+      <div class="wrapper">
+      <div id="formFrame">
+          <h1>Feedback</h1>
+      <form @submit.prevent="submitForm">
+        <h3 id="title">{{ title }}</h3>
+        <FormInput v-model="name" fieldName="Name" type="text"></FormInput>
+        <FormInput v-model="email" fieldName="Email" type="email"></FormInput>
+        <br>
+        <label for="feedback">Your feedback:</label>
+        <textarea v-model="message" placeholder="Write here" rows="5" name="comment[text]" id="comment_text" cols="33"
+          required></textarea>
+        <button type="submit" class="btn" :disabled="!isFormValid">
+          <span>Send</span>
+        </button>
+        <p v-if="submissionStatus">{{ submissionStatus }}</p>
+      </form>
+    </div>
+    </div>
+    </main>
+  </template>
+
+<script setup lang="ts">
+import { ref, watch, computed } from 'vue';
+import { useFormStore } from '@/stores/counter';
+import FormInput from '@/components/FormInput.vue';
+
+const submissionStatus = ref('');
+
+// Definerer props for komponenten
+const props = defineProps<{
+  title: string;
+}>();
+
+// Bruker useFormStore for å hente og sette tilstand
+const store = useFormStore();
+
+// Lokale ref-er som er bundet til input-feltene og initialiseres med verdier fra butikken
+const name = ref(store.name);
+const email = ref(store.email);
+const message = ref('');
+
+// Se på endringer i navn og e-post og oppdater butikken tilsvarende
+watch(name, (newName) => {
+  store.setName(newName);
+});
+
+watch(email, (newEmail) => {
+  store.setEmail(newEmail);
+});
+
+// Valideringslogikk
+const isFormValid = computed(() => {
+  return name.value.trim() !== '' && email.value.trim() !== '' && message.value.trim() !== '';
+});
+
+// Form submit handling
+const submitForm = async () => {
+  if (isFormValid.value) {
+    try {
+      const response = await fetch('http://localhost:3000/submissions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name.value,
+          email: email.value,
+          message: message.value,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Form submitted:', data);
+      // Update submission status for UI feedback
+      submissionStatus.value = 'Form submitted successfully';
+    } catch (error) {
+      console.error('Submission error:', error);
+      submissionStatus.value = 'Submission failed';
+    }
+  } else {
+    console.log('Form not submitted');
+    submissionStatus.value = 'Please fill in all fields';
+  }
+};
+</script>
+
+<style scoped>
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.wrapper {
+  width: 60%;
+  height: 100%;
+  margin: 30px;
+  margin-bottom: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#formFrame {
+  width: 400px;
+  padding: 40px;
+  border-radius: 50px;
+  color: #6d6e72;
+}
+
+label {
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+textarea {
+  padding: 10px;
+  max-width: 100%;
+  line-height: 1.5;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px #999;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+textarea {
+  width: 500px;
+  height: 100px;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  background: none repeat scroll 0 0 rgba(255, 255, 255, 0.151);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12) inset;
+  color: #555555;
+  font-size: 0.9em;
+  line-height: 1.4em;
+  padding: 5px 8px;
+  transition: background-color 0.2s ease 0s;
+}
+
+
+textarea:focus {
+  background: none repeat scroll 0 0 #FFFFFF;
+  outline-width: 0;
+}
+
+.btn {
+  width: 11rem;
+    height: 3rem;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    color: #7e7f86;
+    border: 0;
+    background-color: #fff;
+    border-radius: 2rem;
+    cursor: pointer;
+    margin: 1rem;
+}
+
+.btn:hover {
+  box-shadow: rgba(87, 174, 250, 0.65) 0px 0px 0px 2px, rgba(87, 174, 250, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+}
+</style>
