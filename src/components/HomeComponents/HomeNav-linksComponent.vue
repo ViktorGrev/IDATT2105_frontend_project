@@ -20,7 +20,6 @@
 }
 
 .nav-links li a {
-  color: #000000;
   text-decoration: none;
   font-size: 18px;
   font-weight: 500;
@@ -32,5 +31,6 @@
 
 .nav-links li a:hover {
   background: rgb(87, 174, 250);
+  color: white;
 }
 </style>
