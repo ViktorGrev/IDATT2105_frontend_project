@@ -45,9 +45,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-//import { useUserInfoStore } from '@/stores/UserStore';
-
-//const userStore = useUserInfoStore();
+import { login } from '@/api/AuthController';
 
 const router = useRouter();
 const username = ref('');
@@ -64,32 +62,20 @@ const attemptLogin = async () => {
     if (password.value === "") { passwordError.value = "Password is empty"; } else { passwordError.value = "";}
   }
   else {
-      await login();
+      await loginUser();
   }
 
 };
 
-const login = async () => {
-  try {
-    const response = await axios.post('http://localhost:8080/api/auth/login', {
-      username: username.value,
-      password: password.value
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.data && response.data.token) {
+const loginUser = async () => {
+    login(username.value, password.value). then(response => {
+      console.log('Login response:', response);
       sessionStorage.setItem('userToken', response.data.token);
       router.push({ name: 'home' });
-    } else {
-      console.error('Login failed: No token received');
-    }
-  } catch (error) {
-    passwordError.value = error.response.data.message;
-    console.log('Login error:', error.response.data.message);
-  }
+    }).catch(error => {
+      passwordError.value = error.loginResponse.data.message;
+      console.log('Login error:', error.loginResponse.data.message);
+    });
 };
 
 const redirectToPage = () => {

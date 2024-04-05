@@ -51,6 +51,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { signup } from '@/api/AuthController';
 
 const router = useRouter();
 const username = ref('');
@@ -83,33 +84,20 @@ const attemptSignup = async () => {
       passwordError.value = "";
       confirmPasswordError.value = "";
       alertColor.value = "red";
-      await signup();
+      await signupUser();
     }
   }
 
 };
 
-const signup = async () => {
-  try {
-    const response = await axios.post('http://localhost:8080/api/auth/signup', {
-      username: username.value,
-      password: password.value
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.data && response.data.token) {
+const signupUser = async () => {
+    signup(username.value, password.value). then(response => {
       sessionStorage.setItem('userToken', response.data.token);
       router.push({ name: 'home' });
-    } else {
-      console.error('Signup failed: No token received');
-    }
-  } catch (error) {
-    confirmPasswordError.value = error.response.data.message;
-    console.log('Login error:', error.response.data.message);
-  }
+    }).catch(error => {
+      confirmPasswordError.value = error.loginResponse.data.message;
+      console.log('Login error:', error.loginResponse.data.message);
+    });
 };
 
 const redirectToPage = () => {
