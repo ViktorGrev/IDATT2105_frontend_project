@@ -23,7 +23,7 @@ const questions = reactive([
         id: 1,
         questionText: '',
         answers: ['', '', '', ''],
-        correctAnswerIndex: 0,
+        correctAnswerIndices: [], // Changed from correctAnswerIndex to an array
         type: 'multipleChoice',
         image: null,
     }
@@ -121,7 +121,14 @@ const triggerQuizImageUpload = () => {
 const setCorrectAnswer = (questionId, answerIndex) => {
     const question = findQuestionById(questionId);
     if (question) {
-        question.correctAnswerIndex = question.correctAnswerIndex === answerIndex ? null : answerIndex;
+        const index = question.correctAnswerIndices.indexOf(answerIndex);
+        if (index > -1) {
+            // If found, remove it
+            question.correctAnswerIndices.splice(index, 1);
+        } else {
+            // Otherwise, add it
+            question.correctAnswerIndices.push(answerIndex);
+        }
     }
 };
 
@@ -139,7 +146,7 @@ const createQuiz = async () => {
             case 'multipleChoice':
                 question.options = q.answers.map((answer, index) => ({
                     optionText: answer,
-                    correct: index === q.correctAnswerIndex,
+                    correct: q.correctAnswerIndices.includes(index),
                 }));
                 break;
             case 'trueFalse':
@@ -341,36 +348,31 @@ const importQuiz = (event) => {
                     <button @click="triggerQuizImageUpload" class="titleButton">
                         + Quiz Image
                     </button>
-                    <input type="file" ref="quizImageInput" @change="handleQuizImageUpload" accept="image/*" style="display:none">
+                    <input type="file" ref="quizImageInput" @change="handleQuizImageUpload" accept="image/*"
+                        style="display:none">
 
                     <div class="coAuthorHolder">
-    <label for="coAuthorInput" class="titleLabel">Co-Authors:</label>
-    <div>
-        <input id="coAuthorInput" class="tagInput"
-            placeholder="Add a co-author's name" v-model="quizCoAuthorInput">
-        <button class="titleButton" @click="addCoAuthor">Add Co-Author</button>
-    </div>
-    <div class="tagsDisplay">
-        <span v-for="(author, index) in quizCoAuthors" :key="index" class="tag">
-            {{ author }}
-            <button @click="removeCoAuthor(author)">x</button>
-        </span>
-    </div>
-</div>
+                        <label for="coAuthorInput" class="titleLabel">Co-Authors:</label>
+                        <div>
+                            <input id="coAuthorInput" class="tagInput" placeholder="Add a co-author's name"
+                                v-model="quizCoAuthorInput">
+                            <button class="titleButton" @click="addCoAuthor">Add Co-Author</button>
+                        </div>
+                        <div class="tagsDisplay">
+                            <span v-for="(author, index) in quizCoAuthors" :key="index" class="tag">
+                                {{ author }}
+                                <button @click="removeCoAuthor(author)">x</button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionsList">
-                    <QuestionEditBox
-    v-for="(question, index) in questions"
-    :key="question.id"
-    :question="question"
-    :index="index"
-    @updateQuestion="handleUpdateQuestion"
-    @deleteQuestion="deleteQuestion"
-    @setCorrectAnswer="setCorrectAnswer"
-    @handleImageUpload="handleImageUpload" />
+                    <QuestionEditBox v-for="(question, index) in questions" :key="question.id" :question="question"
+                        :index="index" @updateQuestion="handleUpdateQuestion" @deleteQuestion="deleteQuestion"
+                        @setCorrectAnswer="setCorrectAnswer" @handleImageUpload="handleImageUpload" />
                     <button class="addQuestionButton" @click="addQuestion">+ Add Question</button>
                 </div>
             </div>

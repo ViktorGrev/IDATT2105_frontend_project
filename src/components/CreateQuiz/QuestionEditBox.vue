@@ -38,6 +38,16 @@ const removeAnswerOption = (index) => {
     }
 };
 
+const toggleCorrectAnswer = (answerIndex) => {
+    const index = props.question.correctAnswerIndices.indexOf(answerIndex);
+    if (index > -1) {
+        props.question.correctAnswerIndices.splice(index, 1);
+    } else {
+        props.question.correctAnswerIndices.push(answerIndex);
+    }
+    emits('updateQuestion', { ...props.question });
+};
+
 </script>
 
 <template>
@@ -70,8 +80,9 @@ const removeAnswerOption = (index) => {
                             :placeholder="`Answer ${ansIndex + 1}`">
                         <!-- Button to remove option -->
                         <div>
-                            <input type="radio" class="option-input radio" :name="`correctAnswer-${question.id}`"
-                                :value="ansIndex" v-model="question.correctAnswerIndex">
+                            <input type="checkbox" class="option-input checkbox" :name="`correctAnswer-${question.id}`"
+                                :value="ansIndex" @change="toggleCorrectAnswer(ansIndex)"
+                                :checked="question.correctAnswerIndices.includes(ansIndex)">
                             <label :for="`answer-${ansIndex}`">Correct</label>
                         </div>
                     </div>
