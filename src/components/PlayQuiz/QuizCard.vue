@@ -1,13 +1,13 @@
 <template>
-  <div v-if="quiz">
+  <div v-if="quizData">
     <div class="title">
-      <h1>{{ quiz.title }}</h1>
+      <h1>{{ quizData.title }}</h1>
     </div>
     <form @submit.prevent="submitQuiz">
-      <div class="card" v-for="(question, index) in quiz.questions" :key="index" :data-index="index">
+      <div class="card" v-for="(question, index) in quizData.questions" :key="index" :data-index="index">
         <div class="card-header">
           <h2>{{ question.text }}</h2>
-          <h3>{{ index + 1 }} / {{ quiz.questions.length }}</h3>
+          <h3>{{ index + 1 }} / {{ quizData.questions.length }}</h3>
         </div>
         <div class="card-body">
           <h3>Choose an answer</h3>
@@ -42,8 +42,9 @@ import { ref, reactive, onMounted, provide, nextTick } from 'vue';
 import MultipleChoiceButton from './MultipleChoiceButton.vue';
 import TFButton from './TFButton.vue';
 import BlankInput from './BlankInput.vue';
+import { quiz, answers } from '@/api/QuizController';
 
-let quiz = ref(null); // Use `ref` for async data
+let quizData = ref(null); // Use `ref` for async data
 let selectedAnswers = ref([]);
 let userInputs = ref([]);
 provide('userInputs', userInputs);
@@ -57,20 +58,14 @@ let qId = ref(0);
 async function fetchQuizData() {
   const quizId = route.params.id;
   qId = quizId;
-  try {
-    const response = await axios.get('http://localhost:8080/api/quiz/' + quizId, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
-      }
+    quiz(quizId).then((response) => {
+      quizData.value = response.data;
+      console.log(JSON.stringify(quizData.value, null, 2));
+      selectedAnswers.value = quizData.value.questions.map(() => null);
+      userInputs.value = new Array(quizData.value.questions.length).fill('');
+    }).catch((error) => {
+      console.error("Failed to fetch quiz data:", error);
     });
-    quiz.value = response.data;
-    console.log(JSON.stringify(quiz.value, null, 2));
-    selectedAnswers.value = quiz.value.questions.map(() => null);
-    userInputs.value = new Array(quiz.value.questions.length).fill('');
-  } catch (error) {
-    console.error("Failed to fetch quiz data:", error);
-  }
 }
 
 // Fetch quiz data when component mounts
@@ -80,7 +75,7 @@ onMounted(() => {
 
 async function submitQuiz() {
   let results = {
-  "answers": quiz.value.questions.map((question, index) => {
+  "answers": quizData.value.questions.map((question, index) => {
       let answer = null;
 
       if (question.type === 'MULTIPLE_CHOICE') {
@@ -104,18 +99,12 @@ async function submitQuiz() {
   };
 
   quizCompleted.value = true;
-  console.log(results.answers);
-  const response = await axios.post('http://localhost:8080/api/quiz/' + qId + '/answers',
-    results.answers, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
-      }
+    answers(qId, results.answers).then((response) => {
+      console.log(JSON.stringify(response.data, null, 2));
+      router.push({ name: 'result', params: { id: response.data.id } });
+    }).catch((error) => {
+      console.error("Failed to submit quiz:", error);
     });
-    console.log(response.data);
-    console.log(JSON.stringify(response.data, null, 2));
-
-    router.push({ name: 'result', params: { id: response.data.id } });
 }
 
 

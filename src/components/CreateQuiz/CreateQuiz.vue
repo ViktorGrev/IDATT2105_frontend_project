@@ -3,6 +3,7 @@ import { ref, reactive, nextTick } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import QuestionEditBox from './QuestionEditBox.vue';
+import { create } from '@/api/QuizController';
 
 const quizTitle = ref('');
 const quizTags = ref([]); // Array to hold tags
@@ -80,6 +81,7 @@ const randomizationLabel = () => {
 };
 
 const handleImageUpload = (event, questionId) => {
+    console.log("Hallo");
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
@@ -129,6 +131,7 @@ const createQuiz = async () => {
         }
 
         // Conditionally add the image property if it exists
+        console.log(q.image);
         if (q.image) {
             question.image = q.image;
         }
@@ -147,18 +150,11 @@ const createQuiz = async () => {
 
     console.log(JSON.stringify(quiz, null, 2));
 
-    const response = await axios.post('http://localhost:8080/api/quiz',
-        quiz
-        , {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
-            }
-        });
-
-    console.log(response.data);
-
-    routerView.push({ name: 'quiz', params: { id: response.data.id } });
+    create(quiz).then(response => {
+        routerView.push({ name: 'quiz', params: { id: response.data.id } });
+    }).catch(error => {
+        console.error('Quiz creation error:', error);
+    });
 };
 
 const handleUpdateQuestion = (updatedQuestion) => {
@@ -312,9 +308,15 @@ const importQuiz = (event) => {
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionsList">
-                    <QuestionEditBox v-for="(question, index) in questions" :key="question.id" :question="question"
-                        :index="index" @updateQuestion="handleUpdateQuestion" @deleteQuestion="deleteQuestion"
-                        @setCorrectAnswer="setCorrectAnswer" @handleImageUpload="handleImageUpload" />
+                    <QuestionEditBox
+    v-for="(question, index) in questions"
+    :key="question.id"
+    :question="question"
+    :index="index"
+    @updateQuestion="handleUpdateQuestion"
+    @deleteQuestion="deleteQuestion"
+    @setCorrectAnswer="setCorrectAnswer"
+    @handleImageUpload="handleImageUpload" />
                     <button class="addQuestionButton" @click="addQuestion">+ Add Question</button>
                 </div>
             </div>

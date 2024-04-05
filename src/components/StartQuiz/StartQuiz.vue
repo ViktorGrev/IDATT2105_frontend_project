@@ -11,7 +11,7 @@
               <h1>Ranking</h1>
             </div>
             <!-- Pass leaderboard data to the LeaderboardComponent -->
-            <Leaderboard :leaderboard="leaderboard" @navigateToUserProfile="navigateToUserProfile" />
+            <Leaderboard :leaderboard="leaderboardData" @navigateToUserProfile="navigateToUserProfile" />
           </div>
         </div>
       </div>
@@ -24,12 +24,13 @@
   import { useRouter, useRoute } from 'vue-router';
   import Leaderboard from './Leaderboard.vue';
   import StartHeader from './StartHeader.vue';
+  import { leaderboard } from '@/api/QuizController';
   
   const router = useRouter();
   const route = useRoute();
   
   let playId = ref(0);
-  let leaderboard = ref([]);
+  let leaderboardData = ref([]);
   
   const navigateToTheQuiz = () => {
     router.push({ name: 'play', params: { id: playId.value } });
@@ -38,24 +39,15 @@
   async function fetchQuizData() {
     const quizId = route.params.id;
     playId.value = Number(quizId);
-    try {
-      const response = await axios.get(`http://localhost:8080/api/quiz/${quizId}/leaderboard`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionStorage.getItem("userToken")}`
-        }
+      leaderboard(quizId).then((response) => {
+        leaderboardData.value = response.data;
+      }).catch((error) => {
+        console.error("Failed to fetch leaderboard data:", error);
       });
-      leaderboard.value = response.data;
-      console.log(leaderboard.value);
-      console.log(JSON.stringify(leaderboard.value, null, 2));
-    } catch (error) {
-      console.error("Failed to fetch quiz data:", error);
-    }
+    
   }
   
-  // Define the navigateToUserProfile method
   const navigateToUserProfile = (userId) => {
-    console.log(userId);
     router.push({ name: 'user', params: { id: userId } });
   };
   

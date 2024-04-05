@@ -44,6 +44,7 @@
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { quiz } from '@/api/QuizController';
 
 let quizzInfo = ref(null);
 const router = useRouter();
@@ -51,13 +52,9 @@ const router = useRouter();
 // Function to fetch quiz data
 async function fetchQuizData() {
   try {
-    const response = await axios.get('http://localhost:8080/api/quiz/1', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
-      }
+    quiz(1).then((response) => {
+      quizzInfo.value = response.data;
     });
-    quizzInfo.value = response.data;
   } catch (error) {
     console.error("Failed to fetch quiz data:", error);
   }

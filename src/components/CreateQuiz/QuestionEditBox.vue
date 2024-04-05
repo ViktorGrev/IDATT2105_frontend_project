@@ -35,8 +35,7 @@ const uploadImage = (event) => {
             <div class="questionBox">
                 The question:
                 <input id="question" class="question" v-model="question.questionText" placeholder="Type in here">
-                <input type="file" @change="event => handleImageUpload(event, question.id)" hidden
-                    ref="questionImageInput">
+                <input type="file" @change="uploadImage" hidden ref="questionImageInput">
                 <button class="titleButton" @click="$refs.questionImageInput.click()">+Image</button>
             </div>
             <div class="questionTypeSelector">

@@ -49,6 +49,7 @@
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { results } from '@/api/QuizController';
 
 const route = useRoute();
 const router = useRouter();
@@ -60,21 +61,14 @@ let incorrectAnswers = ref(0);
 
 async function fetchResultData() {
     const resultId = route.params.id;
-    try {
-        const response = await axios.get(`http://localhost:8080/api/quiz/results/${resultId}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': "Bearer " + sessionStorage.getItem("userToken")
-            }
+        results(resultId).then((response) => {
+            result.value = response.data;
+            console.log(JSON.stringify(result.value, null, 2));
+            quiz.value = response.data.quiz;
+            calculateScore();
+        }).catch((error) => {
+            console.error("Failed to fetch quiz data:", error);
         });
-        result.value = response.data;
-        console.log(JSON.stringify(result.value, null, 2));
-        quiz.value = response.data.quiz;
-
-        calculateScore();
-    } catch (error) {
-        console.error("Failed to dddd ddd fetch quiz data:", error);
-    }
 }
 
 function calculateScore() {
@@ -160,7 +154,7 @@ function home() {
 }
 
 function again() {
-    router.push({ name: 'play', params: { id: quiz.value.id } });
+    router.push({ name: 'quiz', params: { id: quiz.value.id } });
 }
 </script>
 
