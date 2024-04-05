@@ -120,7 +120,7 @@ const navigateToUserProfile = (userId) => {
     flex-direction: column;
     background-size: cover;
     background-color: #b19cd9;
-    background-image: url(https://th.bing.com/th/id/OIG3..DEIYlz3kieUkKICw91.?w=1024&h=1024&rs=1&pid=ImgDetMain);
+    background-image: url(https://th.bing.com/th/id/OIG4.r07g3Q8hC2tCHD2hnzTv?w=1024&h=1024&rs=1&pid=ImgDetMain);
 }
 
 .quizContainerV2:hover {
@@ -136,7 +136,8 @@ const navigateToUserProfile = (userId) => {
 }
 
 .quizContainerV2Bottom {
-  background-color: #ded0f9;
+  /*background-color: #ded0f9; possible color*/
+  background-color: rgb(183, 215, 244);
   height: 40%;
   border-radius: 0 0 1em 1em;
   padding-left: 5%;
