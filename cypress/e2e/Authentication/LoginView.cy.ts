@@ -5,7 +5,7 @@ describe('Login functionality', () => {
 
 
     it('failed login due to wrong username and password', () => {
-        cy.get('#username').type('Alice');
+        cy.get('#username').type('Alice123');
         cy.get('#password').type('Alice1');
 
         cy.get('form').submit();

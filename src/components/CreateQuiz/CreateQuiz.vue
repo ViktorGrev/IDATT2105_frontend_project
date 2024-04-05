@@ -265,8 +265,8 @@ const importQuiz = (event) => {
 
                 <div class="inputHeaders">
                     <div class="discriptionHolder">
-                        <label for="descriptionDiv" id="description" class="titleLabel>">Description:</label>
-                        <textarea aria-label="Description" class="descriptionInput"
+                        <label for="descriptionDiv" class="titleLabel>">Description:</label>
+                        <textarea aria-label="Description" id="description" class="descriptionInput"
                             placeholder="Enter a description for the quiz" type="text"
                             v-model="quizDescription"></textarea>
                     </div>
