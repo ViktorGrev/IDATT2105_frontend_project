@@ -13,7 +13,7 @@ import HomeNavlinks from '@/components/HomeComponents/HomeNav-linksComponent.vue
     <div class="contentBox">
       <div id="quizID">
         <div id="recent">
-          <h2 style="color: #6d6e72;">Recent quizz attemps</h2>
+          <h2 style="color: #6d6e72;">Recent quizzes played</h2>
           <history></history>
         </div>
         

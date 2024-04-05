@@ -1,6 +1,5 @@
 <template>
 <div class="list">
-  <h2 style="color: #586380;">All quizz attemps</h2>
   <ul>
     <li v-for="attempt in attempts">
         <span style="width: 100%;">
