@@ -3,7 +3,7 @@
     <div class="quizContainerV1" v-if="quizzInfo" @click="navigateToUserProfile(quizzInfo.id)">
         <div class="quizContainerV1Top">
         </div>
-        <div class="quizContainerV1Bottom">
+        <div class="quizContainerV1Bottom" id="testId">
           <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo.title }} </p>
           <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo.description }}</p>
         </div>

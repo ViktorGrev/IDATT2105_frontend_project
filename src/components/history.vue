@@ -1,9 +1,13 @@
 <template>
   <!--If the quizzes are loaded in, this will show-->
   <div v-if="quizzes">
-    <Carousel v-bind="settings" :breakpoints="breakpoints">
+    <div v-if="noRecentAttempts" style="color: #6d6e72;">
+      You have no recent attempts. Try to play some quizzes!
+    </div>
+    <div v-else>
+      <Carousel v-bind="settings" :breakpoints="breakpoints">
       <Slide v-for="slide in quizzes" :key="slide.id">
-        <div class="carousel__item" @click="navigateToUserProfile(slide.id)">
+        <div class="carousel__item" id="item" @click="navigateToUserProfile(slide.id)">
           <div class="infoBox">
             {{ slide.title }}
             <br>
@@ -19,13 +23,15 @@
         <Navigation />
       </template>
     </Carousel>
+    </div>
+    
   </div>
 
   <!--If the quizzes are not loaded in, this will show-->
   <div v-else>
     <Carousel v-bind="settings" :breakpoints="breakpoints">
       <Slide v-for="slide in 10" :key="slide">
-        <div class="carousel__item">
+        <div class="carousel__item" id="item">
           <div class="infoBox">
             Loading
             <br>
@@ -115,7 +121,7 @@ export default defineComponent({
   setup() {
     const quizzes = ref(null);
     const router = useRouter();
-    const route = useRoute();
+    const noRecentAttempts = ref(null);
     // Define reactive properties
     const settings = ref({
       itemsToShow: 1,
@@ -151,7 +157,10 @@ export default defineComponent({
             'Authorization': `Bearer ${userToken.trim()}`
           }
         });
-        quizzes.value = response.data;
+        quizzes.value = response.data.slice(0,5);
+        if (quizzes.value.length === 0) {
+          noRecentAttempts.value = 1;
+        }
         
       } catch (error) {
         console.error("Failed to fetch quiz data:", error);
@@ -171,6 +180,7 @@ export default defineComponent({
       breakpoints,
       quizzes,
       navigateToUserProfile,
+      noRecentAttempts,
     };
   }
 })
