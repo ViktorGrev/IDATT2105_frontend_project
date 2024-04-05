@@ -107,6 +107,9 @@ const navigateToUserProfile = (userId) => {
   height: 40%;
   border-radius: 0 0 1em 1em;
   padding-left: 5%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .quizContainerV2 {
@@ -141,6 +144,9 @@ const navigateToUserProfile = (userId) => {
   height: 40%;
   border-radius: 0 0 1em 1em;
   padding-left: 5%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .container {
