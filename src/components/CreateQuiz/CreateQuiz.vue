@@ -86,21 +86,31 @@ const randomizationLabel = () => {
 const handleImageUpload = (event, questionId) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-        const question = findQuestionById(questionId);
-        if (question) {
-            question.image = file; // Store the File object
-        }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const question = findQuestionById(questionId);
+            if (question) {
+                // Store the Base64 string
+                question.image = reader.result;
+            }
+        };
+        reader.readAsDataURL(file); // Converts the file to Base64
     }
 };
 
 const handleQuizImageUpload = (event) => {
-    console.log("Hallo");
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-        quizImage.value = file; // Store the File object
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            // Store the Base64 string
+            quizImage.value = reader.result;
+            console.log(quizImage.value); // Logs the Base64 string
+        };
+        reader.readAsDataURL(file); // Converts the file to Base64
     }
-    console.log(URL.createObjectURL(quizImage.value));
-}
+};
+
 
 const quizImageInput = ref(null);
 
