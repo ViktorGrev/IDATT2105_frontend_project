@@ -86,14 +86,14 @@ watch(() => props.modelValue, (newValue) => {
         display: block;
         transition: 0.2s;
         font-size: 1rem;
-        color: #11998e;
+        color: #6d6e72;
         font-weight: 700;
     }
 
     padding-bottom: 6px;
     font-weight: 700;
     border-width: 3px;
-    border-image: linear-gradient(to right, #11998e, #38ef7d);
+    border-image: linear-gradient(to right, rgb(87, 174, 250), rgb(56, 156, 244));
     border-image-slice: 1;
 }
 
