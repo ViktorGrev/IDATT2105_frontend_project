@@ -76,6 +76,8 @@ main {
   flex-direction: column;
   cursor: pointer;
   background-color: white;
+  background-image: linear-gradient(-135deg, transparent 80%, rgb(22, 144, 248) 100%),
+  linear-gradient(45deg, transparent 80%, #f6e8bb 100%);
 }
 
 .carousel__item:hover {
