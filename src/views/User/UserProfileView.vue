@@ -9,7 +9,7 @@ const route = useRoute() // Use useRoute to access the current route details
 
 let username = ref("");
 
-async function fetchQuizData() {
+async function fetchUserData() {
     const userId = route.params.id;
     
     try {
@@ -29,7 +29,7 @@ async function fetchQuizData() {
 // Fetch quiz data when component mounts
 onMounted(() => {
     console.log("Hallo")
-    fetchQuizData(); // Fetch quiz with ID 10
+    fetchUserData(); // Fetch quiz with ID 10
 });
 </script>
 
@@ -43,7 +43,9 @@ onMounted(() => {
                     <button class="buttonStyle">Remove freind</button>
                 </div>
                 <div class="libraryList">
+                    <h2 style="color: #6d6e72; font-family: 'Poppins', sans-serif;">Recent quizzes played</h2>
                     <History></History>
+                    <h2 style="color: #6d6e72; font-family: 'Poppins', sans-serif;">All quizz attemps</h2>
                     <LongTermHistoryComponent></LongTermHistoryComponent>
                 </div>
             </div>
@@ -78,7 +80,7 @@ onMounted(() => {
     font-weight: 700;
     font-size: 5rem;
     margin: 10px;
-    color: #586380;
+    color: #6d6e72;
 }
 
 .libraryTitle {
@@ -91,6 +93,7 @@ onMounted(() => {
     font-size: 2rem;
     margin: 2rem;
     color: #586380;
+    font-family: 'Poppins', sans-serif;
 }
 
 .buttonBox {
