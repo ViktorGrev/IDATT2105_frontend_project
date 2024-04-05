@@ -12,6 +12,8 @@ const quizDescription = ref('');
 const quizCategory = ref(''); // Default category is empty
 const quizRandomization = ref(false);
 const quizImage = ref(null);
+const quizCoAuthors = ref([]); // New state for storing co-authors
+const quizCoAuthorInput = ref('');
 defineProps(['question']);
 
 const routerView = useRouter();
@@ -155,6 +157,7 @@ const createQuiz = async () => {
         tags: quizTags.value, // Assuming you want to split tags by commas into an array
         random: quizRandomization.value, // Assuming this is a checkbox and you want a boolean value
         image: quizImage.value,
+        coAuthors: quizCoAuthors.value,
         questions: formattedQuestions,
     };
 
@@ -172,6 +175,17 @@ const handleUpdateQuestion = (updatedQuestion) => {
     if (questionIndex !== -1) {
         questions[questionIndex] = updatedQuestion;
     }
+};
+
+const addCoAuthor = () => {
+    if (!quizCoAuthors.value.includes(quizCoAuthorInput.value) && quizCoAuthorInput.value.trim() !== '') {
+        quizCoAuthors.value.push(quizCoAuthorInput.value.trim());
+        quizCoAuthorInput.value = ''; // Clear the input field after adding the co-author
+    }
+};
+
+const removeCoAuthor = (authorToRemove) => {
+    quizCoAuthors.value = quizCoAuthors.value.filter(author => author !== authorToRemove);
 };
 
 const fileInput = ref(null);
@@ -318,6 +332,21 @@ const importQuiz = (event) => {
                         + Quiz Image
                     </button>
                     <input type="file" ref="quizImageInput" @change="handleQuizImageUpload" accept="image/*" style="display:none">
+
+                    <div class="coAuthorHolder">
+    <label for="coAuthorInput" class="titleLabel">Co-Authors:</label>
+    <div>
+        <input id="coAuthorInput" class="tagInput"
+            placeholder="Add a co-author's name" v-model="quizCoAuthorInput">
+        <button class="titleButton" @click="addCoAuthor">Add Co-Author</button>
+    </div>
+    <div class="tagsDisplay">
+        <span v-for="(author, index) in quizCoAuthors" :key="index" class="tag">
+            {{ author }}
+            <button @click="removeCoAuthor(author)">x</button>
+        </span>
+    </div>
+</div>
                 </div>
             </div>
             <div class="contentCreation">
@@ -417,7 +446,6 @@ main {
     margin-right: 1rem;
     width: 100%;
     min-width: 160px;
-    margin-bottom: 0.5rem;
 }
 
 .tagInput:focus {
@@ -511,6 +539,7 @@ main {
     font: inherit;
     margin-right: 2rem;
     margin-top: 1rem;
+    height: 2.6rem;
 }
 
 .titleButton:hover {
