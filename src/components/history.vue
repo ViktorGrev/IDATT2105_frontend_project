@@ -76,8 +76,8 @@ main {
   flex-direction: column;
   cursor: pointer;
   background-color: white;
-  background-image: linear-gradient(-135deg, transparent 80%, rgb(22, 144, 248) 100%),
-  linear-gradient(45deg, transparent 80%, #f6e8bb 100%);
+  background-image: linear-gradient(-135deg, transparent 85%, rgb(22, 144, 248) 100%),
+  linear-gradient(45deg, transparent 85%, #f6e8bb 100%);
 }
 
 .carousel__item:hover {
@@ -153,13 +153,13 @@ export default defineComponent({
           throw new Error("User token not found in session storage.");
         }
 
-        const response = await axios.get('http://localhost:8080/api/quiz/recent', {
+        const response = await axios.post('http://localhost:8080/api/quiz/search?title=test', {} ,{
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${userToken.trim()}`
           }
         });
-        quizzes.value = response.data.slice(0,5);
+        quizzes.value = response.data;
         if (quizzes.value.length === 0) {
           noRecentAttempts.value = 1;
         }
