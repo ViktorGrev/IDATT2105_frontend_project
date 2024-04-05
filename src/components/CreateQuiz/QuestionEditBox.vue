@@ -23,6 +23,21 @@ const updateCorrectAnswer = (answerIndex) => {
 const uploadImage = (event) => {
     emits('handleImageUpload', event, props.question.id);
 };
+
+const addAnswerOption = () => {
+    if (props.question.answers.length < 10) { // Example limit to 10 options
+        props.question.answers.push('');
+        emits('updateQuestion', { ...props.question });
+    }
+};
+
+const removeAnswerOption = (index) => {
+    if (props.question.answers.length > 2) { // Ensure there are at least 2 options
+        props.question.answers.splice(index, 1);
+        emits('updateQuestion', { ...props.question });
+    }
+};
+
 </script>
 
 <template>
@@ -47,14 +62,23 @@ const uploadImage = (event) => {
                 </select>
             </div>
             <div class="answers" v-if="question.type === 'multipleChoice'">
-                <div v-for="(answer, ansIndex) in question.answers" :key="`ans-${index}-${ansIndex}`" class="answerRow">
-                    <input class="answersField" v-model="question.answers[ansIndex]"
-                        :placeholder="`Answer ${ansIndex + 1}`">
-                    <div>
-                        <input type="radio" class="option-input radio" :name="`correctAnswer-${question.id}`"
-                            :value="ansIndex" v-model="question.correctAnswerIndex">
-                        <label :for="`answer-${ansIndex}`">Correct</label>
+                <div id="answerAddSplitter">
+                    <div v-for="(answer, ansIndex) in question.answers" :key="`ans-${index}-${ansIndex}`"
+                        class="answerRow">
+                        <button id="removeOption" @click="removeAnswerOption(ansIndex)">X</button>
+                        <input class="answersField" v-model="question.answers[ansIndex]"
+                            :placeholder="`Answer ${ansIndex + 1}`">
+                        <!-- Button to remove option -->
+                        <div>
+                            <input type="radio" class="option-input radio" :name="`correctAnswer-${question.id}`"
+                                :value="ansIndex" v-model="question.correctAnswerIndex">
+                            <label :for="`answer-${ansIndex}`">Correct</label>
+                        </div>
                     </div>
+                </div>
+                <div>
+                    <button id="addOption" @click="addAnswerOption">+ Add Option</button>
+                    <!-- Button to add new option -->
                 </div>
             </div>
             <div class="answers" v-if="question.type === 'trueFalse'">
@@ -291,5 +315,40 @@ select {
 
 select::-ms-expand {
     display: none;
+}
+
+#addOption {
+    background: rgb(46, 165, 46);
+    border: none;
+    border-color: #d9dde8;
+    color: white;
+    font-weight: 400;
+    font-size: 1.3rem;
+    border-bottom: 5px solid #58638063;
+    border-radius: .5rem;
+    cursor: pointer;
+    padding: 0.3rem 1rem;
+}
+
+#removeOption {
+    background: red;
+    border: none;
+    border-color: #d9dde8;
+    color: white;
+    font-weight: 400;
+    font-size: 1.3rem;
+    border-bottom: 5px solid #58638063;
+    border-radius: .5rem;
+    cursor: pointer;
+    margin-right: 0.3rem;
+}
+
+#answerAddSplitter {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
 }
 </style>

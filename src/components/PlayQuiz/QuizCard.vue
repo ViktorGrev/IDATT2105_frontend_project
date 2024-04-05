@@ -160,6 +160,8 @@ function skipQuestion(index) {
 
 .card-body {
   color: #586380;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .card {
@@ -176,6 +178,7 @@ function skipQuestion(index) {
   flex-direction: row;
   justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .submit-btn {

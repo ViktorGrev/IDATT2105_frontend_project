@@ -11,6 +11,7 @@ const quizTagInput = ref(''); // New ref for the tag input field
 const quizDescription = ref('');
 const quizCategory = ref(''); // Default category is empty
 const quizRandomization = ref(false);
+const quizImage = ref(null);
 defineProps(['question']);
 
 const routerView = useRouter();
@@ -81,18 +82,28 @@ const randomizationLabel = () => {
 };
 
 const handleImageUpload = (event, questionId) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const question = findQuestionById(questionId);
+        if (question) {
+            question.image = file; // Store the File object
+        }
+    }
+};
+
+const handleQuizImageUpload = (event) => {
     console.log("Hallo");
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const question = findQuestionById(questionId);
-            if (question) {
-                question.image = e.target.result; // Assign the base64 string to the question's image property
-            }
-        };
-        reader.readAsDataURL(file);
+        quizImage.value = file; // Store the File object
     }
+    console.log(URL.createObjectURL(quizImage.value));
+}
+
+const quizImageInput = ref(null);
+
+const triggerQuizImageUpload = () => {
+    quizImageInput.value.click();
 };
 
 const setCorrectAnswer = (questionId, answerIndex) => {
@@ -112,7 +123,6 @@ const createQuiz = async () => {
                 .replace('fillInBlank', 'FILL_IN_THE_BLANK'),
         };
 
-        // Add question-specific properties
         switch (q.type) {
             case 'multipleChoice':
                 question.options = q.answers.map((answer, index) => ({
@@ -121,13 +131,12 @@ const createQuiz = async () => {
                 }));
                 break;
             case 'trueFalse':
-                question.true = q.correctAnswerIndex === 0; // Assuming 0 is for 'True' and 1 is for 'False'
+                question.true = q.correctAnswerIndex === 0;
                 break;
             case 'fillInBlank':
-                question.solution = q.answers[0]; // Assuming the first entry in the answers array is the solution
+                question.solution = q.answers[0];
                 break;
             default:
-            // Optionally handle unrecognized question types or leave as is
         }
 
         // Conditionally add the image property if it exists
@@ -145,6 +154,7 @@ const createQuiz = async () => {
         description: quizDescription.value,
         tags: quizTags.value, // Assuming you want to split tags by commas into an array
         random: quizRandomization.value, // Assuming this is a checkbox and you want a boolean value
+        image: quizImage.value,
         questions: formattedQuestions,
     };
 
@@ -297,12 +307,17 @@ const importQuiz = (event) => {
                     </div>
                 </div>
                 <div class=titleButtons>
-                    <button class="titleButton" @click="triggerFileInput">+ Import</button>
+                    <button class="titleButton" @click="triggerFileInput">+ Import CSV</button>
                     <input type="file" ref="fileInput" @change="importQuiz" accept=".csv" style="display:none">
 
                     <button @click="toggleRandomization" class="titleButton">
                         Randomize Answers: {{ randomizationLabel() }}
                     </button>
+
+                    <button @click="triggerQuizImageUpload" class="titleButton">
+                        + Quiz Image
+                    </button>
+                    <input type="file" ref="quizImageInput" @change="handleQuizImageUpload" accept="image/*" style="display:none">
                 </div>
             </div>
             <div class="contentCreation">
