@@ -1,11 +1,28 @@
 <script setup lang="ts">
-import axios from 'axios';
+
+import {getSelf, changeUsername} from "@/api/UserController";
+import {onMounted, ref} from "vue";
+
+let username = ref("");
+let usernameError = ref("");
+let usernameResponse = ref("");
+
+onMounted(() => {
+  getSelf().then(response => {
+    username.value = response.data.username;
+  }).catch(error => {
+
+  });
+});
 
 const showDatabase = async () => {
-    let username = "Viktor";
-    const response = await axios.post('http://localhost:8080/api/data', username);
-    console.log(response.data.message.username);
-    console.log(response.data.message.password);
+    changeUsername(username.value).then(response => {
+      usernameError.value = "";
+      usernameResponse.value = "Username has been updated!";
+    }).catch(error => {
+      usernameError.value = error.response.data.message;
+      usernameResponse.value = "";
+    });
 }
 </script>
 
@@ -18,23 +35,19 @@ const showDatabase = async () => {
                         <h2 class="mt-5 mb-5">Profile Settings</h2>
                         <div class="row" style="height:100%">
                             <div class="col-md-3">
-                                <!-- Fixed incorrect usage of href=# by moving it to the a tag where it's supposed to be -->
                                 <div class="d-inline">
-                                    <img src="../assets/profile-circle.svg" width="200px" style="margin:0;"><br>
-                                    <p class="pl-2 mt-2">
-                                        <a href="#" class="btn" style="color:#8f9096;font-weight:600">Edit Picture</a>
-                                    </p>
+                                    <img src="@/assets/default_profile.svg" width="200px" style="margin:0;"><br>
                                 </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="container">
-                                    <form>
-                                        <div class="form-group">
-                                            <label for="fullName">Edit Username:</label>
-                                            <input type="text" class="form-control" id="fullName">
-                                        </div>
-                                        <button type="button" class="btn btn-primary btn-block">Save Changes</button>
-                                    </form>
+                                    <p>Username</p>
+                                  <div class="d-flex align-items-center">
+                                    <textarea v-model="username" style="margin-right: 1rem;"></textarea>
+                                    <button @click="showDatabase" type="button" class="blueButton">Update</button>
+                                  </div>
+                                    <p style="color: red">{{usernameError}}</p>
+                                    <p style="color: green">{{usernameResponse}}</p>
                                 </div>
                             </div>
                         </div>
@@ -46,6 +59,38 @@ const showDatabase = async () => {
 </template>
 
 <style scoped>
+.blueButton {
+  padding: 1rem 1rem;
+  background: rgb(22, 144, 248);
+  border: none;
+  border-color: #d9dde8;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  border-bottom: 5px solid #58638063;
+  border-radius: .5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.blueButton:hover {
+  padding: 1rem 1rem;
+  background: rgb(30, 150, 253);
+  border: none;
+  border-color: #d9dde8;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  border-bottom: 5px solid #58638063;
+  border-radius: .5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
 .wrapper {
     width: 100%;
     display: flex;

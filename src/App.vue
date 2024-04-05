@@ -9,9 +9,13 @@ import BasePage from './components/BaseComponents/BasePage.vue'
 </template>
 
 <style>
-  body {
-    margin: 0px;
-    padding: 0px;
-    background-color: #edeff4;
-  }
+* {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  margin: 0px;
+  padding: 0px;
+  background-color: #edeff4;
+}
 </style>
