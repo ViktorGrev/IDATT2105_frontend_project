@@ -32,7 +32,7 @@
   let leaderboard = ref([]);
   
   const navigateToTheQuiz = () => {
-    router.push({ name: 'quiz', params: { id: playId.value } });
+    router.push({ name: 'play', params: { id: playId.value } });
   };
   
   async function fetchQuizData() {

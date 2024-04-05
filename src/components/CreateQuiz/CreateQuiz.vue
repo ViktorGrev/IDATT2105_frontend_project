@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, nextTick } from 'vue';
 import axios from 'axios';
+import { useRouter, useRoute } from 'vue-router';
 import QuestionEditBox from './QuestionEditBox.vue';
 
 const quizTitle = ref('');
@@ -10,6 +11,8 @@ const quizDescription = ref('');
 const quizCategory = ref(''); // Default category is empty
 const quizRandomization = ref(false);
 defineProps(['question']);
+
+const routerView = useRouter();
 
 const questions = reactive([
     {
@@ -154,6 +157,8 @@ const createQuiz = async () => {
         });
 
     console.log(response.data);
+
+    routerView.push({ name: 'quiz', params: { id: response.data.id } });
 };
 
 const handleUpdateQuestion = (updatedQuestion) => {
@@ -163,9 +168,6 @@ const handleUpdateQuestion = (updatedQuestion) => {
     }
 };
 
-
-
-
 const fileInput = ref(null);
 
 const triggerFileInput = () => {
@@ -173,6 +175,7 @@ const triggerFileInput = () => {
 };
 
 import Papa from 'papaparse';
+import router from '@/router';
 
 const importQuiz = (event) => {
     const files = event.target.files;
@@ -262,7 +265,7 @@ const importQuiz = (event) => {
 
                 <div class="inputHeaders">
                     <div class="discriptionHolder">
-                        <label for="descriptionDiv" class="titleLabel>">Description:</label>
+                        <label for="descriptionDiv" id="description" class="titleLabel>">Description:</label>
                         <textarea aria-label="Description" class="descriptionInput"
                             placeholder="Enter a description for the quiz" type="text"
                             v-model="quizDescription"></textarea>
@@ -270,7 +273,7 @@ const importQuiz = (event) => {
                     <div class="optionHolder">
                         <label for="categoryDiv" class="titleLabel">Category:</label>
                         <div class="categoryBox" id="categoryDiv">
-                            <select v-model="quizCategory" class="category">
+                            <select v-model="quizCategory" id="category" class="category">
                                 <option disabled value="">Select a category</option>
                                 <option>CALCULUS</option>
                                 <option>MATH</option>
