@@ -1,65 +1,71 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import debounce from 'lodash/debounce';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
-//Search word
-const searchQuery = ref('');
+// Search word
+const searchQuery = ref(null);
 
-//Routing to quiz pressed
+// Routing to quiz pressed
 const router = useRouter();
 
-//List that the quizzes will be addded to
+// List that the quizzes will be added to
 const quizzes = ref([]);
+const apiUrl = ref(null);
 
-// Filtered quizzes based on search query
-const filteredQuizzes = ref(null);
-
-// Function to update filtered quizzes
-const updateFilteredQuizzes = () => {
-    filteredQuizzes.value = quizzes.value.filter(quiz => {
-        return quiz.title.toLowerCase().includes(searchQuery.value.toLowerCase());
-    }).slice(0, 10);
-};
-
-// Debounce the update function to improve performance
-const debouncedUpdate = debounce(updateFilteredQuizzes, 0);
+// Categories category
+const selectedCategory = ref(null);
+const categories = ['CHEMISTRY', 'CALCULUS', 'ENGINEERING', 'ALGEBRA', 'PHYSICS', 'BIOLOGY', 'LANGUAGE'];
 
 // Handle keyup event to update search results only when Enter is pressed
 const handleKeyUp = async (event) => {
     if (event.key === 'Enter') {
-        await fetchQuizData(); // Wait for fetchQuizData to complete
-        debouncedUpdate();
+      generateLink('title', searchQuery.value);
+      await fetchQuizData(); // Wait for fetchQuizData to complete
     }
 };
 
-//Method to get quiz data
+// Method to get quiz data
 async function fetchQuizData() {
-  try {
-    const userToken = sessionStorage.getItem("userToken");
-    if (!userToken) {
-      throw new Error("User token not found in session storage.");
-    }
+    try {
+        const userToken = sessionStorage.getItem("userToken");
+        if (!userToken) {
+            throw new Error("User token not found in session storage.");
+        }    
 
-    const response = await axios.get('http://localhost:8080/api/quiz/recent', {
-      headers: {
-    'Content-Type': 'application/json',
-        'Authorization': `Bearer ${userToken.trim()}`
-      }
-    });
-    quizzes.value = response.data;
-    
-  } catch (error) {
-    console.error("Failed to fetch quiz data:", error);
-  }
+        const response = await axios.post(apiUrl.value, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken.trim()}`
+            }
+        });
+        console.log(response.data);
+        
+        quizzes.value = response.data;
+
+    } catch (error) {
+        console.error("Failed to fetch quiz data:", error);
+    }
 }
 
-// Define the navigateToUserProfile method
-const navigateToUserProfile = (quizID) => {
+// Define the navigateToQuiz method
+const navigateToQuiz = (quizID) => {
     router.push({ name: 'quiz', params: { id: quizID } });
 };
+
+// Update selected category when a button is clicked
+const updateSelectedCategory = (category) => {
+  generateLink('category', category);
+    fetchQuizData();
+};
+
+function generateLink(searchType: 'title' | 'category', query: string): void {
+    const baseUrl: string = "http://localhost:8080/api/quiz/search";
+    apiUrl.value = `${baseUrl}?${searchType}=${query}`;
+    console.log(apiUrl.value);
+}
 </script>
+
 
 <template>
 <main>
@@ -70,17 +76,22 @@ const navigateToUserProfile = (quizID) => {
                 <div class="search"></div>
             </div>
         </div>
+        <div class="categoryButtons">
+          <div class="category-box" v-for="category in categories" :key="category" @click="updateSelectedCategory(category)">
+            {{ category }}
+          </div>
+        </div>
     </div>
     <div style="height: 50px;"></div>
     <div class="searchResults">
         <div class="contentBox">
-            <div class="quizz" v-for="quiz in filteredQuizzes" :key="quiz.id">
+            <div class="quizz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quizzInfo">
                     <p style="font-size: 30px;">Quizz: {{ quiz.title }}</p>
                 </div>
                 
                 <div class="quizzPlay">
-                    <img src="../../assets/rizzletRpng.png" alt="play" style="cursor: pointer;" @click="navigateToUserProfile(quiz.id)">
+                    <img src="../../assets/image.png" alt="play" style="cursor: pointer;" @click="navigateToQuiz(quiz.id)">
                 </div>
             </div>
         </div>
@@ -94,6 +105,7 @@ const navigateToUserProfile = (quizID) => {
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+  align-items: center;
 }
 
 .SearchBox {
@@ -264,7 +276,33 @@ const navigateToUserProfile = (quizID) => {
 }
 
 .quizzPlay img {
-    width: 20%;
+    width: 15%;
     height: auto;
+    padding-right: 40px;
 }
+
+.categoryButtons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 80%;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10%;
+}
+
+.category-box {
+    flex: 1 0 21%;
+    border: 2px solid #ddd;
+    border-radius: 1em;
+    padding: 20px;
+    margin: 10px;
+    background-color: #fff;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .category-box:hover {
+    border-color: rgb(22, 144, 248);
+    cursor: pointer;
+  }
 </style>
