@@ -53,7 +53,7 @@ const addQuestion = (type = 'multipleChoice') => {
 onMounted(async () => {
     console.log("Hallo");
     const quizId = router.currentRoute.value.params.id; // Or use `useRoute` if inside a setup function
-        quiz(48).then(response => {
+        quiz(42).then(response => {
             console.log('Quiz data:', response.data);
             populateFormWithData(response.data);
         }).catch(error => {
@@ -75,7 +75,7 @@ function populateFormWithData(data) {
         // Handling for "TRUE_FALSE" questions to store the 'true' value as a correctAnswerIndices
         let correctAnswerIndices = [];
         if (q.type === "TRUE_FALSE") {
-            correctAnswerIndices = q.true ? [0] : [1]; // If 'true' is true, the correct answer is 'True' (index 0), else 'False' (index 1)
+            correctAnswerIndices = q.true ? true : false; // If 'true' is true, the correct answer is 'True' (index 0), else 'False' (index 1)
         } else if (q.options) {
             correctAnswerIndices = q.options.flatMap((option, index) => option.correct ? [index] : []);
         }

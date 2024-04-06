@@ -95,13 +95,13 @@ const toggleCorrectAnswer = (answerIndex) => {
             <div class="answers" v-if="question.type === 'trueFalse'">
                 <div class="answerRow">
                     <label>True</label>
-                    <input type="radio" class="option-input radio" :name="`correctAnswer-${question.id}`" value="0"
-                        v-model="question.correctAnswerIndex">
+                    <input type="radio" class="option-input radio" :name="`correctAnswer-${question.id}`" value="true"
+                        v-model="question.correctAnswerIndices">
                 </div>
                 <div class="answerRow">
                     <label>False</label>
-                    <input type="radio" class="option-input radio" :name="`correctAnswer-${question.id}`" value="1"
-                        v-model="question.correctAnswerIndex">
+                    <input type="radio" class="option-input radio" :name="`correctAnswer-${question.id}`" value="false"
+                        v-model="question.correctAnswerIndices">
                 </div>
             </div>
             <div class="answers" v-if="question.type === 'fillInBlank'">
