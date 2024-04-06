@@ -54,6 +54,10 @@
   tr {
     transition: all 0.2s ease-in-out;
     border-radius: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
   
   tr:not(:first-child):hover {
@@ -84,12 +88,15 @@
     font-size: 2.2rem;
     font-weight: bold;
     text-align: left;
+    display: flex;
+    align-items: center;
   }
   
   .name {
-    text-align: left;
     font-size: 1.3rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
   }
   
   .points {
@@ -99,6 +106,17 @@
     justify-content: flex-end;
     align-items: center;
   }
+
+  @media (max-width: 1000px) {
+    .number .name .points {
+      font-size: 0.5rem;
+    }
+
+    td {
+      padding: 0.2rem 0.5rem;
+    }
+  }
+
   
   .points:first-child {
     width: 10rem;

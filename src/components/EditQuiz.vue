@@ -52,7 +52,7 @@ const addQuestion = (type = 'multipleChoice') => {
 
 onMounted(async () => {
     const quizId = router.currentRoute.value.params.id; // Or use `useRoute` if inside a setup function
-        quiz(56).then(response => {
+        quiz(57).then(response => {
             populateFormWithData(response.data);
         }).catch(error => {
             console.error('Quiz fetch error:', error);

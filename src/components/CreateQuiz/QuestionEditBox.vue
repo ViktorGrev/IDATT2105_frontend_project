@@ -322,6 +322,7 @@ select {
     letter-spacing: normal;
     line-height: 1.5;
     padding: 1rem;
+    cursor: pointer;
 }
 
 select::-ms-expand {

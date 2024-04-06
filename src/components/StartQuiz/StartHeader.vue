@@ -3,7 +3,7 @@
       <div class="topHeader">
         <div class="title">{{ title }}</div>
         <div class="amountQuestion">{{ questions }} questions</div>
-        <div class="views">{{ views }} views</div>
+        <!--<div class="views">{{ views }} views</div>-->
       </div>
       <div class="bottomHeader">
         <div class="creator">Made by: {{ creator }}</div>
@@ -25,6 +25,7 @@
     display: flex;
     justify-content: start;
     flex-direction: column;
+    margin-right: 4rem;
 }
 
 .topHeader {

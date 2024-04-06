@@ -377,7 +377,6 @@ main {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    scroll-behavior: smooth;
     width: 100%;
 }
 
@@ -397,7 +396,6 @@ main {
     justify-content: left;
     flex-direction: column;
     align-items: left;
-    font-family: hurme_no2-webfont, -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 700;
     font-size: 1.2rem;
     margin: 10px;
@@ -407,12 +405,8 @@ main {
 .titleInput {
     font-weight: 600;
     font-size: 1.2rem;
-    letter-spacing: normal;
     line-height: 1.5;
-    appearance: none;
     border: none;
-    box-shadow: none;
-    color: var(--gray-800-gray-200);
     cursor: text;
     filter: none;
     flex: 1 1 auto;
@@ -434,11 +428,8 @@ main {
     font-size: 1.2rem;
     letter-spacing: normal;
     line-height: 1.5;
-    appearance: none;
     border: none;
-    box-shadow: none;
     cursor: text;
-    filter: none;
     flex: 1 1 auto;
     background-color: initial;
     padding-right: 1rem;
@@ -459,11 +450,8 @@ main {
 .descriptionInput {
     font-weight: 600;
     font-size: 1.2rem;
-    letter-spacing: normal;
     line-height: 1.5;
-    appearance: none;
     border: none;
-    box-shadow: none;
     cursor: text;
     background-color: initial;
     background-color: white;
@@ -563,9 +551,7 @@ main {
 }
 
 .contentCreation {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     font-weight: 500;
-    color: white;
     margin: 10px;
     margin-top: 2rem;
 }
@@ -577,13 +563,9 @@ main {
 .category {
     font-weight: 600;
     font-size: 1.2rem;
-    letter-spacing: normal;
     line-height: 1.5;
-    appearance: none;
     border: none;
-    box-shadow: none;
-    cursor: text;
-    filter: none;
+    cursor: pointer;
     flex: 1 1 auto;
     background-color: initial;
     padding: 0px;
@@ -618,57 +600,6 @@ main {
     align-content: space-around;
     margin-top: 1rem;
     margin-bottom: 2rem;
-}
-
-.question {
-    width: 60%;
-    font-weight: 600;
-    font-size: 1.2rem;
-    letter-spacing: normal;
-    line-height: 1.5;
-    appearance: none;
-    border: none;
-    box-shadow: none;
-    cursor: text;
-    filter: none;
-    flex: 1 1 auto;
-    background-color: initial;
-    padding-right: 1rem;
-    background-color: white;
-    height: 3rem;
-    border-radius: 10px;
-    color: #586380;
-    margin-bottom: 1rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
-}
-
-.question:focus {
-    outline: none;
-    border-bottom: 5px solid rgb(22, 144, 248);
-}
-
-.answer {
-    width: 60%;
-    height: 100px;
-    margin-bottom: 1rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
-    font-weight: 600;
-    font-size: 1.2rem;
-    letter-spacing: normal;
-    line-height: 1.5;
-    appearance: none;
-    border: none;
-    box-shadow: none;
-    cursor: text;
-    filter: none;
-    flex: 1 1 auto;
-    background-color: initial;
-    padding-right: 1rem;
-    background-color: white;
-    border-radius: 10px;
-    color: #586380;
 }
 
 .answer:focus {

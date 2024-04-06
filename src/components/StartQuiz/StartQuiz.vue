@@ -7,14 +7,14 @@
             <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
           </div>
           <div class="content">
-            <div id="header">
-              <button class="leaderBoardButton" @click="toggleView">{{ showLeaderboard ? 'Show Recent Attempts' : 'Show Leaderboard' }}</button>
-              <h1>{{ showLeaderboard ? 'Ranking' : 'Recent Attempts' }}</h1>
+            <div id="leaderboard">
+              <h1>Ranking</h1>
+              <Leaderboard :leaderboard="leaderboardData" @navigateToUserProfile="navigateToUserProfile" />
             </div>
-            <!-- Pass leaderboard data to the LeaderboardComponent -->
-            <Leaderboard v-if="showLeaderboard" :leaderboard="leaderboardData" @navigateToUserProfile="navigateToUserProfile" />
-            <!-- Assuming RecentAttempts is your component for showing recent attempts -->
-            <RecentAttempts v-else :attempts="recentAttemptsData" />
+            <div id="recent" >
+              <h1>Recent Attepts</h1>
+              <RecentAttempts :attempts="recentAttemptsData" />
+            </div>
           </div>
         </div>
       </div>
@@ -87,19 +87,41 @@ main {
     width: 60%;
     height: 100%;
     margin: 30px;
-    margin-bottom: 4rem;
+    margin-bottom: 6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (max-width: 10000px) {
+    .wrapper {
+        width: 80%;
+    }
+  
+}
+
+@media (max-width: 800px) {
+    .wrapper {
+        width: 90%;
+    }
+  
 }
 
 .contentBox {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .content {
-    width: 60%;
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     margin-top: 1rem;
+    justify-content: center;
+    align-items: start;
 }
 
 /*playBox*/
@@ -107,7 +129,6 @@ main {
 .playBox {
     width: 40%;
     display: flex;
-
     align-items: start;
 }
 
@@ -124,7 +145,7 @@ main {
     transition: all 0.3s ease-in-out;
     border: 1px solid rgb(22, 144, 248);
     box-shadow: 0 0 0 0 rgb(22, 144, 248);
-    margin-top: 6.7rem;
+    margin-top: 2rem;
 }
 
 .playButton:hover {
@@ -145,5 +166,15 @@ main {
   font-weight: 700;
   border-radius: 10px;
   cursor: pointer;
+}
+
+#leaderboard {
+  width: 80%;
+}
+
+#recent {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
 }
 </style>

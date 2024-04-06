@@ -61,6 +61,7 @@ async function fetchQuizData() {
   qId.value = quizId;
   quiz(quizId).then((response) => {
     quizData.value = response.data;
+    console.log(quizData.value);
     // Initialize selectedAnswers with arrays for multiple choice questions
     selectedAnswers.value = quizData.value.questions.map(question => question.type === 'MULTIPLE_CHOICE' ? [] : null);
     userInputs.value = new Array(quizData.value.questions.length).fill('');
@@ -97,7 +98,9 @@ async function submitQuiz() {
   };
 
   quizCompleted.value = true;
-  answers(qId, results.answers).then((response) => {
+  console.log(results.answers);
+  console.log("Hallo " + qId.value);
+  answers(qId.value, results.answers).then((response) => {
     console.log(JSON.stringify(response.data, null, 2));
     router.push({ name: 'result', params: { id: response.data.id } });
   }).catch((error) => {
