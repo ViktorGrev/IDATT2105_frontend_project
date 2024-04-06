@@ -14,7 +14,6 @@ async function fetchUserData() {
     try {
       const usernameParam = route.params.username[0];
         const response = await getByUsername(usernameParam);
-        console.log(response.data);
         username.value = response.data.username;
     } catch (error) {
         console.error("Failed to fetch quiz data:", error);
@@ -23,7 +22,6 @@ async function fetchUserData() {
 
 // Fetch quiz data when component mounts
 onMounted(() => {
-    console.log("Hallo")
     fetchUserData(); // Fetch quiz with ID 10
 });
 </script>

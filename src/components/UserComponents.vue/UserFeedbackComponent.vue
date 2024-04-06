@@ -76,7 +76,6 @@ const submitForm = async () => {
       }
 
       const data = await response.json();
-      console.log('Form submitted:', data);
       // Update submission status for UI feedback
       submissionStatus.value = 'Form submitted successfully';
     } catch (error) {
@@ -84,7 +83,6 @@ const submitForm = async () => {
       submissionStatus.value = 'Submission failed';
     }
   } else {
-    console.log('Form not submitted');
     submissionStatus.value = 'Please fill in all fields';
   }
 };

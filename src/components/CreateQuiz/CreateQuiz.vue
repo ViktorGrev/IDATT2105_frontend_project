@@ -43,7 +43,7 @@ const addQuestion = (type = 'multipleChoice') => {
         id: nextId,
         questionText: '',
         answers: answers,
-        correctAnswerIndices: [],
+        correctAnswerIndices: [0],
         type: 'multipleChoice'
     });
     currentQuestionId.value = nextId;
@@ -54,7 +54,6 @@ const findQuestionById = (id) => {
 };
 
 const deleteQuestion = (id) => {
-    console.log(`Deleting question with id: ${id}`);
     const index = questions.findIndex(q => q.id === id);
     if (index !== -1) {
         questions.splice(index, 1);
@@ -105,7 +104,6 @@ const handleQuizImageUpload = (event) => {
         reader.onloadend = () => {
             // Store the Base64 string
             quizImage.value = reader.result;
-            console.log(quizImage.value); // Logs the Base64 string
         };
         reader.readAsDataURL(file); // Converts the file to Base64
     }
@@ -150,7 +148,7 @@ const createQuiz = async () => {
                 }));
                 break;
             case 'trueFalse':
-                question.true = q.correctAnswerIndex === 0;
+                question.true = q.correctAnswerIndices.includes(0);
                 break;
             case 'fillInBlank':
                 question.solution = q.answers[0];
@@ -158,8 +156,6 @@ const createQuiz = async () => {
             default:
         }
 
-        // Conditionally add the image property if it exists
-        console.log(q.image);
         if (q.image) {
             question.image = q.image;
         }
@@ -171,8 +167,8 @@ const createQuiz = async () => {
         title: quizTitle.value,
         category: quizCategory.value,
         description: quizDescription.value,
-        tags: quizTags.value, // Assuming you want to split tags by commas into an array
-        random: quizRandomization.value, // Assuming this is a checkbox and you want a boolean value
+        tags: quizTags.value,
+        random: quizRandomization.value,
         image: quizImage.value,
         coAuthors: quizCoAuthors.value,
         questions: formattedQuestions,
@@ -222,7 +218,6 @@ const importQuiz = (event) => {
         Papa.parse(file, {
             delimiter: ";", // Specifying the delimiter as semicolon
             complete: (result) => {
-                console.log('Parsed:', result);
                 if (result.data.length > 1) {
                     // Parse quiz metadata
                     quizTitle.value = result.data[1][0];

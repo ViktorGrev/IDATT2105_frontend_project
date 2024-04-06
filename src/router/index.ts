@@ -85,7 +85,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(sessionStorage.getItem("userToken"));
   const isLoggedIn = () => !!sessionStorage.getItem("userToken");
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   if (requiresAuth && !isLoggedIn()) {

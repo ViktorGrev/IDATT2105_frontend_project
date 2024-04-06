@@ -67,7 +67,7 @@ const confirmPasswordError = ref("");
 
 const attemptSignup = async () => {
   if (username.value === "" || password.value === "" || confirmPassword.value === "") {
-    console.log("Hallo");
+
     alertColor.value = "red";
     if (username.value === "") { usernameError.value = "Username is empty"; } else { usernameError.value = "";}
     if (password.value === "") { passwordError.value = "Password is empty"; } else { passwordError.value = "";}

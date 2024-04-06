@@ -97,7 +97,6 @@ async function submitQuiz() {
   };
 
   quizCompleted.value = true;
-  console.log("Submitting quiz:", results.answers);
   answers(qId, results.answers).then((response) => {
     console.log(JSON.stringify(response.data, null, 2));
     router.push({ name: 'result', params: { id: response.data.id } });

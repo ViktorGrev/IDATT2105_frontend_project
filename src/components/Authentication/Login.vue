@@ -57,7 +57,6 @@ const passwordError = ref("");
 
 const attemptLogin = async () => {
   if (username.value === "" || password.value === "") {
-    console.log("Hallo");
     if (username.value === "") { usernameError.value = "Username is empty"; } else { usernameError.value = "";}
     if (password.value === "") { passwordError.value = "Password is empty"; } else { passwordError.value = "";}
   }
@@ -69,7 +68,6 @@ const attemptLogin = async () => {
 
 const loginUser = async () => {
     login(username.value, password.value). then(response => {
-      console.log('Login response:', response);
       sessionStorage.setItem('userToken', response.data.token);
       router.push({ name: 'home' });
     }).catch(error => {
