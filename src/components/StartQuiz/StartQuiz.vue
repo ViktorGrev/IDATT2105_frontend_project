@@ -8,10 +8,13 @@
           </div>
           <div class="content">
             <div id="header">
-              <h1>Ranking</h1>
+              <button class="leaderBoardButton" @click="toggleView">{{ showLeaderboard ? 'Show Recent Attempts' : 'Show Leaderboard' }}</button>
+              <h1>{{ showLeaderboard ? 'Ranking' : 'Recent Attempts' }}</h1>
             </div>
             <!-- Pass leaderboard data to the LeaderboardComponent -->
-            <Leaderboard :leaderboard="leaderboardData" @navigateToUserProfile="navigateToUserProfile" />
+            <Leaderboard v-if="showLeaderboard" :leaderboard="leaderboardData" @navigateToUserProfile="navigateToUserProfile" />
+            <!-- Assuming RecentAttempts is your component for showing recent attempts -->
+            <RecentAttempts v-else :attempts="recentAttemptsData" />
           </div>
         </div>
       </div>
@@ -24,6 +27,7 @@
   import { useRouter, useRoute } from 'vue-router';
   import Leaderboard from './Leaderboard.vue';
   import StartHeader from './StartHeader.vue';
+  import RecentAttempts from './RecentAttempts.vue';
   import { leaderboard, quiz } from '@/api/QuizController';
   
   const router = useRouter();
@@ -31,9 +35,11 @@
   
   let playId = ref(0);
   let leaderboardData = ref([]);
+  let recentAttemptsData = ref([]);
   let title = ref("Quiz Title");
   let questions = ref(0);
   let creator = ref("Player 1");
+  let showLeaderboard = ref(true);
   
   const navigateToTheQuiz = () => {
     router.push({ name: 'play', params: { id: playId.value } });
@@ -62,6 +68,10 @@
   const navigateToUserProfile = (userId) => {
     router.push({ name: 'user', params: { id: userId } });
   };
+
+  const toggleView = () => {
+  showLeaderboard.value = !showLeaderboard.value;
+};
   
   onMounted(fetchQuizData);
   </script>
@@ -122,12 +132,18 @@ main {
     box-shadow: 2px 5px 0 0 rgb(22, 144, 248);
 }
 
-;
-
 .playButton:active {
     transform: translateY(2px) translateX(1px);
     box-shadow: 0 0 0 0 rgb(22, 144, 248);
 }
 
-;
+.leaderBoardButton {
+  background-color: rgb(22, 144, 248);
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+}
 </style>

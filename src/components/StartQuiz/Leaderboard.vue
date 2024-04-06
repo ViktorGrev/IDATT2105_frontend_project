@@ -14,10 +14,6 @@
         <td v-else class="points">{{ entry.score }}</td>
         </tr>
       </table>
-      <div id="buttons">
-        <button class="exit">Global</button>
-        <button class="continue">Friends</button>
-      </div>
     </div>
   </template>
   
