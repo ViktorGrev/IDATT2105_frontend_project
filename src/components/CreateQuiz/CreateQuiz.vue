@@ -195,9 +195,10 @@ const handleUpdateQuestion = (updatedQuestion) => {
 };
 
 const addCoAuthor = () => {
-    if (!quizCoAuthors.value.includes(quizCoAuthorInput.value) && quizCoAuthorInput.value.trim() !== '') {
-        quizCoAuthors.value.push(quizCoAuthorInput.value.trim());
-        quizCoAuthorInput.value = ''; // Clear the input field after adding the co-author
+    const coAuthorInput = quizCoAuthorInput.value.trim();
+    if (!quizCoAuthors.value.includes(coAuthorInput) && coAuthorInput !== '') {
+      quizCoAuthors.value.push(coAuthorInput);
+      quizCoAuthorInput.value = '';
     }
 };
 

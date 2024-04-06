@@ -1,24 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from 'vue-router'
-import axios from 'axios';
 import History from '../../components/history.vue';
 import LongTermHistoryComponent from '@/components/LongTermHistoryComponent.vue';
+import {getByUsername} from "@/api/UserController";
 
 const route = useRoute() // Use useRoute to access the current route details
 
 let username = ref("");
 
 async function fetchUserData() {
-    const userId = route.params.id;
     
     try {
-        const response = await axios.get('http://localhost:8080/api/user/' + userId, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
-            }
-        });
+      const usernameParam = route.params.username[0];
+        const response = await getByUsername(usernameParam);
         console.log(response.data);
         username.value = response.data.username;
     } catch (error) {

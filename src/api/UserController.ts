@@ -17,3 +17,12 @@ export const changeUsername = (username: string) => {
     };
     return axios.put("http://localhost:8080/api/users/username/" + username, {}, config);
 }
+
+export const getByUsername = (username: string) => {
+    const config = {
+        headers: {
+            "Authorization": "Bearer " + sessionStorage.getItem("userToken")
+        }
+    };
+    return axios.get("http://localhost:8080/api/users/" + username, config);
+}
