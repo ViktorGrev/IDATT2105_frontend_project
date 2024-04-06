@@ -1,7 +1,7 @@
 <template>
     <main>
       <div class="wrapper">
-        <StartHeader :title="'History'" :questions="50" :views="10" :creator="'Player 1'"/>
+        <StartHeader :title="title" :questions="questions" :views="10" :creator="creator"/>
         <div class="contentBox">
           <div class="playBox">
             <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
@@ -24,13 +24,16 @@
   import { useRouter, useRoute } from 'vue-router';
   import Leaderboard from './Leaderboard.vue';
   import StartHeader from './StartHeader.vue';
-  import { leaderboard } from '@/api/QuizController';
+  import { leaderboard, quiz } from '@/api/QuizController';
   
   const router = useRouter();
   const route = useRoute();
   
   let playId = ref(0);
   let leaderboardData = ref([]);
+  let title = ref("Quiz Title");
+  let questions = ref(0);
+  let creator = ref("Player 1");
   
   const navigateToTheQuiz = () => {
     router.push({ name: 'play', params: { id: playId.value } });
@@ -44,6 +47,15 @@
       }).catch((error) => {
         console.error("Failed to fetch leaderboard data:", error);
       });
+      quiz(quizId).then((response) => {
+        console.log(response.data);
+        title.value = response.data.title;
+        questions.value = response.data.questions.length;
+        creator.value = response.data.creator.username;
+      }).catch((error) => {
+        console.error("Failed to fetch quiz data:", error);
+      });
+
     
   }
   
