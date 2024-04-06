@@ -65,6 +65,12 @@ const routes = [
     name: 'settings',
     component: () => import('../views/User/UserSettingsView.vue'),
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/edit',
+    name: 'edit',
+    component: () => import('../views/Quiz/QuizEditView.vue'),
+    meta: { requiresAuth: true },
   }
 ];
 

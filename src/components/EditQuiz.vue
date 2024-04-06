@@ -2,8 +2,9 @@
 import { ref, reactive, nextTick } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import QuestionEditBox from './QuestionEditBox.vue';
-import { create } from '@/api/QuizController';
+import QuestionChangeBox from './QuestionChangeBox.vue';
+import { create, quiz } from '@/api/QuizController';
+import { onMounted } from 'vue';
 
 const quizTitle = ref('');
 const quizTags = ref([]); // Array to hold tags
@@ -23,7 +24,7 @@ const questions = reactive([
         id: 1,
         questionText: '',
         answers: ['', '', '', ''],
-        correctAnswerIndices: [0], // Changed from correctAnswerIndex to an array
+        correctAnswerIndices: [], // Changed from correctAnswerIndex to an array
         type: 'multipleChoice',
         image: null,
     }
@@ -43,11 +44,42 @@ const addQuestion = (type = 'multipleChoice') => {
         id: nextId,
         questionText: '',
         answers: answers,
-        correctAnswerIndices: [],
+        correctAnswerIndices: [0],
         type: 'multipleChoice'
     });
     currentQuestionId.value = nextId;
 };
+
+onMounted(async () => {
+    console.log("Hallo");
+    const quizId = router.currentRoute.value.params.id; // Or use `useRoute` if inside a setup function
+        quiz(42).then(response => {
+            console.log('Quiz data:', response.data);
+            populateFormWithData(response.data);
+        }).catch(error => {
+            console.error('Quiz fetch error:', error);
+        });
+});
+
+function populateFormWithData(data) {
+    quizTitle.value = data.title;
+    quizCategory.value = data.category;
+    quizDescription.value = data.description;
+    quizTags.value = data.tags;
+    quizRandomization.value = data.random;
+    quizImage.value = data.image;
+    quizCoAuthors.value = data.coAuthors;
+    // Replace placeholder questions with actual data
+    questions.splice(0, questions.length, ...data.questions.map((q, index) => ({
+        id: index + 1, // Assuming no ID is provided for options, otherwise use q.id
+        questionText: q.text,
+        answers: q.options?.map(option => option.optionText) || [q.solution],
+        type: q.type.toLowerCase().replace('multiple_choice', 'multipleChoice').replace('true_false', 'trueFalse').replace('fill_in_the_blank', 'fillInBlank'),
+        correctAnswerIndices: q.options?.flatMap((option, index) => option.correct ? [index] : []) || [],
+        image: q.image,
+    })));
+    console.log(JSON.stringify(questions, null, 2));
+}
 
 const findQuestionById = (id) => {
     return questions.find(q => q.id === id);
@@ -121,18 +153,23 @@ const triggerQuizImageUpload = () => {
 const setCorrectAnswer = (questionId, answerIndex) => {
     const question = findQuestionById(questionId);
     if (question) {
-        const index = question.correctAnswerIndices.indexOf(answerIndex);
-        if (index > -1) {
-            // If found, remove it
-            question.correctAnswerIndices.splice(index, 1);
+        if (question.type === 'trueFalse') {
+            // For TRUE_FALSE, ensure only one correct answer can be set
+            question.correctAnswerIndices = [answerIndex];
         } else {
-            // Otherwise, add it
-            question.correctAnswerIndices.push(answerIndex);
+            // For MULTIPLE_CHOICE or other types allowing multiple correct answers
+            const index = question.correctAnswerIndices.indexOf(answerIndex);
+            if (index > -1) {
+                question.correctAnswerIndices.splice(index, 1);
+            } else {
+                question.correctAnswerIndices.push(answerIndex);
+            }
         }
     }
 };
 
 const createQuiz = async () => {
+    const quizId = router.currentRoute.value.params.id;
     const formattedQuestions = questions.map((q) => {
         // Construct the base question object without the image property
         let question = {
@@ -365,7 +402,7 @@ const importQuiz = (event) => {
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionsList">
-                    <QuestionEditBox v-for="(question, index) in questions" :key="question.id" :question="question"
+                    <QuestionChangeBox v-for="(question, index) in questions" :key="question.id" :question="question"
                         :index="index" @updateQuestion="handleUpdateQuestion" @deleteQuestion="deleteQuestion"
                         @setCorrectAnswer="setCorrectAnswer" @handleImageUpload="handleImageUpload" />
                     <button class="addQuestionButton" @click="addQuestion">+ Add Question</button>

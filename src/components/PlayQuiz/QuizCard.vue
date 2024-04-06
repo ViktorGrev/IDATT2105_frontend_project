@@ -14,7 +14,7 @@
           <div class="answers">
             <MultipleChoiceButton v-if="question.type === 'MULTIPLE_CHOICE'"
               v-for="(option, optionIndex) in question.options" :key="optionIndex" :optionText="option.optionText"
-              :optionIndex="optionIndex" :isSelected="selectedAnswers[index] === optionIndex"
+              :optionIndex="optionIndex" :isSelected="selectedAnswers[index].includes(optionIndex)"
               @select="selectAnswer(index, optionIndex)" />
             <div v-if="question.type === 'TRUE_FALSE'">
               <TFButton :value="true" :isSelected="selectedAnswers[index] === true"
@@ -44,74 +44,83 @@ import TFButton from './TFButton.vue';
 import BlankInput from './BlankInput.vue';
 import { quiz, answers } from '@/api/QuizController';
 
-let quizData = ref(null); // Use `ref` for async data
+let quizData = ref(null);
 let selectedAnswers = ref([]);
 let userInputs = ref([]);
-provide('userInputs', userInputs);
 let quizCompleted = ref(false);
+
+provide('userInputs', userInputs);
 
 const route = useRoute();
 const router = useRouter();
 
-let qId = ref(0);
+const qId = ref(0);
 
 async function fetchQuizData() {
   const quizId = route.params.id;
-  qId = quizId;
-    quiz(quizId).then((response) => {
-      quizData.value = response.data;
-      console.log(JSON.stringify(quizData.value, null, 2));
-      selectedAnswers.value = quizData.value.questions.map(() => null);
-      userInputs.value = new Array(quizData.value.questions.length).fill('');
-    }).catch((error) => {
-      console.error("Failed to fetch quiz data:", error);
-    });
+  qId.value = quizId;
+  quiz(quizId).then((response) => {
+    quizData.value = response.data;
+    // Initialize selectedAnswers with arrays for multiple choice questions
+    selectedAnswers.value = quizData.value.questions.map(question => question.type === 'MULTIPLE_CHOICE' ? [] : null);
+    userInputs.value = new Array(quizData.value.questions.length).fill('');
+  }).catch((error) => {
+    console.error("Failed to fetch quiz data:", error);
+  });
 }
 
-// Fetch quiz data when component mounts
-onMounted(() => {
-  fetchQuizData(); // Fetch quiz with ID 10
-});
+onMounted(fetchQuizData);
 
 async function submitQuiz() {
   let results = {
-  "answers": quizData.value.questions.map((question, index) => {
+    "answers": quizData.value.questions.map((question, index) => {
       let answer = null;
 
       if (question.type === 'MULTIPLE_CHOICE') {
-        if (selectedAnswers.value[index] !== null) {
-          const selectedOption = question.options[selectedAnswers.value[index]];
-          answer = selectedOption ? selectedOption.id : null; // Adjust according to what needs to be submitted
-        }
+        // For multiple choice, gather all selected option IDs
+        answer = selectedAnswers.value[index] && selectedAnswers.value[index].length > 0
+          ? selectedAnswers.value[index].map(optionIndex => question.options[optionIndex].id)
+          : null;
       } else if (question.type === 'TRUE_FALSE') {
         // TRUE_FALSE selections are directly the boolean value
         answer = selectedAnswers.value[index] !== null ? selectedAnswers.value[index] : null;
       } else if (question.type === 'FILL_IN_THE_BLANK') {
-        // Directly use userInputs without filtering for empty, as we already filter for non-empty answers below
+        // Directly use userInputs for FILL_IN_THE_BLANK
         answer = userInputs.value[index] && userInputs.value[index].trim() !== '' ? userInputs.value[index].trim() : null;
       }
 
       return {
         "question": question.id,
-        "answer": answer // Answer, null if unanswered, or undefined if not applicable
+        "answer": answer // Answer could be null, a single value, or an array of values
       };
     }).filter(answer => answer.answer !== null && answer.answer !== undefined) // Filter out unanswered questions
   };
 
   quizCompleted.value = true;
-    answers(qId, results.answers).then((response) => {
-      console.log(JSON.stringify(response.data, null, 2));
-      router.push({ name: 'result', params: { id: response.data.id } });
-    }).catch((error) => {
-      console.error("Failed to submit quiz:", error);
-    });
+  console.log("Submitting quiz:", results.answers);
+  answers(qId, results.answers).then((response) => {
+    console.log(JSON.stringify(response.data, null, 2));
+    router.push({ name: 'result', params: { id: response.data.id } });
+  }).catch((error) => {
+    console.error("Failed to submit quiz:", error);
+  });
 }
 
 
 function selectAnswer(questionIndex, optionIndex) {
-  selectedAnswers.value[questionIndex] = optionIndex;
+  if (quizData.value.questions[questionIndex].type === 'MULTIPLE_CHOICE') {
+    // Toggle optionIndex in selectedAnswers for the question
+    const currentIndex = selectedAnswers.value[questionIndex].indexOf(optionIndex);
+    if (currentIndex === -1) {
+      selectedAnswers.value[questionIndex].push(optionIndex);
+    } else {
+      selectedAnswers.value[questionIndex].splice(currentIndex, 1);
+    }
+  } else {
+    selectedAnswers.value[questionIndex] = optionIndex;
+  }
+  // Trigger reactivity
   selectedAnswers.value = [...selectedAnswers.value];
-  scrollToNextQuestion(questionIndex);
 }
 
 function scrollToNextQuestion(index) {
@@ -127,8 +136,13 @@ function scrollToNextQuestion(index) {
 }
 
 function skipQuestion(index) {
-  // Unmark the selected answer for the current question
-  selectedAnswers.value[index] = null;
+  // Check the question type and reset accordingly
+  if (quizData.value.questions[index].type === 'MULTIPLE_CHOICE') {
+    selectedAnswers.value[index] = []; // Clear the array for multiple-choice questions
+  } else {
+    selectedAnswers.value[index] = null; // For other types, set to null
+  }
+  
   userInputs.value[index] = ''; // Clear user input if it's a fill-in-the-blank question
   // Scroll to the next question
   scrollToNextQuestion(index);
@@ -162,6 +176,7 @@ function skipQuestion(index) {
   color: #586380;
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .card {
