@@ -53,7 +53,7 @@ const addQuestion = (type = 'multipleChoice') => {
 onMounted(async () => {
     console.log("Hallo");
     const quizId = router.currentRoute.value.params.id; // Or use `useRoute` if inside a setup function
-        quiz(42).then(response => {
+        quiz(48).then(response => {
             console.log('Quiz data:', response.data);
             populateFormWithData(response.data);
         }).catch(error => {
@@ -69,15 +69,25 @@ function populateFormWithData(data) {
     quizRandomization.value = data.random;
     quizImage.value = data.image;
     quizCoAuthors.value = data.coAuthors;
+
     // Replace placeholder questions with actual data
-    questions.splice(0, questions.length, ...data.questions.map((q, index) => ({
-        id: index + 1, // Assuming no ID is provided for options, otherwise use q.id
-        questionText: q.text,
-        answers: q.options?.map(option => option.optionText) || [q.solution],
-        type: q.type.toLowerCase().replace('multiple_choice', 'multipleChoice').replace('true_false', 'trueFalse').replace('fill_in_the_blank', 'fillInBlank'),
-        correctAnswerIndices: q.options?.flatMap((option, index) => option.correct ? [index] : []) || [],
-        image: q.image,
-    })));
+    questions.splice(0, questions.length, ...data.questions.map((q, index) => {
+        // Handling for "TRUE_FALSE" questions to store the 'true' value as a correctAnswerIndices
+        let correctAnswerIndices = [];
+        if (q.type === "TRUE_FALSE") {
+            correctAnswerIndices = q.true ? [0] : [1]; // If 'true' is true, the correct answer is 'True' (index 0), else 'False' (index 1)
+        } else if (q.options) {
+            correctAnswerIndices = q.options.flatMap((option, index) => option.correct ? [index] : []);
+        }
+        return {
+            id: index + 1,
+            questionText: q.text,
+            answers: q.type === "TRUE_FALSE" ? ['True', 'False'] : q.options?.map(option => option.optionText) || [q.solution],
+            type: q.type.toLowerCase().replace('multiple_choice', 'multipleChoice').replace('true_false', 'trueFalse').replace('fill_in_the_blank', 'fillInBlank'),
+            correctAnswerIndices: correctAnswerIndices,
+            image: q.image,
+        };
+    }));
     console.log(JSON.stringify(questions, null, 2));
 }
 
@@ -169,7 +179,6 @@ const setCorrectAnswer = (questionId, answerIndex) => {
 };
 
 const createQuiz = async () => {
-    const quizId = router.currentRoute.value.params.id;
     const formattedQuestions = questions.map((q) => {
         // Construct the base question object without the image property
         let question = {

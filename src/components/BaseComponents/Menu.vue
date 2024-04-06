@@ -6,20 +6,19 @@
       <input type="radio" name="slider" id="close-btn">
       <ul class="nav-links">
         <label for="close-btn" class="btn close-btn"><i class="fas fa-times"></i></label>
-        <li><a href="#" @click="home">Home</a></li>
-        <li><a href="#" @click="yourLibrary">Your Library</a></li>
-        <li><a href="#" @click="create">Create</a></li>
-        <li><a href="#" @click="search">Search</a></li>
+        <li><a href="#" @click="home"><img src="@/assets/icons/download (2).svg">Home</a></li>
+        <li><a href="#" @click="yourLibrary"><img src="@/assets/icons/download (6).svg">Your Library</a></li>
+        <li><a href="#" @click="create"><img src="@/assets/icons/download (7).svg">Create</a></li>
+        <li><a href="#" @click="search"><img src="@/assets/icons/download (4).svg">Search</a></li>
         <li v-if="isLoggedIn">
-          <a href="#" class="desktop-item">User</a>
+          <a href="#" class="desktop-item"><img src="@/assets/icons/download (5).svg">User</a>
           <input type="checkbox" id="showDrop">
           <label for="showDrop" class="mobile-item">Dropdown Menu</label>
           <ul class="drop-menu">
-            <li><a href="#" @click="user">Profile</a></li>
-            <li><a href="#">Your Library</a></li>
-            <li><a href="#" @click="feedback">Feedback</a></li>
-            <li><a href="#" @click="settings">Settings</a></li>
-            <li><a href="#" @click="logout">Log out</a></li>
+            <li><a href="#" @click="user"><img src="@/assets/icons/download (5).svg">Profile</a></li>
+            <li><a href="#" @click="feedback"><img src="@/assets/icons/download (8).svg">Feedback</a></li>
+            <li><a href="#" @click="settings"><img src="@/assets/icons/download.svg">Settings</a></li>
+            <li><a href="#" @click="logout"><img src="@/assets/icons/download (1).svg">Log out</a></li>
           </ul>
         </li>
         <li v-else>
