@@ -12,9 +12,8 @@ let username = ref("");
 async function fetchUserData() {
     
     try {
-      const usernameParam = route.params.username[0];
+      const usernameParam = route.params.username;
         const response = await getByUsername(usernameParam);
-        console.log(response.data);
         username.value = response.data.username;
     } catch (error) {
         console.error("Failed to fetch quiz data:", error);
