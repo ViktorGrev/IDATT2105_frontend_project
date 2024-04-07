@@ -6,7 +6,7 @@
   <div v-else>
     Total attempts: {{ numberOfAttempts }}
     <ul>
-      <li v-for="attempt in userResults" :key="attempt">
+      <li v-for="attempt in userResults" :key="attempt" @click="navigateToResult(attempt.id)">
           <span style="width: 100%;">
               <listElement>
                   <!--Changing date dynamically-->
@@ -111,21 +111,31 @@ body {
 </style>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import listElement from '../components/listElementComponent.vue'
 import { resultsByUserId } from '@/api/QuizController';
-import { getByUsername } from '@/api/UserController';
-import { useRoute } from 'vue-router'
+import { getByUsername, getSelf } from '@/api/UserController';
+import { useRoute, useRouter } from 'vue-router'
 
 const currentUserID = ref(null);
 const userResults = ref(null);
 const noRecentAttempts = ref(null);
 const numberOfAttempts = ref("");
 const route = useRoute();
-
-const currentURL = computed(() => window.location.href);
+const router = useRouter();
+const self = ref(null);
 
 const username = ref(route.params.username);
+
+async function fetchSelf() {
+  try {
+    getSelf().then((response) => {
+      self.value = response.data;
+    });
+  } catch (error) {
+    console.error("Failed to fetch self", error);
+  }
+}
 
 async function fetchUserData() {
   try {
@@ -154,9 +164,21 @@ async function fetchUserResults() {
 }
 
 onMounted(fetchUserData);
+onMounted(fetchSelf);
 
 const shortenTimestamp = (timestamp: string) => {
   const dateObj = new Date(timestamp);
   return dateObj.toLocaleDateString();
+};
+
+// Define the navigateToResult method
+const navigateToResult = (resultID) => {
+  console.log("Noe: ");
+  console.log(currentUserID.value);
+  if(self.value.id === currentUserID.value) {
+    router.push({ name: 'result', params: { id: resultID } });
+  } else {
+    console.log("Not correct userid");
+  }
 };
 </script>
