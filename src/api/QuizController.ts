@@ -73,3 +73,23 @@ export const featuredQuiz = () => {
   };
   return axios.get('http://localhost:8080/api/quiz/featured', config);
 }
+
+export const difficulty = (id: number) => {
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+      'Authorization': "Bearer " + userStore.accessToken
+    },
+  };
+  return axios.get('http://localhost:8080/api/quiz/' + id + '/difficulty', config);
+}
+
+export const deleteQuiz = (id: number) => {
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+      'Authorization': "Bearer " + userStore.accessToken
+    },
+  };
+  return axios.delete('http://localhost:8080/api/quiz/' + id, config);
+}

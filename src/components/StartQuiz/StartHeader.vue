@@ -3,7 +3,8 @@
       <div class="topHeader">
         <div class="title">{{ title }}</div>
         <div class="amountQuestion">{{ questions }} questions</div>
-        <!--<div class="views">{{ views }} views</div>-->
+        <div class="views">Average score: {{ avgScore }}</div>
+        <div class="views" :style="{ color: difficultyColor }">Difficulty: {{ difficulty }}</div>
       </div>
       <div class="bottomHeader">
         <div class="creator">Made by: {{ creator }}</div>
@@ -12,13 +13,31 @@
   </template>
   
   <script setup lang="ts">
-  defineProps({
-    title: String,
-    questions: Number,
-    views: Number,
-    creator: String,
-  });
-  </script>
+import { computed } from 'vue';
+
+const props = defineProps({
+  title: String,
+  questions: Number,
+  avgScore: String,
+  difficulty: String,
+  creator: String,
+});
+
+const difficultyColor = computed(() => {
+  console.log(props.difficulty)
+  switch (props.difficulty) {
+    case 'EASY':
+      return 'green';
+    case 'MEDIUM':
+      return 'orange';
+    case 'HARD':
+      return 'red';
+    default:
+      return '#586380';
+  }
+});
+</script>
+
 
 <style scoped>
 .header {
@@ -26,6 +45,10 @@
     justify-content: start;
     flex-direction: column;
     margin-right: 4rem;
+    background-color: blanchedalmond;
+    padding: 1rem 1rem;
+    border-radius: 15px;
+    border: 2px solid #586380;;
 }
 
 .topHeader {
@@ -42,6 +65,7 @@
     font-weight: 700;
     font-size: 3rem;
     color: #586380;
+    
 }
 
 .views {
