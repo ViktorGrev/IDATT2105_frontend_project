@@ -3,17 +3,20 @@ import { ref, reactive, nextTick } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import QuestionChangeBox from './QuestionChangeBox.vue';
-import { create, quiz } from '@/api/QuizController';
+import { editQuiz, quiz } from '@/api/QuizController';
 import { onMounted } from 'vue';
 
+const quizId = ref(0);
+const time = ref("");
+const creator = ref("");
 const quizTitle = ref('');
-const quizTags = ref([]); // Array to hold tags
-const quizTagInput = ref(''); // New ref for the tag input field
+const quizTags = ref([]);
+const quizTagInput = ref('');
 const quizDescription = ref('');
-const quizCategory = ref(''); // Default category is empty
+const quizCategory = ref('');
 const quizRandomization = ref(false);
 const quizImage = ref(null);
-const quizCoAuthors = ref([]); // New state for storing co-authors
+const quizCoAuthors = ref([]);
 const quizCoAuthorInput = ref('');
 defineProps(['question']);
 
@@ -52,7 +55,8 @@ const addQuestion = (type = 'multipleChoice') => {
 
 onMounted(async () => {
     const quizId = router.currentRoute.value.params.id; // Or use `useRoute` if inside a setup function
-        quiz(57).then(response => {
+        quiz(58).then(response => {
+            console.log(JSON.stringify(response.data, null, 2));
             populateFormWithData(response.data);
         }).catch(error => {
             console.error('Quiz fetch error:', error);
@@ -60,6 +64,9 @@ onMounted(async () => {
 });
 
 function populateFormWithData(data) {
+    quizId.value = data.id;
+    time.value = data.timestamp;
+    creator.value = data.creator;
     quizTitle.value = data.title;
     quizCategory.value = data.category;
     quizDescription.value = data.description;
@@ -178,6 +185,7 @@ const createQuiz = async () => {
     const formattedQuestions = questions.map((q) => {
         // Construct the base question object without the image property
         let question = {
+            id: q.id,
             text: q.questionText,
             type: q.type.replace('multipleChoice', 'MULTIPLE_CHOICE')
                 .replace('trueFalse', 'TRUE_FALSE')
@@ -203,11 +211,12 @@ const createQuiz = async () => {
         if (q.image) {
             question.image = q.image;
         }
-
+        console.log(question);
         return question;
     });
 
     const quiz = {
+        id: quizId.value,
         title: quizTitle.value,
         category: quizCategory.value,
         description: quizDescription.value,
@@ -216,12 +225,14 @@ const createQuiz = async () => {
         image: quizImage.value,
         coAuthors: quizCoAuthors.value,
         questions: formattedQuestions,
+        timestamp: time.value,
+        creator: creator.value,
     };
 
     console.log(JSON.stringify(quiz, null, 2));
 
-    create(quiz).then(response => {
-        routerView.push({ name: 'quiz', params: { id: response.data.id } });
+    editQuiz(quizId.value, quiz).then(response => {
+        console.log(response.data);
     }).catch(error => {
         console.error('Quiz creation error:', error);
     });
@@ -253,6 +264,7 @@ const triggerFileInput = () => {
 
 import Papa from 'papaparse';
 import router from '@/router';
+import { timeStamp } from 'console';
 
 const importQuiz = (event) => {
     const files = event.target.files;

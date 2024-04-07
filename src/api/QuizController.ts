@@ -104,3 +104,13 @@ export const deleteQuiz = (id: number) => {
   };
   return axios.delete('http://localhost:8080/api/quiz/' + id, config);
 }
+
+export const editQuiz = (id: number, quiz: any) => {
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+      'Authorization': "Bearer " + userStore.accessToken
+    },
+  };
+  return axios.put('http://localhost:8080/api/quiz/' + id, quiz, config);
+}

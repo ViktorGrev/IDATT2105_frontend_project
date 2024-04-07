@@ -9,6 +9,9 @@
             <button id="delete" @click="deleteThisQuiz"><img src="@/assets/icons/delete.svg">Delete quiz</button>
             <button id="edit"><img src="@/assets/icons/edit.svg">Edit quiz</button>
           </div>
+          <div v-if="role === 'ADMIN' || username === creator">
+            <button id="edit"><img src="@/assets/icons/edit.svg">Edit quiz</button>
+          </div>
           <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
         </div>
         <div class="content">
@@ -45,6 +48,7 @@ let recentAttemptsData = ref([]);
 let title = ref("Quiz Title");
 let questions = ref(0);
 let creator = ref("");
+let coAuthors = ref("");
 let avgScore = ref("");
 let difficultylvl = ref("");
 let showLeaderboard = ref(true);
