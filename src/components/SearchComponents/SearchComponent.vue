@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { search } from '@/api/UserController';
 
 // Search word
 const searchQuery = ref(null);
@@ -10,7 +11,8 @@ const searchQuery = ref(null);
 const router = useRouter();
 
 // List that the quizzes will be added to
-const quizzes = ref([]);
+const quizzes = ref(null);
+const users = ref(null);
 const apiUrl = ref(null);
 
 // Categories category
@@ -22,6 +24,7 @@ const handleKeyUp = async (event) => {
     if (event.key === 'Enter') {
       generateLink('title', searchQuery.value);
       await fetchQuizData(); // Wait for fetchQuizData to complete
+      fetchUserData();
     }
 };
 
@@ -48,9 +51,26 @@ async function fetchQuizData() {
     }
 }
 
+// Function to fetch user data
+async function fetchUserData() {
+  try {
+    search(searchQuery.value).then((response) => {
+      users.value = response.data;
+      console.log(response.data); 
+    });
+  } catch (error) {
+    console.error("Failed to fetch quiz data:", error);
+  }
+}
+
 // Define the navigateToQuiz method
 const navigateToQuiz = (quizID) => {
     router.push({ name: 'quiz', params: { id: quizID } });
+};
+
+// Define the navigateToQuiz method
+const navigateToUser = (user) => {
+    router.push({ name: 'profile', params: { username: user } });
 };
 
 // Update selected category when a button is clicked
@@ -85,6 +105,7 @@ function generateLink(searchType: 'title' | 'category', query: string): void {
     <div style="height: 50px;"></div>
     <div class="searchResults">
         <div class="contentBox">
+          <h2 style="color: #6d6e72;">Quizzes</h2>
             <div class="quizz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quizzInfo">
                     <p style="font-size: 30px;">Quizz: {{ quiz.title }}</p>
@@ -94,6 +115,12 @@ function generateLink(searchType: 'title' | 'category', query: string): void {
                     <img src="../../assets/image.png" alt="play" style="cursor: pointer;" @click="navigateToQuiz(quiz.id)">
                 </div>
             </div>
+          <h2 style="color: #6d6e72;">Users</h2>
+          <div class="categoryButtons">
+            <div class="category-box" v-for="user in users" :key="user.id" @click="navigateToUser(user.username)">  
+              {{ user.username }}
+            </div>
+        </div>
         </div>
     </div>
 </main>

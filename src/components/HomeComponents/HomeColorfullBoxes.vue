@@ -54,10 +54,35 @@ async function fetchQuizData() {
   try {
     quiz(1).then((response) => {
       quizzInfo.value = response.data;
+      console.log(quizzInfo.value);
+      
     });
   } catch (error) {
     console.error("Failed to fetch quiz data:", error);
   }
+}
+
+// Method to get quiz data
+async function fetchQuizData2() {
+    try {
+        const userToken = sessionStorage.getItem("userToken");
+        if (!userToken) {
+            throw new Error("User token not found in session storage.");
+        }    
+
+        const response = await axios.get('http://localhost:8080/api/quiz/featured', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken.trim()}`
+            }
+        });
+        console.log(response.data);
+        
+        
+
+    } catch (error) {
+        console.error("Failed to fetch quiz data:", error);
+    }
 }
 
 // Fetch quiz data when component mounts
