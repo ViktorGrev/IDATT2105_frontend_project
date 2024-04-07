@@ -56,7 +56,7 @@ const navigateToQuiz = (quizId) => {
     margin: 20px;
     flex-direction: column;
     background-size: cover;
-    background-image: url(https://th.bing.com/th/id/OIG4.MXst0.sxtmlF.FpwLjMa?w=1024&h=1024&rs=1&pid=ImgDetMain);
+    background-image: url(@/assets/yellowFeatured.jpeg);
 }
 
 .quizContainerV1:hover {
@@ -93,7 +93,7 @@ const navigateToQuiz = (quizId) => {
     flex-direction: column;
     background-size: cover;
     background-color: #b19cd9;
-    background-image: url(https://th.bing.com/th/id/OIG4.r07g3Q8hC2tCHD2hnzTv?w=1024&h=1024&rs=1&pid=ImgDetMain);
+    background-image: url(@/assets/blueFeatured.jpeg);
 }
 
 .quizContainerV2:hover {
