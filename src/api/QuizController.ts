@@ -50,3 +50,23 @@ export const results = (id) => {
     };
     return axios.get('http://localhost:8080/api/quiz/results/' + id, config);
 }
+
+export const resultsByUserId = (userid) => {
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+      'Authorization': "Bearer " + sessionStorage.getItem("userToken")
+    },
+  };
+  return axios.get('http://localhost:8080/api/quiz/results/users/' + userid, config);
+}
+
+export const featuredQuiz = () => {
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+      'Authorization': "Bearer " + sessionStorage.getItem("userToken")
+    },
+  };
+  return axios.get('http://localhost:8080/api/quiz/featured', config);
+}
