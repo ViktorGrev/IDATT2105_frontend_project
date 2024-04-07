@@ -1,88 +1,36 @@
 <template>
 <div class="container">
-    <div class="quizContainerV1" v-if="quizzInfo" @click="navigateToUserProfile(quizzInfo.id)">
-        <div class="quizContainerV1Top">
-        </div>
-        <div class="quizContainerV1Bottom" id="testId">
-          <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo.title }} </p>
-          <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo.description }}</p>
-        </div>
-    </div>
-    <div v-else>
-      <div class="quizContainerV1Top"></div>
-      <div class="quizContainerV1Bottom"></div>
-    </div>
-    <div class="quizContainerV2" v-if="quizzInfo" @click="navigateToUserProfile(quizzInfo.id)">
-      <div class="quizContainerV2Top">
-                 
+    <div v-for="(quiz, index) in quizzes" :key="index" :class="`quizContainerV${index % 2 === 0 ? '1' : '2'}`" @click="navigateToQuiz(quiz.quiz.id)" v-if="quizzes">
+      <div :class="`quizContainerV${index % 2 === 0 ? '1' : '2'}Top`">
+        <!-- You can add content here if needed -->
       </div>
-      <div class="quizContainerV2Bottom">
-        <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo.title }} </p>
-        <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo.description }}</p>
+      <div :class="`quizContainerV${index % 2 === 0 ? '1' : '2'}Bottom`">
+        <p style="font-size: 25px; margin: 0; margin-top: 5px;">{{ quiz.quiz.title }}</p>
+        <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quiz.quiz.description }}</p>
       </div>
     </div>
-    <div v-else>
-      <div class="quizContainerV1Top"></div>
-      <div class="quizContainerV1Bottom"></div>
-    </div>
-    <div class="quizContainerV1" v-if="quizzInfo" @click="navigateToUserProfile(quizzInfo.id)">
-        <div class="quizContainerV1Top">
-        </div>
-        <div class="quizContainerV1Bottom">
-          <p style="font-size: 25px; margin: 0; margin-top: 5px;"> {{ quizzInfo.title }} </p>
-          <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quizzInfo.description }}</p>
-        </div>
-    </div>
-    <div v-else>
-      <div class="quizContainerV1Top"></div>
-      <div class="quizContainerV1Bottom"></div>
-    </div>
+  <div v-else>Loading</div>
 </div>
 </template>
 
 <script lang="ts" setup>
-import axios from 'axios';
 import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { quiz } from '@/api/QuizController';
+import { useRouter } from 'vue-router';
+import { featuredQuiz } from '@/api/QuizController';
 
-let quizzInfo = ref(null);
+const quizzes = ref(null);
 const router = useRouter();
 
 // Function to fetch quiz data
 async function fetchQuizData() {
   try {
-    quiz(1).then((response) => {
-      quizzInfo.value = response.data;
-      console.log(quizzInfo.value);
+    featuredQuiz().then((response) => {
+      quizzes.value = response.data.slice(0,3);
       
     });
   } catch (error) {
     console.error("Failed to fetch quiz data:", error);
   }
-}
-
-// Method to get quiz data
-async function fetchQuizData2() {
-    try {
-        const userToken = sessionStorage.getItem("userToken");
-        if (!userToken) {
-            throw new Error("User token not found in session storage.");
-        }    
-
-        const response = await axios.get('http://localhost:8080/api/quiz/featured', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userToken.trim()}`
-            }
-        });
-        console.log(response.data);
-        
-        
-
-    } catch (error) {
-        console.error("Failed to fetch quiz data:", error);
-    }
 }
 
 // Fetch quiz data when component mounts
@@ -91,10 +39,10 @@ onMounted(() => {
 });
 
 // Define the navigateToUserProfile method
-const navigateToUserProfile = (userId) => {
-        console.log(userId);
-        router.push({ name: 'quiz', params: { id: userId } });
-    };
+const navigateToQuiz = (quizId) => {
+  console.log(quizId);
+  router.push({ name: 'quiz', params: { id: quizId } });
+};
 </script>
 
 <style scoped>
