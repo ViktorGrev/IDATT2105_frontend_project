@@ -72,7 +72,7 @@ export default {
         router.push({ name: 'feedback' }); 
       },
       yourLibrary() {
-        router.push({ name: 'feedback' }); 
+        router.push({ name: 'yourLibrary' }); 
       },
       search() {
         router.push({ name: 'search' }); 
