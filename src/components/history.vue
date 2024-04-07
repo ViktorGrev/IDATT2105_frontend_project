@@ -7,14 +7,14 @@
     <div v-else>
       <Carousel v-bind="settings" :breakpoints="breakpoints">
       <Slide v-for="slide in quizzes" :key="slide.id">
-        <div class="carousel__item" id="item" @click="navigateToUserProfile(slide.id)">
+        <div class="carousel__item" id="item" @click="navigateToQuiz(slide.id)">
           <div class="infoBox">
-            {{ slide.title }}
+            {{ slide.quiz.title }}
             <br>
-            {{ slide.description }}
+            {{ slide.quiz.description }}
           </div>
           <div class="creatorBox">
-            {{ slide.creator.username }}
+            {{ slide.quiz.creator.username }}
           </div>
         </div>
       </Slide>
@@ -106,11 +106,12 @@ main {
 </style>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { Carousel, Navigation, Slide } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import axios from 'axios';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
+import { getSelf, getByUsername } from '@/api/UserController';
 
 
 export default defineComponent({
@@ -124,6 +125,8 @@ export default defineComponent({
     const quizzes = ref(null);
     const router = useRouter();
     const noRecentAttempts = ref(null);
+    const currentUserID = ref(null);
+    const recentApiUrl = ref(null);
     // Define reactive properties
     const settings = ref({
       itemsToShow: 1,
@@ -153,7 +156,10 @@ export default defineComponent({
           throw new Error("User token not found in session storage.");
         }
 
-        const response = await axios.post('http://localhost:8080/api/quiz/search?title=test', {} ,{
+        generateLink(currentUserID.value)
+        
+
+        const response = await axios.get(recentApiUrl.value,{
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${userToken.trim()}`
@@ -163,25 +169,86 @@ export default defineComponent({
         if (quizzes.value.length === 0) {
           noRecentAttempts.value = 1;
         }
+      } catch (error) {
+        console.error("Failed to fetch quiz data:", error);
+      }
+    }
+
+     // Function to fetch quiz data
+     async function fetchQuizData2(username) {
+      try {
+        const userToken = sessionStorage.getItem("userToken");
+        if (!userToken) {
+          throw new Error("User token not found in session storage.");
+        }
+
+        generateLink(username);
+        
+
+        const response = await axios.get(recentApiUrl.value,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken.trim()}`
+          }
+        });
+        console.log(response.data);
         
       } catch (error) {
         console.error("Failed to fetch quiz data:", error);
       }
     }
 
-    // Define the navigateToUserProfile method
-    const navigateToUserProfile = (userId) => {
+    // Function to fetch quiz data
+    async function fetchUsername() {
+      try {
+        const userToken = sessionStorage.getItem("userToken");
+        if (!userToken) {
+          throw new Error("User token not found in session storage.");
+        }
+
+        getSelf().then((response) => {
+          currentUserID.value = response.data.id;
+          fetchQuizData(); 
+        });
+      } catch (error) {
+        console.error("Failed to fetch quiz data:", error);
+      }
+    }
+
+    // Define the navigateToQuiz method
+    const navigateToQuiz = (userId) => {
         console.log(userId);
         router.push({ name: 'quiz', params: { id: userId } });
     };
 
-    onMounted(fetchQuizData)
+    function generateLink(userId, query: string): void {
+      const baseUrl: string = "http://localhost:8080/api/quiz/results/users/";
+      recentApiUrl.value = `${baseUrl}${userId}`;
+    }
 
+    const currentURL = computed(() => window.location.href);
+
+    const usernameOfOther = computed(() => {
+      const parts = currentURL.value.split('/');
+      return parts[parts.length - 1];
+    });
+
+    console.log(usernameOfOther.value);
+
+    if(usernameOfOther.value == "") {
+      onMounted(fetchUsername);
+    } else {
+      console.log("testtest");
+      onMounted(fetchUserid(usernameOfOther.value))
+      //onMounted(fetchQuizData2(usernameOfOther.value))
+    }
+    
+    
     return {
       settings,
       breakpoints,
       quizzes,
-      navigateToUserProfile,
+      navigateToQuiz,
       noRecentAttempts,
     };
   }
