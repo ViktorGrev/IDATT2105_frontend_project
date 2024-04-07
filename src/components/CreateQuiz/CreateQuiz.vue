@@ -14,6 +14,7 @@ const quizRandomization = ref(false);
 const quizImage = ref(null);
 const quizCoAuthors = ref([]); // New state for storing co-authors
 const quizCoAuthorInput = ref('');
+const errorMessage = ref ('');
 defineProps(['question']);
 
 const routerView = useRouter();
@@ -180,6 +181,7 @@ const createQuiz = async () => {
         routerView.push({ name: 'quiz', params: { id: response.data.id } });
     }).catch(error => {
         console.error('Quiz creation error:', error);
+        errorMessage.value = error.response.data.message;
     });
 };
 
@@ -283,6 +285,9 @@ const importQuiz = (event) => {
             <div class="title">
                 <div class="createtitle">
                     <h1>Create a new Study Set</h1> <button @click="createQuiz" class="createButton">Create</button>
+                </div>
+                <div style="color: red;">
+                    {{ errorMessage }}
                 </div>
                 <label for="quizTitle" class="titleLabel">Quiz Title:</label>
                 <input id="quizTitle" aria-label="Title" class="titleInput" maxlength="255"
