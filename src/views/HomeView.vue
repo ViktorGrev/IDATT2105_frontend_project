@@ -7,7 +7,7 @@ import HomeNavlinks from '@/components/HomeComponents/HomeNav-linksComponent.vue
 <template>
   <main>
     <div class="header">
-      <h1 style="color: #6d6e72;">Rizzlet</h1>
+      
     </div>
     <HomeNavlinks></HomeNavlinks>
     <div class="contentBox">
