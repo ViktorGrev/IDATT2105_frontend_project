@@ -1,27 +1,33 @@
 <template>
 <div class="list" v-if="userResults">
-  <ul>
-    <li v-for="attempt in userResults" :key="attempt">
-        <span style="width: 100%;">
-            <listElement>
-                <!--Changing date dynamically-->
-                <template #dateBox>
-                    <p>{{ shortenTimestamp(attempt.timestamp) }}</p>
-                </template>
+  <div v-if="noRecentAttempts" style="color: #6d6e72;">
+      You have no recently played quizzes. Try to play some quizzes!
+  </div>
+  <div v-else>
+    Total attempts: {{ numberOfAttempts }}
+    <ul>
+      <li v-for="attempt in userResults" :key="attempt" @click="navigateToResult(attempt.id)">
+          <span style="width: 100%;">
+              <listElement>
+                  <!--Changing date dynamically-->
+                  <template #dateBox>
+                      <p>{{ shortenTimestamp(attempt.timestamp) }}</p>
+                  </template>
 
-                <!--Changing title dynamically-->
-                <template #titleBox>
-                    <p>{{ attempt.quiz.title }}</p>
-                </template>
+                  <!--Changing title dynamically-->
+                  <template #titleBox>
+                      <p>{{ attempt.quiz.title }}</p>
+                  </template>
 
-                <!--Changing score dynamically-->
-                <template #scoreBox>
-                    <p>{{ attempt.score }} / {{ attempt.quiz.questions.length }} </p>
-                </template>
-            </listElement>
-        </span>
-    </li>
-  </ul>
+                  <!--Changing score dynamically-->
+                  <template #scoreBox>
+                      <p>{{ attempt.score }} / {{ attempt.quiz.questions.length }} </p>
+                  </template>
+              </listElement>
+          </span>
+      </li>
+    </ul>
+  </div>
 </div>
 
 <div v-else>
@@ -105,20 +111,31 @@ body {
 </style>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import listElement from '../components/listElementComponent.vue'
-import { results, resultsByUserId } from '@/api/QuizController';
-import { getByUsername } from '@/api/UserController';
+import { resultsByUserId } from '@/api/QuizController';
+import { getByUsername, getSelf } from '@/api/UserController';
+import { useRoute, useRouter } from 'vue-router'
 
 const currentUserID = ref(null);
 const userResults = ref(null);
+const noRecentAttempts = ref(null);
+const numberOfAttempts = ref("");
+const route = useRoute();
+const router = useRouter();
+const self = ref(null);
 
-const currentURL = computed(() => window.location.href);
+const username = ref(route.params.username);
 
-const username = computed(() => {
-  const parts = currentURL.value.split('/');
-  return parts[parts.length - 1];
-});
+async function fetchSelf() {
+  try {
+    getSelf().then((response) => {
+      self.value = response.data;
+    });
+  } catch (error) {
+    console.error("Failed to fetch self", error);
+  }
+}
 
 async function fetchUserData() {
   try {
@@ -136,7 +153,10 @@ async function fetchUserResults() {
   try {
     resultsByUserId(currentUserID.value).then((response) => {
       userResults.value = response.data;
-      console.log(response.data); 
+      numberOfAttempts.value = userResults.value.length;
+      if (userResults.value.length === 0) {
+          noRecentAttempts.value = 1;
+      }
     });
   } catch (error) {
     console.error("Failed to fetch quiz results:", error);
@@ -144,9 +164,21 @@ async function fetchUserResults() {
 }
 
 onMounted(fetchUserData);
+onMounted(fetchSelf);
 
 const shortenTimestamp = (timestamp: string) => {
   const dateObj = new Date(timestamp);
   return dateObj.toLocaleDateString();
+};
+
+// Define the navigateToResult method
+const navigateToResult = (resultID) => {
+  console.log("Noe: ");
+  console.log(currentUserID.value);
+  if(self.value.id === currentUserID.value) {
+    router.push({ name: 'result', params: { id: resultID } });
+  } else {
+    console.log("Not correct userid");
+  }
 };
 </script>

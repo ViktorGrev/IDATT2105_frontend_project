@@ -66,13 +66,13 @@ export default {
         router.push({ name: 'login' });
       },
       user() {
-        router.push({ name: 'user' }); 
+        router.push({ name: 'profile', params: {username: userStore.username}}); 
       },
       feedback() {
         router.push({ name: 'feedback' }); 
       },
       yourLibrary() {
-        router.push({ name: 'feedback' }); 
+        router.push({ name: 'yourLibrary' }); 
       },
       search() {
         router.push({ name: 'search' }); 
