@@ -32,11 +32,12 @@
                             
                         </template>
                         <template v-else-if="question.type === 'TRUE_FALSE'">
+                          Answer: {{findAnswer(question.id)}}
                             <div
-                                :class="{ correct: question.true && findAnswer(question.id), incorrect: !question.true && findAnswer(question.id) }">
+                                :class="{ correct: question.true && findAnswer(question.id).toString() === 'true', incorrect: !question.true && findAnswer(question.id).toString() === 'true' }">
                                 True<img v-if="question.true" src="@/assets/icons/Check.svg"> </div>
                             <div
-                                :class="{ correct: question.true && findAnswer(question.id), incorrect: question.true && findAnswer(question.id) }">
+                                :class="{ correct: !question.true && findAnswer(question.id).toString() === 'false', incorrect: question.true && findAnswer(question.id).toString() === 'false' }">
                                 False<img v-if="!question.true" src="@/assets/icons/Check.svg"> </div>
                         </template>
                     </div>
@@ -74,6 +75,11 @@ async function fetchResultData() {
         }).catch((error) => {
             console.error("Failed to fetch quiz data:", error);
         });
+}
+
+function findTrueFalseAnswer(questionId) {
+  const answerObj = result.value.answers.find(a => a.question === questionId);
+  return answerObj ? answerObj.answer : undefined;
 }
 
 function findAnswer(questionId) {
