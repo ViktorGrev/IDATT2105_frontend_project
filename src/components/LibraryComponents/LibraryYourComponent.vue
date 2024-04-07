@@ -7,7 +7,7 @@
             <div class="contentBox" v-else>
                 <div class="quizz" v-for="quiz in createdQuizzes" :key="quiz.id" @click="navigateToQuiz(quiz.id)">
                     <div class="quizzInfo">
-                        <p style="font-size: 30px;">Quizz:</p>
+                        <p style="font-size: 30px;">Quizz: {{ quiz.title }}</p>
                     </div>
                     
                     <div class="quizzPlay">
@@ -48,6 +48,7 @@ const createdQuizzes = ref([]);
 const createdQuizzesIsEmpty = ref(null);
 const coAuthorQuizzes = ref([]);
 const coAuthorQuizzesIsEmpty = ref(null);
+const router = useRouter();
 
 let userid = ref("");
 
