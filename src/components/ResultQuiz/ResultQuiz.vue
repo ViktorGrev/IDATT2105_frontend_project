@@ -4,8 +4,8 @@
             <div class="contentBox">
                 <div class="title">{{ quiz.title }}</div>
                 <div class="scoreText">You answered:</div>
-                <div class="scoreText">{{ correctAnswers }} correct</div>
-                <div class="scoreText">{{ incorrectAnswers }} wrong</div>
+                <div class="scoreText">{{ score }} correct</div>
+                <div class="scoreText">{{ wrong }} wrong</div>
                 <div class="choiceButtons">
                     <button class="choice" id="redo" @click="again">Again</button>
                     <button class="choice" id="leave" @click="home">Leave</button>
@@ -23,19 +23,22 @@
                         </template>
                         <template v-else-if="question.type === 'MULTIPLE_CHOICE'">
                             <div v-for="option in question.options" :key="option.id" :class="{
-                    correct: option.correct,
-                    incorrect: !option.correct && option.id.toString() === userSelectedOption(question.id)
-                }">
-                                {{ option.optionText }}
+            'correct': userSelectedOption(question.id).includes(option.id) && option.correct,
+            'incorrect': userSelectedOption(question.id).includes(option.id) && !option.correct}">
+                                {{ option.optionText }} 
+                                <img v-if="option.correct" src="@/assets/icons/Check.svg"> 
+                                    
+                                
                             </div>
+                            
                         </template>
                         <template v-else-if="question.type === 'TRUE_FALSE'">
                             <div
-                                :class="{ correct: question.true.toString() === 'true', incorrect: question.true.toString() !== 'true' && isIncorrectAnswer(question, 'true') }">
-                                True</div>
+                                :class="{ correct: question.true && isIncorrectAnswer(question, 'true'), incorrect: !question.true && isIncorrectAnswer(question, 'true') }">
+                                True<img v-if="question.true" src="@/assets/icons/Check.svg"> </div>
                             <div
-                                :class="{ correct: question.true.toString() === 'false', incorrect: question.true.toString() !== 'false' && isIncorrectAnswer(question, 'false') }">
-                                False</div>
+                                :class="{ correct: !question.true && !isIncorrectAnswer(question, 'true'), incorrect: question.true && isIncorrectAnswer(question, 'false') }">
+                                False<img v-if="!question.true" src="@/assets/icons/Check.svg"> </div>
                         </template>
                     </div>
                 </div>
@@ -56,53 +59,22 @@ const router = useRouter();
 
 let quiz = ref({});
 let result = ref({});
-let correctAnswers = ref(0);
+let score = ref(0);
+let wrong = ref(0);
 let incorrectAnswers = ref(0);
 
 async function fetchResultData() {
     const resultId = route.params.id;
         results(resultId).then((response) => {
             result.value = response.data;
+            score.value = response.data.score;
+            wrong.value = response.data.quiz.questions.length - response.data.score;
             console.log(JSON.stringify(result.value, null, 2));
             quiz.value = response.data.quiz;
-            calculateScore();
+            console.log(userSelectedOption(1160))
         }).catch((error) => {
             console.error("Failed to fetch quiz data:", error);
         });
-}
-
-function calculateScore() {
-    correctAnswers.value = 0;
-    incorrectAnswers.value = 0;
-
-    quiz.value.questions.forEach(question => {
-        const userAnswerObj = result.value.answers.find(a => a.question === question.id);
-        if (userAnswerObj) {
-            let isCorrect = false;
-            if (question.type === 'MULTIPLE_CHOICE') {
-                const correctOption = question.options.find(o => o.correct);
-                isCorrect = String(correctOption.id) === userAnswerObj.answer;
-            } else if (question.type === 'TRUE_FALSE') {
-                isCorrect = question.true.toString().toLowerCase() === userAnswerObj.answer.toLowerCase();
-            } else if (question.type === 'FILL_IN_THE_BLANK') {
-                isCorrect = question.solution.toLowerCase() === userAnswerObj.answer.toLowerCase();
-            }
-
-            if (isCorrect) {
-                correctAnswers.value++;
-            } else {
-                incorrectAnswers.value++;
-            }
-        } else {
-            // Increment incorrectAnswers for unanswered questions
-            incorrectAnswers.value++;
-        }
-    });
-}
-
-function isAnswered(questionId, optionId) {
-    const answer = result.value.answers.find(a => a.question === questionId);
-    return answer && String(answer.answer) === String(optionId);
 }
 
 function findAnswer(questionId) {
@@ -116,34 +88,15 @@ function isCorrectFillInBlank(question) {
     return userAnswer.trim().toLowerCase() === question.solution.trim().toLowerCase();
 }
 
-// Adjust the existing isCorrectAnswer function to handle TRUE_FALSE correctly
-function isCorrectAnswer(question, answer) {
-    const userAnswer = findAnswer(question.id);
-    // For TRUE_FALSE, 'true' value is actually a boolean true, not string 'true'.
-    return question.true === (userAnswer.toLowerCase() === 'true');
-}
-
 function isIncorrectAnswer(question, answer) {
     const userAnswer = findAnswer(question.id);
     // The user's answer could be false, but it should be treated as a string here for comparison.
     return userAnswer && userAnswer.toLowerCase() === answer && question.true.toString().toLowerCase() !== userAnswer.toLowerCase();
 }
 
-function checkAnswerCorrectness(question, userAnswer) {
-    if (question.type === 'TRUE_FALSE') {
-        return String(question.true).toLowerCase() === userAnswer.toLowerCase();
-    } else if (question.type === 'MULTIPLE_CHOICE') {
-        const correctOption = question.options.find(option => option.correct);
-        return String(correctOption.id) === userAnswer;
-    } else if (question.type === 'FILL_IN_THE_BLANK') {
-        return question.solution.toLowerCase() === userAnswer.toLowerCase();
-    }
-    return false;
-}
-
-function userSelectedOption(questionId) {
+function userSelectedOption(questionId) : number[] {
     const answerObj = result.value.answers.find(a => a.question === questionId);
-    return answerObj ? answerObj.answer : null; // Make sure this matches the ID type (string or number)
+    return answerObj ? answerObj.answer : []; // Make sure this matches the ID type (string or number)
 }
 
 onMounted(fetchResultData);

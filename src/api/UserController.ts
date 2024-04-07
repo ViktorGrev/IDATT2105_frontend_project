@@ -31,7 +31,7 @@ export const getByUsername = (username: string) => {
 export const search = (username: string) => {
     const config = {
         headers: {
-            "Authorization": "Bearer " + sessionStorage.getItem("userToken")
+            "Authorization": "Bearer " + useUserInfoStore().accessToken
         }
     };
     return axios.post("http://localhost:8080/api/users/search?username=" + username, {} ,config);
