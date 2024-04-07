@@ -9,7 +9,6 @@ import HomeNavlinks from '@/components/HomeComponents/HomeNav-linksComponent.vue
     <div class="header">
       
     </div>
-    <HomeNavlinks></HomeNavlinks>
     <div class="contentBox">
       <div id="quizID">
         <div id="recent">
@@ -18,7 +17,7 @@ import HomeNavlinks from '@/components/HomeComponents/HomeNav-linksComponent.vue
         </div>
         
         <div id="topContent">
-          <h2 style="color: #6d6e72;">Top 10 quizzes</h2>
+          <h2 style="color: #6d6e72;">Featured quizzes</h2>
           <HomeColorfullBoxes></HomeColorfullBoxes>
         </div>
       </div>
