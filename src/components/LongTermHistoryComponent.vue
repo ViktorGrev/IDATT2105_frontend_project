@@ -1,27 +1,31 @@
 <template>
-<div class="list">
+<div class="list" v-if="userResults">
   <ul>
-    <li v-for="attempt in attempts">
+    <li v-for="attempt in userResults" :key="attempt">
         <span style="width: 100%;">
             <listElement>
                 <!--Changing date dynamically-->
                 <template #dateBox>
-                    <p>{{ attempt.date }}</p>
+                    <p>{{ shortenTimestamp(attempt.timestamp) }}</p>
                 </template>
 
                 <!--Changing title dynamically-->
                 <template #titleBox>
-                    <p>{{ attempt.title }}</p>
+                    <p>{{ attempt.quiz.title }}</p>
                 </template>
 
                 <!--Changing score dynamically-->
                 <template #scoreBox>
-                    <p>{{ attempt.score }}</p>
+                    <p>{{ attempt.score }} / {{ attempt.quiz.questions.length }} </p>
                 </template>
             </listElement>
         </span>
     </li>
   </ul>
+</div>
+
+<div v-else>
+  loading...
 </div>
 </template>
 
@@ -101,13 +105,48 @@ body {
 </style>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import listElement from '../components/listElementComponent.vue'
+import { results, resultsByUserId } from '@/api/QuizController';
+import { getByUsername } from '@/api/UserController';
 
-const attempts = ref([{ date: '21/03/2022' , title: 'Eternal Echoes', score: '45/50'}, 
-{ date: '21/03/2023' , title: 'Midnight Mirage', score: '40/40'},
-{ date: '11/04/2022' , title: 'Whispers in the Wind', score: '3/10'},
-{ date: '31/11/2022' , title: 'Shadows of Destiny', score: '40/55'},
-{ date: '03/01/2022' , title: 'Infinite Horizons', score: '45/100'},
-{ date: '31/01/2021' , title: 'Echoes of Yesterday', score: '37/48'}])
+const currentUserID = ref(null);
+const userResults = ref(null);
+
+const currentURL = computed(() => window.location.href);
+
+const username = computed(() => {
+  const parts = currentURL.value.split('/');
+  return parts[parts.length - 1];
+});
+
+async function fetchUserData() {
+  try {
+    getByUsername(username.value).then((response) => {
+      currentUserID.value = response.data.id;
+      console.log(currentUserID.value); 
+      fetchUserResults();
+    });
+  } catch (error) {
+    console.error("Failed to fetch userID:", error);
+  }
+}
+
+async function fetchUserResults() {
+  try {
+    resultsByUserId(currentUserID.value).then((response) => {
+      userResults.value = response.data;
+      console.log(response.data); 
+    });
+  } catch (error) {
+    console.error("Failed to fetch quiz results:", error);
+  }
+}
+
+onMounted(fetchUserData);
+
+const shortenTimestamp = (timestamp: string) => {
+  const dateObj = new Date(timestamp);
+  return dateObj.toLocaleDateString();
+};
 </script>

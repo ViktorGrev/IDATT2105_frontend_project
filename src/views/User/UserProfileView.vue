@@ -31,10 +31,10 @@ onMounted(() => {
         <div class="wrapper">
             <div class="contentBox">
                 <div class="Name">{{ username }}</div>
-                <div class="buttonBox">
+                <!--<div class="buttonBox">
                     <button class="buttonStyle">Add friend</button>
                     <button class="buttonStyle">Remove freind</button>
-                </div>
+                </div>-->
                 <div class="libraryList">
                     <h2 style="color: #6d6e72; font-family: 'Poppins', sans-serif;">Recent quizzes played</h2>
                     <History></History>
