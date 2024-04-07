@@ -45,8 +45,6 @@ async function fetchUserResults() {
   try {
     resultsByUserId(currentUserID.value).then((response) => {
         const allResults = response.data;
-        console.log(JSON.stringify(response.data))
-        console.log(quizId.value);
       const filteredResults = allResults.filter(result => result.quiz.id == quizId.value);
       userResults.value = filteredResults;
       
@@ -69,8 +67,6 @@ const shortenTimestamp = (timestamp: string) => {
 
 // Define the navigateToResult method
 const navigateToResult = (resultID) => {
-  console.log("Noe: ");
-  console.log(currentUserID.value);
   if(self.value.id === currentUserID.value) {
     router.push({ name: 'result', params: { id: resultID } });
   } else {
