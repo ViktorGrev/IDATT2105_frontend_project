@@ -92,12 +92,12 @@ function generateLink(searchType: 'title' | 'category', query: string): void {
     <div>
         <div class="SearchBox">
             <div class="container">
-                <input type="text" v-model="searchQuery" placeholder="Search..." @keyup="handleKeyUp">
+                <input type="text" id="searchField" v-model="searchQuery" placeholder="Search..." @keyup="handleKeyUp">
                 <div class="search"></div>
             </div>
         </div>
         <div class="categoryButtons">
-          <div class="category-box" v-for="category in categories" :key="category" @click="updateSelectedCategory(category)">
+          <div class="category-box" id="categorybutton" v-for="category in categories" :key="category" @click="updateSelectedCategory(category)">
             {{ category }}
           </div>
         </div>
@@ -107,7 +107,7 @@ function generateLink(searchType: 'title' | 'category', query: string): void {
         <div class="contentBox">
           <h2 style="color: #6d6e72;">Quizzes</h2>
             <div class="quizz" v-for="quiz in quizzes" :key="quiz.id">
-                <div class="quizzInfo">
+                <div class="quizzInfo" id="searchedQuizzes">
                     <p style="font-size: 30px;">Quizz: {{ quiz.title }}</p>
                 </div>
                 
@@ -117,7 +117,7 @@ function generateLink(searchType: 'title' | 'category', query: string): void {
             </div>
           <h2 style="color: #6d6e72;">Users</h2>
           <div class="categoryButtons">
-            <div class="category-box" v-for="user in users" :key="user.id" @click="navigateToUser(user.username)">  
+            <div class="category-box" id="searchedUsers" v-for="user in users" :key="user.id" @click="navigateToUser(user.username)">  
               {{ user.username }}
             </div>
         </div>
