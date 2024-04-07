@@ -6,8 +6,8 @@
       <div class="contentBox">
         <div class="playBox">
           <div v-if="role === 'ADMIN' || username === creator">
-            <button id="delete" @click="deleteThisQuiz"><img src="@/assets/icons/download (3).svg">Delete quiz</button>
-            <button id="edit"><img src="@/assets/icons/download (9).svg">Edit quiz</button>
+            <button id="delete" @click="deleteThisQuiz"><img src="@/assets/icons/delete.svg">Delete quiz</button>
+            <button id="edit"><img src="@/assets/icons/edit.svg">Edit quiz</button>
           </div>
           <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
         </div>
