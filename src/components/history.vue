@@ -2,12 +2,12 @@
   <!--If the quizzes are loaded in, this will show-->
   <div v-if="quizzes">
     <div v-if="noRecentAttempts" style="color: #6d6e72;">
-      You have no recent attempts. Try to play some quizzes!
+      You have no recently played quizzes. Try to play some quizzes!
     </div>
     <div v-else>
       <Carousel v-bind="settings" :breakpoints="breakpoints">
-      <Slide v-for="slide in quizzes" :key="slide.id">
-        <div class="carousel__item" id="item" @click="navigateToQuiz(slide.id)">
+      <Slide v-for="slide in quizzes" :key="slide">
+        <div class="carousel__item" id="item" @click="navigateToQuiz(slide.quiz.id)">
           <div class="infoBox">
             {{ slide.quiz.title }}
             <br>
@@ -110,7 +110,7 @@ import { defineComponent, ref, onMounted, computed } from 'vue'
 import { Carousel, Navigation, Slide } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { getSelf, getByUsername } from '@/api/UserController';
 
 
@@ -124,6 +124,7 @@ export default defineComponent({
   setup() {
     const quizzes = ref(null);
     const router = useRouter();
+    const route = useRoute();
     const noRecentAttempts = ref(null);
     const currentUserID = ref(null);
     const recentApiUrl = ref(null);
@@ -165,34 +166,14 @@ export default defineComponent({
             'Authorization': `Bearer ${userToken.trim()}`
           }
         });
-        quizzes.value = response.data;
+        quizzes.value = response.data.slice(0,5);
+        console.log("quizzes.value:");
+        
+        
+        
         if (quizzes.value.length === 0) {
           noRecentAttempts.value = 1;
         }
-      } catch (error) {
-        console.error("Failed to fetch quiz data:", error);
-      }
-    }
-
-     // Function to fetch quiz data
-     async function fetchQuizData2(username) {
-      try {
-        const userToken = sessionStorage.getItem("userToken");
-        if (!userToken) {
-          throw new Error("User token not found in session storage.");
-        }
-
-        generateLink(username);
-        
-
-        const response = await axios.get(recentApiUrl.value,{
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userToken.trim()}`
-          }
-        });
-        console.log(response.data);
-        
       } catch (error) {
         console.error("Failed to fetch quiz data:", error);
       }
@@ -216,9 +197,9 @@ export default defineComponent({
     }
 
     // Define the navigateToQuiz method
-    const navigateToQuiz = (userId) => {
-        console.log(userId);
-        router.push({ name: 'quiz', params: { id: userId } });
+    const navigateToQuiz = (quizID) => {
+        console.log(quizID);
+        router.push({ name: 'quiz', params: { id: quizID } });
     };
 
     function generateLink(userId, query: string): void {
@@ -239,8 +220,22 @@ export default defineComponent({
       onMounted(fetchUsername);
     } else {
       console.log("testtest");
-      onMounted(fetchUserid(usernameOfOther.value))
+      onMounted(fetchUserid)
       //onMounted(fetchQuizData2(usernameOfOther.value))
+    }
+
+    async function fetchUserid() {
+      try {
+        getByUsername(usernameOfOther.value).then((response) => {
+          currentUserID.value = response.data.id;
+          fetchQuizData(); 
+          console.log("testUserIDHasCome");
+          
+          console.log(response.data.id); 
+        });
+      } catch (error) {
+        console.error("Failed to fetch userID:", error);
+      }
     }
     
     
