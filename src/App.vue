@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import BasePage from './components/BaseComponents/BasePage.vue'
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
   <main>
-      <BasePage></BasePage>
+      <RouterView></RouterView>
   </main>
 </template>
 

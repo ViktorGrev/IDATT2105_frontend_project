@@ -11,7 +11,7 @@
         <li><a href="#" @click="create"><img src="@/assets/icons/download (7).svg">Create</a></li>
         <li><a href="#" @click="search"><img src="@/assets/icons/download (4).svg">Search</a></li>
         <li v-if="isLoggedIn">
-          <a href="#" class="desktop-item"><img src="@/assets/icons/download (5).svg">User</a>
+          <a href="#" class="desktop-item"><img src="@/assets/icons/download (5).svg">{{ username }}</a>
           <input type="checkbox" id="showDrop">
           <label for="showDrop" class="mobile-item">Dropdown Menu</label>
           <ul class="drop-menu">
@@ -32,22 +32,20 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserInfoStore } from '@/stores/UserStore';
 
 export default {
   setup() {
     const userStore = useUserInfoStore();
-    console.log(userStore.username);
+    const isLoggedIn = computed(() => userStore.isLoggedIn); 
+    const username = computed(() => userStore.username);
     const router = useRouter();
 
-    const isLoggedIn = computed(() => {
-      return sessionStorage.getItem("userToken") !== null;
-    });
 
     return {
+      username,
       login() {
         router.push({ name: 'login' });
       },
@@ -64,7 +62,7 @@ export default {
         router.push({ name: 'settings' });
       },
       logout() {
-        sessionStorage.removeItem("userToken");
+        userStore.clearUserInfo();
         router.push({ name: 'login' });
       },
       user() {
