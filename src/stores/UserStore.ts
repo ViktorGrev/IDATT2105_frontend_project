@@ -1,4 +1,3 @@
-/*import { OpenAPI } from '@/api/backend';
 import Cookies from 'js-cookie';
 import { defineStore } from 'pinia';
 
@@ -9,11 +8,9 @@ const cookiesStorage: Storage = {
   getItem(key) {
     const store = Cookies.get(key);
     if (store === undefined) {
-      OpenAPI.TOKEN = '';
       return '';
     }
 
-    OpenAPI.TOKEN = JSON.parse(Cookies.get(key) || '').accessToken;
     return Cookies.get(key) || '';
   },
   length: 0,
@@ -28,10 +25,9 @@ const cookiesStorage: Storage = {
   },
 };
 
+
 export type UserStoreInfo = {
   username?: string;
-  firstname?: string;
-  lastname?: string;
   accessToken?: string;
   role?: string;
 };
@@ -39,28 +35,22 @@ export type UserStoreInfo = {
 export const useUserInfoStore = defineStore('UserInfoStore', {
   state: () => ({
     username: '',
-    firstname: '',
-    lastname: '',
     accessToken: '',
-    role: '',
+    role: ''
   }),
   actions: {
     setUserInfo(userinfo: UserStoreInfo) {
-      userinfo.username && (this.$state.username = userinfo.username);
-      userinfo.firstname && (this.$state.firstname = userinfo.firstname);
-      userinfo.lastname && (this.$state.lastname = userinfo.lastname);
-      userinfo.accessToken && (this.$state.accessToken = userinfo.accessToken);
-      userinfo.accessToken && (OpenAPI.TOKEN = this.$state.accessToken);
-      userinfo.role && (this.$state.role = userinfo.role);
+      this.$state.username = userinfo.username || '';
+      this.$state.role = userinfo.role || '';
+    },
+    setAccessToken(accessToken: string) {
+      this.$state.accessToken = accessToken;
     },
     clearUserInfo() {
       this.$state.username = '';
-      this.$state.firstname = '';
-      this.$state.lastname = '';
       this.$state.accessToken = '';
       this.$state.role = '';
-      OpenAPI.TOKEN = undefined;
-    },
+    }
   },
   getters: {
     isLoggedIn(): boolean {
@@ -69,8 +59,6 @@ export const useUserInfoStore = defineStore('UserInfoStore', {
   },
   persist: {
     enabled: true,
-    strategies: [{ key: 'userInfo', storage: cookiesStorage }],
-  },
+    strategies: [{ key: 'userInfo', storage: cookiesStorage }]
+  }
 });
-
-*/

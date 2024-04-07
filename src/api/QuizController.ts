@@ -1,51 +1,54 @@
 import axios from "axios";
+import { useUserInfoStore } from "@/stores/UserStore";
 
-export const create = (quiz) => {
+const userStore = useUserInfoStore();
+
+export const create = (quiz: any) => {
   const config = {
     headers: {
       "Content-type": "application/json",
-      'Authorization ': "Bearer " + sessionStorage.getItem("userToken")
+      'Authorization ': "Bearer " + userStore.accessToken
     },
   };
   return axios.post("http://localhost:8080/api/quiz",
     quiz, config);
 }
 
-export const leaderboard = (id) => {
+export const leaderboard = (id: number) => {
     const config = {
       headers: {
         "Content-type": "application/json",
-        'Authorization': "Bearer " + sessionStorage.getItem("userToken")
+        'Authorization': "Bearer " + userStore.accessToken
       },
     };
     return axios.get("http://localhost:8080/api/quiz/" + id + "/leaderboard", config);
 }
 
-export const quiz = (id) => {
+export const quiz = (id: number) => {
     const config = {
       headers: {
         "Content-type": "application/json",
-        'Authorization': "Bearer " + sessionStorage.getItem("userToken")
+        'Authorization': "Bearer " + userStore.accessToken
       },
     };
     return axios.get('http://localhost:8080/api/quiz/' + id, config);
 }
 
-export const answers = (id, answers) => {
+export const answers = (id: number, answers: any) => {
     const config = {
       headers: {
         "Content-type": "application/json",
-        'Authorization': "Bearer " + sessionStorage.getItem("userToken")
+        'Authorization': "Bearer " + userStore.accessToken
       },
     };
     return axios.post('http://localhost:8080/api/quiz/' + id + '/answers', answers, config);
 }
 
-export const results = (id) => {
+export const results = (id: number) => {
     const config = {
       headers: {
         "Content-type": "application/json",
-        'Authorization': "Bearer " + sessionStorage.getItem("userToken")
+        'Authorization': "Bearer " + userStore.accessToken
       },
     };
     return axios.get('http://localhost:8080/api/quiz/results/' + id, config);

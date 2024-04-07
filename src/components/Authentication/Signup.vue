@@ -52,6 +52,10 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { signup } from '@/api/AuthController';
+import { getSelf } from '@/api/UserController';
+import { useUserInfoStore } from '@/stores/UserStore';
+
+const userStore = useUserInfoStore();
 
 const router = useRouter();
 const username = ref('');
@@ -91,12 +95,21 @@ const attemptSignup = async () => {
 };
 
 const signupUser = async () => {
-    signup(username.value, password.value). then(response => {
-      sessionStorage.setItem('userToken', response.data.token);
-      router.push({ name: 'home' });
+    signup(username.value, password.value). then(loginResponse => {
+      sessionStorage.setItem('userToken', loginResponse.data.token);
+      userStore.setAccessToken(loginResponse.data.token);
+      getSelf().then(response => {
+        userStore.setUserInfo({
+          username: response.data.username,
+          role: response.data.role,
+        });
+        router.push({ name: 'home' });
+      }).catch(error => {
+        console.log('Error getting user info:', error);
+      });
     }).catch(error => {
-      confirmPasswordError.value = error.loginResponse.data.message;
-      console.log('Login error:', error.loginResponse.data.message);
+      confirmPasswordError.value = error.response.data.message;
+      console.log('Login error:', error.response.data.message);
     });
 };
 

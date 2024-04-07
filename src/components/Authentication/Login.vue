@@ -46,12 +46,16 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { login } from '@/api/AuthController';
+import { getSelf } from '@/api/UserController';
+import { useUserInfoStore } from '@/stores/UserStore';
+
+const userStore = useUserInfoStore();
 
 const router = useRouter();
 const username = ref('');
 const password = ref('');
 
-const alertColor = ref("red"); // Initialize dynamicColor with ref and default color
+const alertColor = ref("red");
 const usernameError = ref("");
 const passwordError = ref("");
 
@@ -67,12 +71,22 @@ const attemptLogin = async () => {
 };
 
 const loginUser = async () => {
-    login(username.value, password.value). then(response => {
-      sessionStorage.setItem('userToken', response.data.token);
-      router.push({ name: 'home' });
+    login(username.value, password.value). then(loginResponse => {
+      sessionStorage.setItem('userToken', loginResponse.data.token);
+      userStore.setAccessToken(loginResponse.data.token);
+      getSelf().then(response => {
+        userStore.setUserInfo({
+          username: response.data.username,
+          role: response.data.role,
+        });
+        router.push({ name: 'home' });
+      }).catch(error => {
+        console.log('Error getting user info:', error);
+      });
     }).catch(error => {
-      passwordError.value = error.loginResponse.data.message;
-      console.log('Login error:', error.loginResponse.data.message);
+      console.log('Login error:', error);
+      passwordError.value = error.response.data.message;
+      console.log('Login error:', error.response.data.message);
     });
 };
 

@@ -16,6 +16,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "oh-vue-icons": "^1.0.0-rc3",
     "papaparse": "^5.4.1",
