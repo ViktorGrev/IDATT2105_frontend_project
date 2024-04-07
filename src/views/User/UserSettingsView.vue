@@ -2,14 +2,18 @@
 
 import {getSelf, changeUsername} from "@/api/UserController";
 import {onMounted, ref} from "vue";
+import { useUserInfoStore } from '@/stores/UserStore';
 
 let username = ref("");
 let usernameError = ref("");
 let usernameResponse = ref("");
+const userName = ref("");
+const userStore = useUserInfoStore();
 
 onMounted(() => {
   getSelf().then(response => {
     username.value = response.data.username;
+    userName.value = useUserInfoStore().username;
   }).catch(error => {
 
   });
@@ -18,6 +22,8 @@ onMounted(() => {
 const showDatabase = async () => {
     changeUsername(username.value).then(response => {
       usernameError.value = "";
+      userStore.setUsername(username.value);
+      userName.value = useUserInfoStore().username;
       usernameResponse.value = "Username has been updated!";
     }).catch(error => {
       usernameError.value = error.response.data.message;
@@ -41,9 +47,9 @@ const showDatabase = async () => {
                             </div>
                             <div class="col-md-9">
                                 <div class="container">
-                                    <p>Username</p>
+                                    <p>{{ userName }}</p>
                                   <div class="d-flex align-items-center">
-                                    <textarea v-model="username" style="margin-right: 1rem;"></textarea>
+                                    <textarea v-model="username" style="margin-right: 1rem;" data-testid="username-textarea"></textarea>
                                     <button @click="showDatabase" type="button" class="blueButton">Update</button>
                                   </div>
                                     <p style="color: red">{{usernameError}}</p>
