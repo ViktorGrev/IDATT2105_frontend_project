@@ -35,9 +35,12 @@
 import axios from 'axios';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserInfoStore } from '@/stores/UserStore';
 
 export default {
   setup() {
+    const userStore = useUserInfoStore();
+    console.log(userStore.username);
     const router = useRouter();
 
     const isLoggedIn = computed(() => {

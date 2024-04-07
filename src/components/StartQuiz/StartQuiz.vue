@@ -4,6 +4,10 @@
         <StartHeader :title="title" :questions="questions" :views="10" :creator="creator"/>
         <div class="contentBox">
           <div class="playBox">
+            <div v-if="role === 'ADMIN' || username === creator" >
+              <button id="delete"><img src="@/assets/icons/download (3).svg">Delete quiz</button>
+              <button id="edit"><img src="@/assets/icons/download (9).svg">Edit quiz</button>
+            </div>
             <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
           </div>
           <div class="content">
@@ -29,6 +33,7 @@
   import StartHeader from './StartHeader.vue';
   import RecentAttempts from './RecentAttempts.vue';
   import { leaderboard, quiz } from '@/api/QuizController';
+  import { useUserInfoStore } from '@/stores/UserStore';
   
   const router = useRouter();
   const route = useRoute();
@@ -38,8 +43,10 @@
   let recentAttemptsData = ref([]);
   let title = ref("Quiz Title");
   let questions = ref(0);
-  let creator = ref("Player 1");
+  let creator = ref("");
   let showLeaderboard = ref(true);
+  let role = useUserInfoStore().role;
+  let username = useUserInfoStore().username;
   
   const navigateToTheQuiz = () => {
     router.push({ name: 'play', params: { id: playId.value } });
@@ -130,6 +137,7 @@ main {
     width: 40%;
     display: flex;
     align-items: start;
+    flex-direction: column;
 }
 
 .playButton {
@@ -176,5 +184,23 @@ main {
   width: 70%;
   display: flex;
   flex-direction: column;
+}
+
+#delete {
+  background-color: red;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  color: white;
+}
+
+#edit {
+  background-color: rgb(81, 147, 163);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  color: white;
 }
 </style>
