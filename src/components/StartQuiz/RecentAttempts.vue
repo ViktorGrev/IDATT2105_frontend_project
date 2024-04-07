@@ -76,7 +76,6 @@ const navigateToResult = (resultID) => {
 </script>
 
 <template>
-    <h1>Recent</h1>
     <div class="list" v-if="userResults">
     <div v-if="noRecentAttempts" style="color: #6d6e72;">
         You have no previous results on this quiz. Try to play this quiz!
@@ -129,7 +128,7 @@ body {
 }
 .list {
   position: relative;
-  max-height: 400px;
+  max-height: 650px;
   overflow: auto;
   width: 100%;
 }

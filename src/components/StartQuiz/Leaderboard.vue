@@ -76,7 +76,7 @@
   }
   
   td {
-    height: 5rem;
+    height: 2rem;
     font-family: "Rubik", sans-serif;
     font-size: 1.4rem;
     padding: 1rem 2rem;
@@ -129,7 +129,7 @@
   
   .ribbon {
     width: 106%;
-    height: 7.5rem;
+    height: 4.5rem;
     top: -0.5rem;
     background-color: rgb(22, 144, 248);
     position: absolute;
@@ -160,54 +160,6 @@
     background-color: rgb(22, 144, 248);
     position: absolute;
     z-index: -1;
-  }
-  
-  #buttons {
-    width: 100%;
-    margin-top: 3rem;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-  }
-  
-  .exit {
-    width: 11rem;
-    height: 3rem;
-    font-family: "Rubik", sans-serif;
-    font-size: 1.3rem;
-    text-transform: uppercase;
-    color: #7e7f86;
-    border: 0;
-    background-color: #fff;
-    border-radius: 2rem;
-    cursor: pointer;
-  }
-  
-  .exit:hover {
-    border: 0.1rem solid rgb(22, 144, 248);
-  }
-  
-  .continue {
-    width: 11rem;
-    height: 3rem;
-    font-family: "Rubik", sans-serif;
-    font-size: 1.3rem;
-    color: #fff;
-    text-transform: uppercase;
-    background-color: rgb(22, 144, 248);
-    border: 0;
-    border-bottom: 0.2rem solid #3838b8;
-    border-radius: 2rem;
-    cursor: pointer;
-  }
-  
-  .continue:hover {
-    border-bottom: 0;
-    border-bottom: white;
-  }
-  
-  .continue:active {
-    border-bottom: 0;
   }
   </style>
   

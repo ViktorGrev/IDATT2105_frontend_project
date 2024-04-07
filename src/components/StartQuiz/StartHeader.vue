@@ -1,13 +1,13 @@
 <template>
     <div class="header">
       <div class="topHeader">
-        <div class="title">{{ title }}</div>
+        <div class="title"><strong>{{ title }}</strong></div>
         <div class="amountQuestion">{{ questions }} questions</div>
         <div class="views">Average score: {{ avgScore }}</div>
-        <div class="views" :style="{ color: difficultyColor }">Difficulty: {{ difficulty }}</div>
+        <div class="views">Difficulty: <div :style="{ color: difficultyColor }"> {{ difficulty }}</div></div>
       </div>
       <div class="bottomHeader">
-        <div class="creator">Made by: {{ creator }}</div>
+        <div class="creator">Made by {{ creator }}</div>
       </div>
     </div>
   </template>

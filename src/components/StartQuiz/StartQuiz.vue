@@ -7,12 +7,12 @@
         <div class="playBox">
           <div v-if="role === 'ADMIN' || username === creator">
             <button id="delete" @click="deleteThisQuiz"><img src="@/assets/icons/delete.svg">Delete quiz</button>
+
+          </div>
+          <div v-if="role === 'ADMIN' || username === creator || coAuthors.some(a => a.username === username)">
             <button id="edit"><img src="@/assets/icons/edit.svg">Edit quiz</button>
           </div>
-          <div v-if="role === 'ADMIN' || username === creator">
-            <button id="edit"><img src="@/assets/icons/edit.svg">Edit quiz</button>
-          </div>
-          <button class="playButton" @click="navigateToTheQuiz">START QUIZ</button>
+          <button class="playButton" @click="navigateToTheQuiz">Play Quiz</button>
         </div>
         <div class="content">
           <div id="leaderboard">
@@ -48,7 +48,7 @@ let recentAttemptsData = ref([]);
 let title = ref("Quiz Title");
 let questions = ref(0);
 let creator = ref("");
-let coAuthors = ref("");
+let coAuthors = ref([]);
 let avgScore = ref("");
 let difficultylvl = ref("");
 let showLeaderboard = ref(true);
@@ -72,12 +72,13 @@ async function fetchQuizData() {
     title.value = response.data.title;
     questions.value = response.data.questions.length;
     creator.value = response.data.creator.username;
+    coAuthors.value = response.data.coAuthors;
   }).catch((error) => {
     console.error("Failed to fetch quiz data:", error);
   });
   difficulty(quizId).then((response) => {
     console.log(response.data);
-    avgScore.value = response.data.averageScore;
+    avgScore.value = response.data.averageScore.toFixed(1);
     console.log(avgScore.value);
     difficultylvl.value = response.data.level;
   }).catch((error) => {
