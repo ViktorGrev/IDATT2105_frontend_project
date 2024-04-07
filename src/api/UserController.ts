@@ -26,3 +26,12 @@ export const getByUsername = (username: string) => {
     };
     return axios.get("http://localhost:8080/api/users/" + username, config);
 }
+
+export const search = (username: string) => {
+    const config = {
+        headers: {
+            "Authorization": "Bearer " + sessionStorage.getItem("userToken")
+        }
+    };
+    return axios.post("http://localhost:8080/api/users/search?username=" + username, {} ,config);
+}
