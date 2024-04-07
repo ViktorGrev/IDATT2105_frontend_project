@@ -43,6 +43,9 @@ export const useUserInfoStore = defineStore('UserInfoStore', {
       this.$state.username = userinfo.username || '';
       this.$state.role = userinfo.role || '';
     },
+    setUsername(username: string) {
+      this.$state.username = username;
+    },
     setAccessToken(accessToken: string) {
       this.$state.accessToken = accessToken;
     },
