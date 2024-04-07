@@ -24,7 +24,6 @@
             </div>
             <BlankInput v-if="question.type === 'FILL_IN_THE_BLANK'" :questionIndex="index" />
           </div>
-          <button @click="skipQuestion(index)" class="skip-btn" type="button">Don't know?</button>
         </div>
       </div>
       <button type="submit" class="submit-btn">Submit Quiz</button>
