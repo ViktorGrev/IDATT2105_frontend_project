@@ -14,11 +14,10 @@
                     <div v-for="question in quiz.questions" :key="question.id" class="question">
                         <div class="questionText">{{ question.text }}</div>
                         <template v-if="question.type === 'FILL_IN_THE_BLANK'">
+                            <p>Solution: {{ question.solution }} <img src="@/assets/icons/Check.svg"> </p>
                             <div class="userAnswer"
                                 :class="{ correct: isCorrectFillInBlank(question), incorrect: !isCorrectFillInBlank(question) }">
                                 Answer: {{ findAnswer(question.id) || "No answer provided" }}
-                                <span v-if="!isCorrectFillInBlank(question)" class="correctAnswer"> (Correct: {{
-                    question.solution }})</span>
                             </div>
                         </template>
                         <template v-else-if="question.type === 'MULTIPLE_CHOICE'">
@@ -34,10 +33,10 @@
                         </template>
                         <template v-else-if="question.type === 'TRUE_FALSE'">
                             <div
-                                :class="{ correct: question.true && isIncorrectAnswer(question, 'true'), incorrect: !question.true && isIncorrectAnswer(question, 'true') }">
+                                :class="{ correct: question.true && findAnswer(question.id), incorrect: !question.true && findAnswer(question.id) }">
                                 True<img v-if="question.true" src="@/assets/icons/Check.svg"> </div>
                             <div
-                                :class="{ correct: !question.true && !isIncorrectAnswer(question, 'true'), incorrect: question.true && isIncorrectAnswer(question, 'false') }">
+                                :class="{ correct: question.true && findAnswer(question.id), incorrect: question.true && findAnswer(question.id) }">
                                 False<img v-if="!question.true" src="@/assets/icons/Check.svg"> </div>
                         </template>
                     </div>
