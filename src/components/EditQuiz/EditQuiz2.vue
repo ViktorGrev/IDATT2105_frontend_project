@@ -123,7 +123,7 @@ const addAnswerOption = (id) => {
 
         // Create a new option with default values
         let newOption: Option = {
-            id: Date.now(), // Using a timestamp for unique ID - consider a different method for production
+            id: null,
             optionText: '',
             correct: false
         };
@@ -137,18 +137,74 @@ const addAnswerOption = (id) => {
     }
 };
 
-const removeAnswerOption = (questionId, optionId) => {
-    const questionIndex = quizQuestions.value.findIndex(q => q.id === questionId);
-    if (questionIndex !== -1) {
-        if (quizQuestions.value[questionIndex].options && quizQuestions.value[questionIndex].options.length > 0) {
-            quizQuestions.value[questionIndex].options = quizQuestions.value[questionIndex].options.filter(option => option.id !== optionId);
+const removeAnswerOption = (questionId, optionIndex) => {
+    // Assuming quizQuestions.value is an array and you're looking for a specific question by id
+    const questionIndex = quizQuestions.value.findIndex(question => question.id === questionId);
+
+    // Ensure the question was found
+    if(questionIndex !== -1) {
+        console.log(quizQuestions.value[questionIndex]); // Log the found question
+        console.log(optionIndex); // Log the optionIndex to be removed
+
+        // Check if the optionIndex is valid for the question's options
+        if(optionIndex >= 0 && optionIndex < quizQuestions.value[questionIndex].options.length) {
+            // Remove the option from the question's options array
+            quizQuestions.value[questionIndex].options.splice(optionIndex, 1);
         } else {
-            console.error('No options available to remove');
+            console.error("Invalid optionIndex");
         }
     } else {
-        console.error('Question not found');
+        console.error("Question not found");
     }
 };
+
+
+const addQuestion = (type = 'MULTIPLE_CHOICE') => {
+    let newQuestion: Question = {
+        id: null,
+        text: '',
+        type: 'MULTIPLE_CHOICE',
+        correct: false,
+        options: [],
+    };
+    let newOption: Option = {
+        id: null,
+        optionText: '',
+        correct: false
+    };
+
+    newQuestion.options.push(newOption);
+    quizQuestions.value.push(newQuestion);
+    currentQuestionId.value = nextId;
+};
+
+
+const createQuiz = async () => {
+
+
+    const quiz = {
+        id: quizId.value,
+        title: quizTitle.value,
+        category: quizCategory.value,
+        description: quizDescription.value,
+        tags: quizTags.value,
+        random: quizRandom.value,
+        image: quizImage.value,
+        coAuthors: quizCoAuthors.value,
+        questions: quizQuestions.value,
+        timestamp: quizTime.value,
+        creator: quizCreator.value,
+    };
+
+    console.log(JSON.stringify(quiz, null, 2));
+    
+    editQuiz(quizId.value, quiz).then(response => {
+        routerView.push({ name: 'quiz', params: { id: quizId } });
+    }).catch(error => {
+        console.error('Quiz creation error:', error);
+    });
+};
+
 </script>
 
 
@@ -157,7 +213,7 @@ const removeAnswerOption = (questionId, optionId) => {
         <div class="box">
             <div class="title">
                 <div class="createtitle">
-                    <h1>Create a new Study Set</h1> <button @click="createQuiz" class="createButton">Create</button>
+                    <h1>Create a new Study Set</h1> <button @click="createQuiz" class="createButton">Update</button>
                 </div>
                 <label for="quizTitle" class="titleLabel">Quiz Title:</label>
                 <input id="quizTitle" aria-label="Title" class="titleInput" maxlength="255"
@@ -209,12 +265,6 @@ const removeAnswerOption = (questionId, optionId) => {
                         Randomize Answers: {{ randomLabel() }}
                     </button>
 
-                    <button @click="triggerQuizImageUpload" class="titleButton">
-                        + Quiz Image
-                    </button>
-                    <input type="file" ref="quizImageInput" @change="handleQuizImageUpload" accept="image/*"
-                        style="display:none">
-
                     <div class="coAuthorHolder">
                         <label for="coAuthorInput" class="titleLabel">Co-Authors:</label>
                         <div>
@@ -257,8 +307,9 @@ const removeAnswerOption = (questionId, optionId) => {
                             </div>
                             <div class="answers" v-if="question.type === 'MULTIPLE_CHOICE'">
                                 <div id="answerAddSplitter">
-                                    <div v-for="option in question.options" class="answerRow">
-                                        <button id="removeOption" @click="removeAnswerOption(question.id, option.id)">X</button>
+                                    <div v-for="(option, index) in question.options" :key="index" class="answerRow">
+                                        <button id="removeOption"
+                                            @click="removeAnswerOption(question.id, index)">X</button>
                                         <input class="answersField" v-model="option.optionText">
                                         <div>
                                             <input type="checkbox" class="option-input checkbox" :value="option.id"
