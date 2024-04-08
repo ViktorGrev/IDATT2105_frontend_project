@@ -43,7 +43,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { login } from '@/api/AuthController';
 import { getSelf } from '@/api/UserController';
@@ -72,7 +71,6 @@ const attemptLogin = async () => {
 
 const loginUser = async () => {
     login(username.value, password.value). then(loginResponse => {
-      sessionStorage.setItem('userToken', loginResponse.data.token);
       userStore.setAccessToken(loginResponse.data.token);
       getSelf().then(response => {
         userStore.setUserInfo({
