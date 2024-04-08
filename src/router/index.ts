@@ -16,16 +16,6 @@ const routes = [
         meta: { requiresAuth: true },
       },
       {
-        path: '/login',
-        name: 'login',
-        component: LoginView,
-      },
-      {
-        path: '/signup',
-        name: 'signup',
-        component: () => import('../views/Authentication/SignUpView.vue'),
-      },
-      {
         path: '/create',
         name: 'create',
         component: () => import('../views/Quiz/QuizCreateView.vue'),
@@ -97,6 +87,16 @@ const routes = [
         component: () => import('@/views/NotFoundView.vue'),
       },
     ]
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('../views/Authentication/SignUpView.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
