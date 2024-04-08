@@ -11,15 +11,15 @@ describe('Search', () => {
    //Testing if search for quizz works
    it('Find quiz when search with input field', () => {
       cy.visit('http://localhost:5173/search');
-      cy.get('#searchField').type('test{enter}');
-      cy.get('#searchedQuizzes').contains(/Test/i)
+      cy.get('#searchField').type('ntnu{enter}');
+      cy.get('#searchedQuizzes').contains(/ntnu/i)
    });
 
    //Testing if search for user works
     it('Find user when search with input field', () => {
       cy.visit('http://localhost:5173/search');
-      cy.get('#searchField').type('gogogo{enter}');
-      cy.get('#searchedUsers').contains(/gogogo/i)
+      cy.get('#searchField').type('Alice{enter}');
+      cy.get('#searchedUsers').contains(/alice/i)
    });    
 
    //Testing category buttons

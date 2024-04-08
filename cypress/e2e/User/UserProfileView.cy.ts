@@ -25,7 +25,7 @@ describe('Start page for a quiz', () => {
 
         cy.get('.list').contains(/total attempts/i)
 
-        cy.get('.list li').contains(/test/i).click();
+        cy.get('.list li').contains(/ntnu/i).click();
         cy.url().should('include', '/result');
       });
   });
