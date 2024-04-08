@@ -1,128 +1,122 @@
-# Trivium
+# Rizzlet
 
 <p align="center">
-  <img src="assets\ReadmePicture.webp" width="500">
+  <img src="./src/assets/rizzletRpng.png" width="500">
 </p>
 
-**Application website:** [Book That Room](https://idatt2105-project.vercel.app/)
+**Application website:** [Rizzlet](rizzlet.no)
 
 Made by: Henrik Berg, Victor Kaste, Viktor Grevskott
-Last run CI/CD: [Github Actions](https://github.com/diderikk/idatt2105_project/actions)
+
 
 ## Content
 
 1. [Introduction](#introduction)
 2. [Functionality](#functionality)
-3. [ER-diagram](#er-diagram)
-4. [REST-API](#rest-api)
-5. [Security](#security)
-6. [CI/CD](#cicd)
-7. [Dependencies](#dependencies)
-8. [Future work](#future-work)
-9. [Installation manual](#installation-manual)
-10. [Running tests](#running-tests)
+3. [API Usage](#api-usage)
+4. [Security](#security)
+5. [CI/CD](#cicd)
+6. [Dependencies](#dependencies)
+7. [Future work](#future-work)
+8. [Installation manual](#installation-manual)
+9. [Running tests](#running-tests)
+10. [Contact](#contact)
 
 ## Introduction
+
+A group project in the class idatt2105 at ntnu. The application is a quiz aplication where users can make their own quizzes, and play quizzes made by other people. 
 
 ## Functionality
 
 ### User
 
 - Log in
-- View user's reservations
-- Book rooms/sections of a room
-- Administer user's reservations
-- View all rooms
-- Join room chat
+- Play quizzes
+- Make quizzes
+- Edit own made quizzes
+- Delete own made quizzes
+- Edit co-authored quizzes
 - View profile information
+- Edit profile infomation
+- View quizz results
 
 ### Admin
 
 - Log in
-- View and administer all reservations
-- View and administer all rooms
-- View and administer all users
-- Create users, rooms and reservations
-- View statistics of rooms and users
-- Join room chat
+- Play quizzes
+- Make quizzes
+- Edit all quizzes
+- Delete all quizzes
+- View profile information
+- Edit profile infomation
+- View quizz results
 
-## ER-diagram
-
-## REST-API
+## API-usage
+The program uses pre made axios method go access the backend endpoint across the entire program.
 
 ## Security
+The application checks wheter a user is logged in correctly
 
 ## CI/CD
-
-### CI
-
-### CD
+The group has has tried to use CI/CD, but it will not complete due to TypeScript errors
 
 ## Dependencies
 
-### Backend
+Dependencies can be found in the package.json file
 
-- Maven
-  - Build automation tool for the backend application written in Java
-- Spring Boot
-  - Application framework for easily creating stand-alone applications with Java
-- Spring Security
-  - Powerful authentication and access-control framework. Standard for Spring-based applications when using Spring Boot
-- Swagger
-  - For hosting of API.
-- Java Persistence API (JPA)
-  - A programming interface specification for management of relational data in Java applications
-- Docker (optional)
-  - Can be used to safely build and run applications in isolated containers
-
-### Frontend
+## Frontend technology
 
 - Vue.js 3
   - Open source JavaScript framework for building interfaces and applications
 - Typescript
   - A strict syntactical superset of JavaScript programming language, helpful to avoid typical JavaScript errors
-- Babel
-  - Free and open-source JavaScript compiler, so that the code can be run by older JavaScript engines
-- ESlint
-  - Static code analysis tool for problem identification in JavaScript code
-- Bulma
-  - Free open-source CSS framework that provides ready-to-use components to build responsive web interfaces
+- Vitest
+  - Testing framework used to unit test
+- Cypress
+  - Testing framework for js, used for e2e testing
+- ESLint
+  - ESLint statically analyzes your code to quickly find problems. It is built into most text editors and you can run ESLint as part of your continuous integration pipeline.
 
 ## Future work
 
-### Reservation of equipment
+#### Fully working CI/CD
 
-### Reservation cache
+#### Images for quizzes
 
-### Visitor registration
 
-### Refresh tokens
-
-### Groups
-
-### Server performance
 
 ## Installation manual
+### Prerequisites
 
-For building and running the application on different environments, [Docker](https://docs.docker.com/engine/install/) can be used.
-[Maven](https://maven.apache.org/install.html) is needed to run backend application.
+To run this application you will need
 
-To run the server and client locally (so that they communicate with eachother):
+- node version 16 or higher
+- npm
 
-Change constant isTesting to **true** in _frontend/src/backend.ts_ and run following commands under, depending on the wished behaviour of the application.
+#### Installation guide
 
-To run Spring Boot a config.properties file is needed in _src/main/resources_
+1. Clone the repo
+   ```sh
+   git clone git@github.com:ViktorGrev/IDATT2105_project.git
+   ```
+2. Change directory into the downloaded repo
+   ```sh
+   cd IDATT2105_project
+   ```
+3. Install all dependencies using yarn
 
-```
-database.url=DATABASE_URL
-database.username=DATABASE_USERNAME
-database.password=DATABASE_PASSWORD
-// Admin user created on startup
-root.email=ROOT_EMAIL
-root.password=ROOT_PASSWORD
-email.email=EMAIL_EMAIL
-email.password=EMAIL_PASSWORD
-```
+   ```sh
+   npm install
+   ```
+
+   note: all npm dependencies can be found in the `package.json` file.
+
+#### Running the program
+You will need to have the [Backend](https://github.com/ViktorGrev/IDATT2105_backend) up and running to get full functionallity
+  ```sh
+   npm run dev
+   ```
+
 
 ### Backend
 
@@ -175,9 +169,19 @@ npm run serve
 
 ## Running tests
 
-User Maven commands to run tests (backend):
+Unit test:
 
 ```
-cd backend/
-./mvnw test
+npm run test:unit
 ```
+
+End 2 end test (e2e)
+```
+npx cypress open
+```
+
+## Contact
+
+Henrik Berg - henridb@stud.ntnu.no \
+Victor Kaste - vekaste@stud.ntnu.no \
+Viktor Grevskott - viktorgg@stud.ntnu.no
