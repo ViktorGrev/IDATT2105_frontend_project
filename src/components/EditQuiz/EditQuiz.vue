@@ -77,9 +77,9 @@ const removeCoAuthor = (authorToRemove) => {
     quizCoAuthors.value = quizCoAuthors.value.filter(author => author !== authorToRemove);
 };
 
-const deleteQuestion = (id) => {
-    quizQuestions.value = quizQuestions.value.filter(i => i.id !== id)
-    console.log("Hallo");
+const deleteQuestion = (index) => {
+    quizQuestions.value.splice(index, 1);
+    console.log("Question deleted");
 };
 
 export interface Option {
@@ -88,42 +88,26 @@ export interface Option {
     correct: boolean,
 }
 
-const addAnswerOption = (id) => {
-    const questionIndex = quizQuestions.value.findIndex(q => q.id === id);
-    if (questionIndex !== -1) {
-        // If the question does not have an options array, initialize it
-        if (!quizQuestions.value[questionIndex].options) {
-            quizQuestions.value[questionIndex].options = [];
-        }
-
-        // Create a new option with default values
-        let newOption: Option = {
-            id: null,
+const addAnswerOption = (questionIndex) => {
+    const question = quizQuestions.value[questionIndex];
+    if (question) {
+        const newOption = {
+            id: null, // Consider removing or generating a unique id if needed
             optionText: '',
             correct: false
         };
-
-        // Add the new option to the question's options array
-        quizQuestions.value[questionIndex].options.push(newOption);
-
-        // Since Vue 3 is reactive, this should automatically update your UI to reflect the changes
-    } else {
-        console.error('Question not found');
+        question.options.push(newOption);
     }
 };
 
-const removeAnswerOption = (questionId, optionIndex) => {
-    const questionIndex = quizQuestions.value.findIndex(question => question.id === questionId);
-    if(questionIndex !== -1) {
-        if(optionIndex >= 0 && optionIndex < quizQuestions.value[questionIndex].options.length) {
-            quizQuestions.value[questionIndex].options.splice(optionIndex, 1);
-        } else {
-            console.error("Invalid optionIndex");
-        }
-    } else {
-        console.error("Question not found");
+
+const removeAnswerOption = (questionIndex, optionIndex) => {
+    const question = quizQuestions.value[questionIndex];
+    if (question && question.options.length > optionIndex) {
+        question.options.splice(optionIndex, 1);
     }
 };
+
 
 
 const addQuestion = (type = 'MULTIPLE_CHOICE') => {
@@ -142,7 +126,6 @@ const addQuestion = (type = 'MULTIPLE_CHOICE') => {
 
     newQuestion.options.push(newOption);
     quizQuestions.value.push(newQuestion);
-    currentQuestionId.value = nextId;
 };
 
 
@@ -278,11 +261,11 @@ const createQuiz = async () => {
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionsList">
-                    <div class="loop" v-for="question in quizQuestions">
+                    <div class="loop" v-for="(question, qindex) in quizQuestions">
                         <div class="questionEditBox">
                             <div class="titleHolder">
                                 <div>Question {{ question.tile }}</div>
-                                <button class="deleteButton" @click="deleteQuestion(question.id)">Delete</button>
+                                <button class="deleteButton" @click="deleteQuestion(qindex)">Delete</button>
                             </div>
                             <div class="questionBox">
                                 The question:
@@ -300,7 +283,7 @@ const createQuiz = async () => {
                                 <div id="answerAddSplitter">
                                     <div v-for="(option, index) in question.options" :key="index" class="answerRow">
                                         <button id="removeOption"
-                                            @click="removeAnswerOption(question.id, index)">X</button>
+                                            @click="removeAnswerOption(qindex, index)">X</button>
                                         <input class="answersField" v-model="option.optionText">
                                         <div>
                                             <input type="checkbox" class="option-input checkbox" :value="option.id"
@@ -310,7 +293,7 @@ const createQuiz = async () => {
 
                                 </div>
                                 <div>
-                                    <button id="addOption" @click="addAnswerOption(question.id)">+ Add Option</button>
+                                    <button id="addOption" @click="addAnswerOption(qindex)">+ Add Option</button>
                                 </div>
                             </div>
                             <div class="answers" v-else-if="question.type === 'FILL_IN_THE_BLANK'">
