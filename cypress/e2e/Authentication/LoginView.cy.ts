@@ -36,9 +36,5 @@ describe('Login functionality', () => {
         cy.get('#password').type('GoGo1');
 
         cy.get('form').submit();
-
-        cy.window().should((win) => {
-            expect(win.sessionStorage.getItem('userToken')).to.exist;
-          });
     });
 });

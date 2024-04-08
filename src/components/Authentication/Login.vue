@@ -71,7 +71,6 @@ const attemptLogin = async () => {
 
 const loginUser = async () => {
     login(username.value, password.value). then(loginResponse => {
-      sessionStorage.setItem('userToken', loginResponse.data.token);
       userStore.setAccessToken(loginResponse.data.token);
       getSelf().then(response => {
         userStore.setUserInfo({

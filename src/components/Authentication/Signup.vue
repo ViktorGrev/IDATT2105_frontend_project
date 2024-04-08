@@ -95,7 +95,6 @@ const attemptSignup = async () => {
 
 const signupUser = async () => {
     signup(username.value, password.value). then(loginResponse => {
-      sessionStorage.setItem('userToken', loginResponse.data.token);
       userStore.setAccessToken(loginResponse.data.token);
       getSelf().then(response => {
         userStore.setUserInfo({
