@@ -117,56 +117,6 @@ You will need to have the [Backend](https://github.com/ViktorGrev/IDATT2105_back
    npm run dev
    ```
 
-
-### Backend
-
-_Make (with Docker and Maven)_
-
-```
-make backend_dev
-```
-
-_Docker (with Maven)_
-
-```
-mkdir backend/src/main/resources/keystore
-keytool -genkeypair -dname "cn=, ou=, o=, c=NO" -alias fullstack -storepass password -keypass password -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore backend/src/main/resources/keystore/cert_key.p12 -validity 3650
-mvn -B -DskipTests -f ./backend package
-docker build -t backend-server ./backend
-docker run -p 8443:8443 --name backend --rm backend-server
-
-```
-
-_Maven_
-
-```
-cd backend/
-./mvnw spring-boot:run
-```
-
-### Frontend
-
-_Make (with Docker and Maven)_
-
-```
-make frontend_serve
-```
-
-_Docker (with Maven)_
-
-```
-docker build -t frontend-server ./frontend
-docker run -p 3000:3000 --name frontend --rm frontend-server
-```
-
-_npm (node package manager)_
-
-```
-cd frontend/
-npm install
-npm run serve
-```
-
 ## Running tests
 
 Unit test:
