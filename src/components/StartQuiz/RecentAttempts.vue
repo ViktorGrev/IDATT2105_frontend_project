@@ -107,7 +107,7 @@ const navigateToResult = (resultID) => {
     </div>
     </div>
 
-    <div v-else>
+    <div v-else style="color: #6d6e72;">
     loading...
     </div>
 

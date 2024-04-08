@@ -98,6 +98,7 @@ main {
     flex-direction: column;
     font-size: 20px;
     height: 50%;
+    color: #6d6e72;
 }
 .creatorBox {
     color: rgb(21, 83, 137);

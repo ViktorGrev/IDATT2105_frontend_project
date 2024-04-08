@@ -9,7 +9,7 @@
         <p style="font-size: 15px; margin: 0; margin-top: 5px; overflow: hidden;">{{ quiz.quiz.description }}</p>
       </div>
     </div>
-  <div v-else>Loading</div>
+  <div v-else style="color: #6d6e72;">Loading</div>
 </div>
 </template>
 
