@@ -5,12 +5,14 @@
             <h2 style="color: #6d6e72;">Your created quizzes</h2>
             <div v-if="createdQuizzesIsEmpty">You have no created quizzes</div>
             <div class="contentBox" v-else>
-                <div class="quizz" v-for="quiz in createdQuizzes" :key="quiz.id" @click="navigateToQuiz(quiz.id)">
+                <div class="quizz" v-for="quiz in createdQuizzes" :key="quiz.id">
                     <div class="quizzInfo">
                         <p style="font-size: 30px;">Quizz: {{ quiz.title }}</p>
                     </div>
                     
                     <div class="quizzPlay">
+                        <button @click="deleteThisQuiz" :class="{ 'red-button': true }">Delete</button>
+                        <button :class="{ 'green-button': true }">Edit</button>
                         <img src="../../assets/image.png" alt="play" style="cursor: pointer;" @click="navigateToQuiz(quiz.id)">
                     </div>
                 </div>
@@ -39,7 +41,7 @@
 import { useRouter, useRoute } from 'vue-router';
 import { ref, onMounted, computed } from "vue";
 import {getByUsername} from "@/api/UserController";
-import {getLibrary} from "@/api/QuizController";
+import { getLibrary, deleteQuiz} from "@/api/QuizController";
 import { useUserInfoStore } from '@/stores/UserStore';
 
 const userStore = useUserInfoStore();
@@ -91,6 +93,15 @@ const navigateToQuiz = (quizID) => {
 };
 
 onMounted(fetchUserData);
+
+const deleteThisQuiz = () => {
+  deleteQuiz(playId.value).then((response) => {
+    console.log(response.data);
+    router.push({ name: 'home' });
+  }).catch((error) => {
+    console.error("Failed to fetch quiz data:", error);
+  });
+};
 </script>
 
 <style scoped>
@@ -128,7 +139,6 @@ onMounted(fetchUserData);
 
 .quizz:hover {
   box-shadow: 5px 5px 5px #88888845;
-  cursor: pointer;
 }
 
 .quizzInfo {
@@ -151,5 +161,44 @@ onMounted(fetchUserData);
     width: 15%;
     height: auto;
     padding-right: 40px;
+}
+
+.red-button {
+  background-color: red; 
+  color: #ffffff; 
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.red-button:hover {
+  background-color: #cc0000;
+}
+
+/* Green Button */
+.green-button {
+  background-color: rgb(81, 147, 163); 
+  color: #ffffff; 
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 10px;
+  color: white;
+}
+
+.green-button:hover {
+  background-color: rgb(55, 100, 112);
 }
 </style>
