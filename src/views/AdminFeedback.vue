@@ -18,7 +18,7 @@ onMounted(fetchQuizData);
 <template>
     <main>
         <div class="box">
-            <div class="header"></div>
+            <div class="header">User-feedback</div>
             <!-- Fixed v-for usage -->
             <div class="feedbackBox" v-for="feedback in feedbackData" :key="feedback.id"> <!-- Assuming each feedback has a unique 'id' -->
                 <div class="name">
@@ -61,7 +61,9 @@ main {
     display: flex;
     flex-direction: column;
     border: 2px solid gray; /* Adjusted for consistency */
+    margin: 0.2rem;
     margin-bottom: 1rem;
+    padding: 0.5rem;
 }
 
 .name, .email { /* Corrected selector for applying styles correctly */
