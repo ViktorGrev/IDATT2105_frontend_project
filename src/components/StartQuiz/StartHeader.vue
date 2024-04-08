@@ -24,7 +24,6 @@ const props = defineProps({
 });
 
 const difficultyColor = computed(() => {
-  console.log(props.difficulty)
   switch (props.difficulty) {
     case 'EASY':
       return 'green';

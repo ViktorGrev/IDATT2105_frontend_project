@@ -82,14 +82,11 @@ async function fetchLibrary() {
         createdQuizzes.value = response.data.created;
         if(createdQuizzes.value.length === 0) {
             createdQuizzesIsEmpty.value = 1;
-            console.log("TRUE")
         }
 
-        console.log(response.data.coAuthored)
         coAuthorQuizzes.value = response.data.coAuthored;
         if(coAuthorQuizzes.value.length === 0) {
             coAuthorQuizzesIsEmpty.value = 1;
-            console.log("TRUE")
         }
 
     } catch (error) {
@@ -106,7 +103,6 @@ onMounted(fetchUserData);
 
 const deleteThisQuiz = () => {
   deleteQuiz(playId.value).then((response) => {
-    console.log(response.data);
     router.push({ name: 'home' });
   }).catch((error) => {
     console.error("Failed to fetch quiz data:", error);

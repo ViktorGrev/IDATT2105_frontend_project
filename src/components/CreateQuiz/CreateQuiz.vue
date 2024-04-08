@@ -174,8 +174,6 @@ const createQuiz = async () => {
         questions: formattedQuestions,
     };
 
-    console.log(JSON.stringify(quiz, null, 2));
-
     create(quiz).then(response => {
         routerView.push({ name: 'quiz', params: { id: response.data.id } });
     }).catch(error => {

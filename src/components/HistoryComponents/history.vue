@@ -162,7 +162,6 @@ export default defineComponent({
 
         // Inside setup() function
         const uniqueQuizzes = computed(() => {
-          console.log("Quizzes:", quizzes.value);
           if (quizzes.value) {
             const uniqueIds = new Set();
             return quizzes.value.filter(slide => {
@@ -200,14 +199,12 @@ export default defineComponent({
 
     // Define the navigateToQuiz method
     const navigateToQuiz = (quizID) => {
-        console.log(quizID);
         router.push({ name: 'quiz', params: { id: quizID } });
     };
 
     function generateLink(userId, query: string): void {
       const baseUrl: string = "http://localhost:8080/api/quiz/results/users/";
       const restUrl: string = `${userId}`
-      console.log(restUrl)
       recentApiUrl.value = restUrl;
     }
 
@@ -218,12 +215,9 @@ export default defineComponent({
       return parts[parts.length - 1];
     });
 
-    console.log(usernameOfOther.value);
-
     if(usernameOfOther.value == "") {
       onMounted(fetchUsername);
     } else {
-      console.log("testtest");
       onMounted(fetchUserid)
       //onMounted(fetchQuizData2(usernameOfOther.value))
     }
@@ -233,9 +227,6 @@ export default defineComponent({
         getByUsername(usernameOfOther.value).then((response) => {
           currentUserID.value = response.data.id;
           fetchQuizData2(); 
-          console.log("testUserIDHasCome");
-          
-          console.log(response.data.id); 
         });
       } catch (error) {
         console.error("Failed to fetch userID:", error);

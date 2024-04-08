@@ -117,7 +117,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isLoggedIn = () => !!useUserInfoStore().accessToken;
   const isAdmin = () => useUserInfoStore().role == 'ADMIN';
-  console.log(isAdmin())
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
   if (requiresAuth && !isLoggedIn()) {

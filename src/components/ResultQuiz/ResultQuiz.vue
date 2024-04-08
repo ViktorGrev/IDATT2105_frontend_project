@@ -69,9 +69,7 @@ async function fetchResultData() {
             result.value = response.data;
             score.value = response.data.score;
             wrong.value = response.data.quiz.questions.length - response.data.score;
-            console.log(JSON.stringify(result.value, null, 2));
             quiz.value = response.data.quiz;
-            console.log(userSelectedOption(1160))
         }).catch((error) => {
             console.error("Failed to fetch quiz data:", error);
         });
@@ -97,12 +95,10 @@ function g(id: number): boolean {
   }
 
   if (ar2.length != ar.length) {
-    console.log("A");
     return false;
   }
   for (var a of ar) {
     if (!ar2.includes(a)) {
-      console.log("B");
       return false;
     }
   }

@@ -44,8 +44,6 @@ function populateFormWithData(data: any) {
     quizImage.value = data.image;
     quizCoAuthors.value = data.coAuthors;
     quizQuestions.value = data.questions;
-
-    console.log(JSON.stringify(quizQuestions.value, null, 2));
 }
 
 const addTag = () => {

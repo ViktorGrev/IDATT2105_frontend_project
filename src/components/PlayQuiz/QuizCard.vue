@@ -55,17 +55,13 @@ const router = useRouter();
 const qId = ref(0);
 
 function shuffleArray<T>(array: T[]): T[] {
-    const newArray = array.slice(); // Create a copy of the original array
-
-    console.log(array);
+    const newArray = array.slice(); 
 
     // Fisher-Yates shuffle algorithm
     for (let i = newArray.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
-    console.log("I randomized :D")
-    console.log(newArray);
 
     return newArray;
 }
@@ -108,16 +104,13 @@ async function submitQuiz() {
 
       return {
         "question": question.id,
-        "answer": answer // Answer could be null, a single value, or an array of values
+        "answer": answer 
       };
-    }).filter(answer => answer.answer !== null && answer.answer !== undefined) // Filter out unanswered questions
+    }).filter(answer => answer.answer !== null && answer.answer !== undefined) 
   };
 
   quizCompleted.value = true;
-  console.log(results.answers);
-  console.log("Hallo " + qId.value);
   answers(qId.value, results.answers).then((response) => {
-    console.log(JSON.stringify(response.data, null, 2));
     router.push({ name: 'result', params: { id: response.data.id } });
   }).catch((error) => {
     console.error("Failed to submit quiz:", error);

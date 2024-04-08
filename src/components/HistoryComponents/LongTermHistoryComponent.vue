@@ -141,7 +141,6 @@ async function fetchUserData() {
   try {
     getByUsername(username.value).then((response) => {
       currentUserID.value = response.data.id;
-      console.log(currentUserID.value); 
       fetchUserResults();
     });
   } catch (error) {
@@ -173,8 +172,6 @@ const shortenTimestamp = (timestamp: string) => {
 
 // Define the navigateToResult method
 const navigateToResult = (resultID) => {
-  console.log("Noe: ");
-  console.log(currentUserID.value);
   if(self.value.id === currentUserID.value) {
     router.push({ name: 'result', params: { id: resultID } });
   } else {

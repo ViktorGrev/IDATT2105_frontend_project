@@ -67,7 +67,6 @@ async function fetchQuizData() {
     console.error("Failed to fetch leaderboard data:", error);
   });
   quiz(quizId).then((response) => {
-    console.log(response.data);
     title.value = response.data.title;
     questions.value = response.data.questions.length;
     creator.value = response.data.creator.username;
@@ -76,9 +75,7 @@ async function fetchQuizData() {
     console.error("Failed to fetch quiz data:", error);
   });
   difficulty(quizId).then((response) => {
-    console.log(response.data);
     avgScore.value = response.data.averageScore.toFixed(1);
-    console.log(avgScore.value);
     difficultylvl.value = response.data.level;
   }).catch((error) => {
     console.error("Failed to fetch quiz data:", error);
@@ -91,7 +88,6 @@ const navigateToUserProfile = (userId: number) => {
 
 const deleteThisQuiz = () => {
   deleteQuiz(playId.value).then((response) => {
-    console.log(response.data);
     router.push({ name: 'home' });
   }).catch((error) => {
     console.error("Failed to fetch quiz data:", error);

@@ -22,7 +22,6 @@ async function fetchSelf() {
       self.value = response.data;
       fetchUserData();
       quizId.value = route.params.id;
-      console.log(quizId.value)
     });
   } catch (error) {
     console.error("Failed to fetch self", error);
@@ -33,7 +32,6 @@ async function fetchUserData() {
   try {
     getByUsername(self.value.username).then((response) => {
       currentUserID.value = response.data.id;
-      console.log(currentUserID.value); 
       fetchUserResults();
     });
   } catch (error) {

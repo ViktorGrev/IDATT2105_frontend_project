@@ -32,7 +32,6 @@ async function fetchQuizData2() {
   try {
     searchForQuiz(searchQuery.value).then((response) => {
       quizzes.value = response.data;
-      console.log(response.data); 
     });
   } catch (error) {
     console.error("Failed to fetch quiz data:", error);
@@ -44,7 +43,6 @@ async function fetchUserData() {
   try {
     search(searchQuery.value).then((response) => {
       users.value = response.data;
-      console.log(response.data); 
     });
   } catch (error) {
     console.error("Failed to fetch quiz data:", error);
@@ -70,10 +68,7 @@ const updateSelectedCategory = (category) => {
 function generateLink(searchType: 'title' | 'category', query: string): void {
     const baseUrl: string = "http://localhost:8080/api/quiz/search";
     const restUrl: string = `${searchType}=${query}`
-    console.log(restUrl);
-    
     apiUrl.value = restUrl;
-    console.log(apiUrl.value);
 }
 </script>
 

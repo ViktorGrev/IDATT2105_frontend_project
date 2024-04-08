@@ -40,7 +40,6 @@ onMounted(() => {
 
 // Define the navigateToUserProfile method
 const navigateToQuiz = (quizId) => {
-  console.log(quizId);
   router.push({ name: 'quiz', params: { id: quizId } });
 };
 </script>

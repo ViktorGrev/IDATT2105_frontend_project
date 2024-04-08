@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-import UserFeedbackComponent from '@/components/UserComponents.vue/UserFeedbackComponent.vue';
+import UserFeedbackComponent from '@/components/UserComponents/UserFeedbackComponent.vue';
 </script>

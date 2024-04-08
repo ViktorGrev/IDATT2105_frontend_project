@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import FormInput from '@/components/FormInput.vue';
+import FormInput from '@/components/UserComponents/FormInput.vue';
 import {sendFeedback} from "@/api/UserController";
 
 const email = ref("");
@@ -29,7 +29,6 @@ const message = ref("");
 const submissionStatus = ref("");
 
 const submitForm = async () => {
-  console.log("test");
   sendFeedback(email.value, message.value).then(response => {
     submissionStatus.value = "Feedback has been sent!";
   }).catch(error => {
