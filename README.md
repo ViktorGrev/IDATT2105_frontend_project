@@ -85,7 +85,7 @@ Dependencies can be found in the package.json file
 
 #### Fully functional openAPI generating
 
-#### Get cypress tests to work on test data
+#### Get tests to work on test data
 - Used to work on old test data, but needs update
 
 
