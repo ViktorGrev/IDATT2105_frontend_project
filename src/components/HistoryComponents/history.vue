@@ -124,7 +124,6 @@ export default defineComponent({
   setup() {
     const quizzes = ref(null);
     const router = useRouter();
-    const route = useRoute();
     const noRecentAttempts = ref(null);
     const currentUserID = ref(null);
     const recentApiUrl = ref(null);
@@ -152,14 +151,33 @@ export default defineComponent({
     // Function to fetch quiz data
     async function fetchQuizData2() {
       try {
-
         generateLink(currentUserID.value);
         resultsByUserId(recentApiUrl.value).then((response) => {
-          quizzes.value = response.data.slice(0,5);
+          quizzes.value = response.data;
         
         if (quizzes.value.length === 0) {
           noRecentAttempts.value = 1;
         } 
+
+        // Inside setup() function
+        const uniqueQuizzes = computed(() => {
+          console.log("Quizzes:", quizzes.value);
+          if (quizzes.value) {
+            const uniqueIds = new Set();
+            return quizzes.value.filter(slide => {
+              if (uniqueIds.has(slide.quiz.id)) {
+                return false;
+              } else {
+                uniqueIds.add(slide.quiz.id);
+                return true;
+              }
+            });
+          } else {
+            return [];
+          }
+        });
+
+        quizzes.value = uniqueQuizzes.value.slice(0, 5);
 
         });
       } catch (error) {
