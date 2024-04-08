@@ -3,34 +3,44 @@
     <div class="container">
         <div>
             <h2 style="color: #6d6e72;">Your created quizzes</h2>
-            <div v-if="createdQuizzesIsEmpty">You have no created quizzes</div>
-            <div class="contentBox" v-else>
-                <div class="quizz" v-for="quiz in createdQuizzes" :key="quiz.id">
-                    <div class="quizzInfo">
-                        <p style="font-size: 30px;">Quizz: {{ quiz.title }}</p>
-                    </div>
-                    
-                    <div class="quizzPlay">
-                        <button @click="deleteThisQuiz" :class="{ 'red-button': true }">Delete</button>
-                        <button :class="{ 'green-button': true }">Edit</button>
-                        <img src="../../assets/image.png" alt="play" style="cursor: pointer;" @click="navigateToQuiz(quiz.id)">
+            <div v-if="createdQuizzes" class="container">
+                <div v-if="createdQuizzesIsEmpty">You have no created quizzes</div>
+                <div class="contentBox" v-else>
+                    <div class="quizz" v-for="quiz in createdQuizzes" :key="quiz.id" @click="navigateToQuiz(quiz.id)" style="cursor: pointer;">
+                        <div class="quizzInfo">
+                            <p style="font-size: 30px;">Quizz: {{ quiz.title }}</p>
+                        </div>
+                        
+                        <div class="quizzPlay">
+                            <button @click="deleteThisQuiz" :class="{ 'red-button': true }">Delete</button>
+                            <button :class="{ 'green-button': true }">Edit</button>
+                            <img src="../../assets/image.png" alt="play" style="cursor: pointer;">
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div v-else style="text-align: center; align-items:center;">
+                loading
             </div>
         </div>
         <div>
             <h2 style="color: #6d6e72;">Your co-autored quizzes</h2>
-            <div v-if="coAuthorQuizzesIsEmpty" style="color: #6d6e72;">You have no co-autored quizzes</div>
-            <div class="contentBox" v-else>
-                <div class="quizz" v-for="quiz in coAuthorQuizzes" :key="quiz.id" @click="navigateToQuiz(quiz.id)">
-                    <div class="quizzInfo">
-                        <p style="font-size: 30px;">Quizz:</p>
-                    </div>
-                    
-                    <div class="quizzPlay">
-                        <img src="../../assets/image.png" alt="play" style="cursor: pointer;" @click="navigateToQuiz(quiz.id)">
+            <div v-if="coAuthorQuizzes" class="container">
+                <div v-if="coAuthorQuizzesIsEmpty" style="color: #6d6e72;">You have no co-autored quizzes</div>
+                <div class="contentBox" v-else>
+                    <div class="quizz" v-for="quiz in coAuthorQuizzes" :key="quiz.id" @click="navigateToQuiz(quiz.id)" style="cursor: pointer;">
+                        <div class="quizzInfo">
+                            <p style="font-size: 30px;">Quizz: {{ quiz.title }}</p>
+                        </div>
+                        <div class="quizzPlay">
+                            <button :class="{ 'green-button': true }">Edit</button>
+                            <img src="../../assets/image.png" alt="play">
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div v-else style="text-align: center; align-items:center;">
+                loading
             </div>
         </div>
     </div>
@@ -46,9 +56,9 @@ import { useUserInfoStore } from '@/stores/UserStore';
 
 const userStore = useUserInfoStore();
 
-const createdQuizzes = ref([]);
+const createdQuizzes = ref(null);
 const createdQuizzesIsEmpty = ref(null);
-const coAuthorQuizzes = ref([]);
+const coAuthorQuizzes = ref(null);
 const coAuthorQuizzesIsEmpty = ref(null);
 const router = useRouter();
 
