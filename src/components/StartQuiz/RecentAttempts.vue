@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import listElement from '@/components/listElementComponent.vue'
+import listElement from '@/components/HistoryComponents/listElementComponent.vue'
 import { resultsByUserId } from '@/api/QuizController';
 import { getByUsername, getSelf } from '@/api/UserController';
 import { useRouter, useRoute } from 'vue-router'
