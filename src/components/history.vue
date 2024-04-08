@@ -109,9 +109,9 @@ main {
 import { defineComponent, ref, onMounted, computed } from 'vue'
 import { Carousel, Navigation, Slide } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
-import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import { getSelf, getByUsername } from '@/api/UserController';
+import { resultsByUserId } from '@/api/QuizController';
 
 
 export default defineComponent({
@@ -150,30 +150,18 @@ export default defineComponent({
     });
 
     // Function to fetch quiz data
-    async function fetchQuizData() {
+    async function fetchQuizData2() {
       try {
-        const userToken = sessionStorage.getItem("userToken");
-        if (!userToken) {
-          throw new Error("User token not found in session storage.");
-        }
 
-        generateLink(currentUserID.value)
-        
-
-        const response = await axios.get(recentApiUrl.value,{
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userToken.trim()}`
-          }
-        });
-        quizzes.value = response.data.slice(0,5);
-        console.log("quizzes.value:");
-        
-        
+        generateLink(currentUserID.value);
+        resultsByUserId(recentApiUrl.value).then((response) => {
+          quizzes.value = response.data.slice(0,5);
         
         if (quizzes.value.length === 0) {
           noRecentAttempts.value = 1;
-        }
+        } 
+
+        });
       } catch (error) {
         console.error("Failed to fetch quiz data:", error);
       }
@@ -182,14 +170,9 @@ export default defineComponent({
     // Function to fetch quiz data
     async function fetchUsername() {
       try {
-        const userToken = sessionStorage.getItem("userToken");
-        if (!userToken) {
-          throw new Error("User token not found in session storage.");
-        }
-
         getSelf().then((response) => {
           currentUserID.value = response.data.id;
-          fetchQuizData(); 
+          fetchQuizData2(); 
         });
       } catch (error) {
         console.error("Failed to fetch quiz data:", error);
@@ -204,7 +187,9 @@ export default defineComponent({
 
     function generateLink(userId, query: string): void {
       const baseUrl: string = "http://localhost:8080/api/quiz/results/users/";
-      recentApiUrl.value = `${baseUrl}${userId}`;
+      const restUrl: string = `${userId}`
+      console.log(restUrl)
+      recentApiUrl.value = restUrl;
     }
 
     const currentURL = computed(() => window.location.href);
@@ -228,7 +213,7 @@ export default defineComponent({
       try {
         getByUsername(usernameOfOther.value).then((response) => {
           currentUserID.value = response.data.id;
-          fetchQuizData(); 
+          fetchQuizData2(); 
           console.log("testUserIDHasCome");
           
           console.log(response.data.id); 
