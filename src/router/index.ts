@@ -64,7 +64,7 @@ const routes = [
         meta: { requiresAuth: true },
       },
       {
-        path: '/edit',
+        path: '/edit/:id',
         name: 'edit',
         component: () => import('../views/Quiz/QuizEditView.vue'),
         meta: { requiresAuth: true },

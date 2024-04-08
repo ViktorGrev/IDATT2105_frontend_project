@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, reactive, nextTick } from 'vue';
-import axios from 'axios';
+import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import MultipleChoiceEdit from './MultipleChoiceEdit.vue';
 import { editQuiz, quiz } from '@/api/QuizController';
 import { onMounted } from 'vue';
 
-const quizData = ref([]);
+const route = useRoute();
+const router = useRouter();
+
 const quizId = ref(0);
 const quizTime = ref("");
 const quizCreator = ref("");
@@ -24,7 +24,7 @@ const quizImageInput = ref("");
 const quizCoAuthorInput = ref('');
 
 onMounted(async () => {
-    quiz(58).then(response => {
+    quiz(route.params.id).then(response => {
         populateFormWithData(response.data);
     }).catch(error => {
         console.error('Quiz fetch error:', error);
@@ -66,22 +66,6 @@ const randomLabel = () => {
     return quizRandom.value ? "On" : "Off";
 };
 
-const triggerQuizImageUpload = () => {
-    quizImageInput.value.click();
-};
-
-const handleQuizImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            // Store the Base64 string
-            quizImage.value = reader.result;
-        };
-        reader.readAsDataURL(file); // Converts the file to Base64
-    }
-};
-
 const addCoAuthor = () => {
     if (!quizCoAuthors.value.includes(quizCoAuthorInput.value) && quizCoAuthorInput.value.trim() !== '') {
         quizCoAuthors.value.push(quizCoAuthorInput.value.trim());
@@ -91,15 +75,6 @@ const addCoAuthor = () => {
 
 const removeCoAuthor = (authorToRemove) => {
     quizCoAuthors.value = quizCoAuthors.value.filter(author => author !== authorToRemove);
-};
-
-
-const importQuiz = () => {
-    fileInput.value.click();
-};
-
-const triggerFileInput = () => {
-    fileInput.value.click();
 };
 
 const deleteQuestion = (id) => {
@@ -138,17 +113,9 @@ const addAnswerOption = (id) => {
 };
 
 const removeAnswerOption = (questionId, optionIndex) => {
-    // Assuming quizQuestions.value is an array and you're looking for a specific question by id
     const questionIndex = quizQuestions.value.findIndex(question => question.id === questionId);
-
-    // Ensure the question was found
     if(questionIndex !== -1) {
-        console.log(quizQuestions.value[questionIndex]); // Log the found question
-        console.log(optionIndex); // Log the optionIndex to be removed
-
-        // Check if the optionIndex is valid for the question's options
         if(optionIndex >= 0 && optionIndex < quizQuestions.value[questionIndex].options.length) {
-            // Remove the option from the question's options array
             quizQuestions.value[questionIndex].options.splice(optionIndex, 1);
         } else {
             console.error("Invalid optionIndex");
@@ -180,8 +147,6 @@ const addQuestion = (type = 'MULTIPLE_CHOICE') => {
 
 
 const createQuiz = async () => {
-
-
     const quiz = {
         id: quizId.value,
         title: quizTitle.value,

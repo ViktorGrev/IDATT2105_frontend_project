@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EditQuiz from '../../components/EditQuiz/EditQuiz2.vue';
+import EditQuiz from '../../components/EditQuiz/EditQuiz.vue';
 </script>
 
 

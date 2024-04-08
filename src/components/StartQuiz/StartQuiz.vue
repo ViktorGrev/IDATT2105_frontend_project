@@ -10,7 +10,7 @@
 
           </div>
           <div v-if="role === 'ADMIN' || username === creator || coAuthors.some(a => a.username === username)">
-            <button id="edit"><img src="@/assets/icons/edit.svg">Edit quiz</button>
+            <button id="edit" @click="editThisQuiz"><img src="@/assets/icons/edit.svg">Edit quiz</button>
           </div>
           <button class="playButton" @click="navigateToTheQuiz">Play Quiz</button>
         </div>
@@ -97,6 +97,10 @@ const deleteThisQuiz = () => {
     console.error("Failed to fetch quiz data:", error);
   });
 };
+
+const editThisQuiz = () => {
+  router.push({ name: 'edit' });
+}
 
 onMounted(fetchQuizData);
 </script>
