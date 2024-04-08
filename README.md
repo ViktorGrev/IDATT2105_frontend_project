@@ -83,6 +83,8 @@ Dependencies can be found in the package.json file
 
 #### Images for quizzes
 
+#### Fully functional openAPI generating
+
 
 
 ## Installation manual
