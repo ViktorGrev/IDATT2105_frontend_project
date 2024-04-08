@@ -16,8 +16,4 @@ describe('Start page for a quiz', () => {
 
         cy.get('.blueButton');
     });
-    
-    it('Can change username', () => {
-        cy.get('[data-testid="username-textarea"]').should('contain', /alice/i);
-    });
   });

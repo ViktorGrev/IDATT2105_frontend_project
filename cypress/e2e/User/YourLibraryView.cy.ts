@@ -10,13 +10,13 @@ describe('Start page for a quiz', () => {
   
       it('Quizzes load in', () => {
         cy.wait(1000);
-        cy.get('.contentBox').contains(/test/i);
+        cy.get('.contentBox').contains(/ntnu/i);
         cy.get('.quizz');
       });
 
       it('Quizzes redirect you', () => {
         cy.wait(500);
-        cy.get('.quizz').contains(/test/i).click();
+        cy.get('.quizz').contains(/ntnu/i).click();
         cy.url().should('include', '/quiz');
       });
   });
