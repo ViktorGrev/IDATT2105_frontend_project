@@ -44,11 +44,9 @@ export default {
     const username = computed(() => userStore.username);
     const router = useRouter();
     const userRole = computed(() => userStore.role)
-    console.log(userRole.value)
     const isAdmin = ref(null);
     if(userRole.value === 'ADMIN') {
       isAdmin.value = 1;
-      console.log("he admin");
     }
 
 

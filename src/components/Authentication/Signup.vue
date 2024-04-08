@@ -104,6 +104,7 @@ const signupUser = async () => {
         router.push({ name: 'home' });
       }).catch(error => {
         console.log('Error getting user info:', error);
+        confirmPasswordError.value = error.response.data.message;
       });
     }).catch(error => {
       confirmPasswordError.value = error.response.data.message;

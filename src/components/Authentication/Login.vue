@@ -80,9 +80,9 @@ const loginUser = async () => {
         router.push({ name: 'home' });
       }).catch(error => {
         console.log('Error getting user info:', error);
+        passwordError.value = error.response.data.message;
       });
     }).catch(error => {
-      console.log('Login error:', error);
       passwordError.value = error.response.data.message;
       console.log('Login error:', error.response.data.message);
     });

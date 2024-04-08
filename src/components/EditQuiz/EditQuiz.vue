@@ -22,6 +22,7 @@ const quizQuestions = ref([]);
 const quizTagInput = ref("");
 const quizImageInput = ref("");
 const quizCoAuthorInput = ref('');
+const errorMessage = ref("");
 
 onMounted(async () => {
     quiz(route.params.id).then(response => {
@@ -79,7 +80,6 @@ const removeCoAuthor = (authorToRemove) => {
 
 const deleteQuestion = (index) => {
     quizQuestions.value.splice(index, 1);
-    console.log("Question deleted");
 };
 
 export interface Option {
@@ -92,7 +92,6 @@ const addAnswerOption = (questionIndex) => {
     const question = quizQuestions.value[questionIndex];
     if (question) {
         const newOption = {
-            id: null, // Consider removing or generating a unique id if needed
             optionText: '',
             correct: false
         };
@@ -119,7 +118,6 @@ const addQuestion = (type = 'MULTIPLE_CHOICE') => {
         options: [],
     };
     let newOption: Option = {
-        id: null,
         optionText: '',
         correct: false
     };
@@ -132,18 +130,18 @@ const addQuestion = (type = 'MULTIPLE_CHOICE') => {
 const createQuiz = async () => {
     const formattedQuestions = quizQuestions.value.map((q) => {
         let question = {
-            text: q.questionText,
+            text: q.text,
             type: q.type
         };
 
         switch (q.type) {
-            case 'multipleChoice':
+            case 'MULTIPLE_CHOICE':
                 question.options = q.options
                 break;
-            case 'trueFalse':
+            case 'TRUE_FALSE':
                 question.true = q.true
                 break;
-            case 'fillInBlank':
+            case 'FILL_IN_THE_BLANK':
                 question.solution = q.solution
                 break;
             default:
@@ -176,6 +174,7 @@ const createQuiz = async () => {
         router.push({ name: 'quiz', params: { id: quizId.value } });
     }).catch(error => {
         console.error('Quiz creation error:', error);
+        errorMessage.value = error.response.data.message;
     });
 };
 
@@ -187,7 +186,9 @@ const createQuiz = async () => {
         <div class="box">
             <div class="title">
                 <div class="createtitle">
-                    <h1>Create a new Study Set</h1> <button @click="createQuiz" class="createButton">Update</button>
+                    <h1>Create a new Study Set</h1> <button @click="createQuiz" class="createButton">Update<div style="color: red;">
+                    {{ errorMessage }}
+                </div></button>
                 </div>
                 <label for="quizTitle" class="titleLabel">Quiz Title:</label>
                 <input id="quizTitle" aria-label="Title" class="titleInput" maxlength="255"
