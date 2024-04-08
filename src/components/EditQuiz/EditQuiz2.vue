@@ -2,7 +2,7 @@
 import { ref, reactive, nextTick } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import QuestionChangeBox from './QuestionChangeBox.vue';
+import MultipleChoiceEdit from './MultipleChoiceEdit.vue';
 import { editQuiz, quiz } from '@/api/QuizController';
 import { onMounted } from 'vue';
 
@@ -23,43 +23,12 @@ const quizTagInput = ref("");
 const quizImageInput = ref("");
 const quizCoAuthorInput = ref('');
 
-const trueOrFalseQuestion = reactive([
-    {
-        id: 1,
-        text: '',
-        true: false,
-        type: "TRUE_FALSE",
-        image: null,
-    }
-]);
-
-const multipleChoiceQuestion = reactive([
-    {
-        id: 1,
-        text: '',
-        options: [],
-        type: "MULTIPLE_CHOICE",
-        image: null,
-    }
-]);
-
-const fillInTheBlankQuestion = reactive([
-    {
-        id: 1,
-        text: '',
-        solution: '',
-        type: "FILL_IN_THE_BLANK",
-        image: null,
-    }
-]);
-
 onMounted(async () => {
-        quiz(58).then(response => {
-            console.log(JSON.stringify(response.data, null, 2));
-            populateFormWithData(response.data);
-        }).catch(error => {
-            console.error('Quiz fetch error:', error);
-        });
+    quiz(58).then(response => {
+        populateFormWithData(response.data);
+    }).catch(error => {
+        console.error('Quiz fetch error:', error);
+    });
 });
 
 function populateFormWithData(data: any) {
@@ -76,45 +45,6 @@ function populateFormWithData(data: any) {
     quizQuestions.value = data.questions;
 
     console.log(JSON.stringify(quizQuestions.value, null, 2));
-
-    /*trueOrFalseQuestion.splice(0, trueOrFalseQuestion.length);
-    multipleChoiceQuestion.splice(0, multipleChoiceQuestion.length);
-    fillInTheBlankQuestion.splice(0, fillInTheBlankQuestion.length);
-    data.questions.forEach((question: any) => {
-        switch (question.type) {
-            case 'TRUE_FALSE':
-                trueOrFalseQuestion.push({
-                    id: question.id,
-                    text: question.text,
-                    true: question.true,
-                    type: question.type,
-                    image: question.image,
-                });
-                break;
-            case 'MULTIPLE_CHOICE':
-                multipleChoiceQuestion.push({
-                    id: question.id,
-                    text: question.text,
-                    options: question.options.map((option: any) => ({
-                        id: option.id,
-                        optionText: option.text,
-                        correct: option.correct,
-                    })),
-                    type: question.type,
-                    image: question.image,
-                });
-                break;
-            case 'FILL_IN_THE_BLANK':
-                fillInTheBlankQuestion.push({
-                    id: question.id,
-                    text: question.text,
-                    solution: question.solution,
-                    type: question.type,
-                    image: question.image,
-                });
-                break;
-        }
-    });*/
 }
 
 const addTag = () => {
@@ -170,6 +100,54 @@ const importQuiz = () => {
 
 const triggerFileInput = () => {
     fileInput.value.click();
+};
+
+const deleteQuestion = (id) => {
+    quizQuestions.value = quizQuestions.value.filter(i => i.id !== id)
+    console.log("Hallo");
+};
+
+export interface Option {
+    id: number,
+    optionText: string,
+    correct: boolean,
+}
+
+const addAnswerOption = (id) => {
+    const questionIndex = quizQuestions.value.findIndex(q => q.id === id);
+    if (questionIndex !== -1) {
+        // If the question does not have an options array, initialize it
+        if (!quizQuestions.value[questionIndex].options) {
+            quizQuestions.value[questionIndex].options = [];
+        }
+
+        // Create a new option with default values
+        let newOption: Option = {
+            id: Date.now(), // Using a timestamp for unique ID - consider a different method for production
+            optionText: '',
+            correct: false
+        };
+
+        // Add the new option to the question's options array
+        quizQuestions.value[questionIndex].options.push(newOption);
+
+        // Since Vue 3 is reactive, this should automatically update your UI to reflect the changes
+    } else {
+        console.error('Question not found');
+    }
+};
+
+const removeAnswerOption = (questionId, optionId) => {
+    const questionIndex = quizQuestions.value.findIndex(q => q.id === questionId);
+    if (questionIndex !== -1) {
+        if (quizQuestions.value[questionIndex].options && quizQuestions.value[questionIndex].options.length > 0) {
+            quizQuestions.value[questionIndex].options = quizQuestions.value[questionIndex].options.filter(option => option.id !== optionId);
+        } else {
+            console.error('No options available to remove');
+        }
+    } else {
+        console.error('Question not found');
+    }
 };
 </script>
 
@@ -227,9 +205,6 @@ const triggerFileInput = () => {
 
 
                 <div class=titleButtons>
-                    <button class="titleButton" @click="triggerFileInput">+ Import CSV</button>
-                    <input type="file" ref="fileInput" @change="importQuiz" accept=".csv" style="display:none">
-
                     <button @click="toggleRandom" class="titleButton">
                         Randomize Answers: {{ randomLabel() }}
                     </button>
@@ -256,12 +231,64 @@ const triggerFileInput = () => {
                     </div>
                 </div>
             </div>
+
+
+
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionsList">
-                    <QuestionChangeBox v-for="(question, index) in quizQuestions.value" :key="question.id" :question="question"
-                        :index="index" @updateQuestion="handleUpdateQuestion" @deleteQuestion="deleteQuestion"
-                        @setCorrectAnswer="setCorrectAnswer" @handleImageUpload="handleImageUpload" />
+                    <div class="loop" v-for="question in quizQuestions">
+                        <div class="questionEditBox">
+                            <div class="titleHolder">
+                                <div>Question {{ question.tile }}</div>
+                                <button class="deleteButton" @click="deleteQuestion(question.id)">Delete</button>
+                            </div>
+                            <div class="questionBox">
+                                The question:
+                                <input id="question" class="question" v-model="question.text"
+                                    placeholder="Type in here">
+                            </div>
+                            <div class="questionTypeSelector">
+                                <select v-model="question.type">
+                                    <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+                                    <option value="TRUE_FALSE">True / False</option>
+                                    <option value="FILL_IN_THE_BLANK">Fill in the Blank</option>
+                                </select>
+                            </div>
+                            <div class="answers" v-if="question.type === 'MULTIPLE_CHOICE'">
+                                <div id="answerAddSplitter">
+                                    <div v-for="option in question.options" class="answerRow">
+                                        <button id="removeOption" @click="removeAnswerOption(question.id, option.id)">X</button>
+                                        <input class="answersField" v-model="option.optionText">
+                                        <div>
+                                            <input type="checkbox" class="option-input checkbox" :value="option.id"
+                                                @change="option.correct = !option.correct" :checked="option.correct">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div>
+                                    <button id="addOption" @click="addAnswerOption(question.id)">+ Add Option</button>
+                                </div>
+                            </div>
+                            <div class="answers" v-else-if="question.type === 'FILL_IN_THE_BLANK'">
+                                <div class="answerRow">
+                                    <input class="answersField" v-model="question.solution">
+                                </div>
+                            </div>
+                            <div class="answers" v-else-if="question.type === 'TRUE_FALSE'">
+                                <div class="answerRow">
+                                    <label>True</label>
+                                    <input type="radio" class="option-input radio" value="true" v-model="question.true">
+                                </div>
+                                <div class="answerRow">
+                                    <label>False</label>
+                                    <input type="radio" class="option-input radio" value="false"
+                                        v-model="question.true">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <button class="addQuestionButton" @click="addQuestion">+ Add Question</button>
                 </div>
             </div>
@@ -600,5 +627,259 @@ main {
     align-items: center;
     justify-content: center;
     margin-top: 1rem;
+}
+
+.questionEditBox {
+    border: 2px solid #586380;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    padding: 1.5rem;
+    color: #586380;
+    width: 100;
+}
+
+.titleHolder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.questionContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+}
+
+.questionContent {
+    background-color: #edeff4;
+    width: 100%;
+    border-radius: 20px;
+    margin-top: 20px;
+    color: #586380;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.question {
+    width: 60%;
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: normal;
+    line-height: 1.5;
+    appearance: none;
+    border: none;
+    box-shadow: none;
+    cursor: text;
+    filter: none;
+    flex: 1 1 auto;
+    background-color: initial;
+    padding-right: 1rem;
+    background-color: white;
+    height: 3rem;
+    border-radius: 10px;
+    color: #586380;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.question:focus {
+    outline: none;
+    border-bottom: 5px solid rgb(22, 144, 248);
+}
+
+.answersField {
+    width: 50%;
+    min-width: 180px;
+    max-width: 200px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: normal;
+    line-height: 1.5;
+    appearance: none;
+    border: none;
+    box-shadow: none;
+    cursor: text;
+    filter: none;
+    flex: 1 1 auto;
+    background-color: initial;
+    padding-right: 1rem;
+    background-color: white;
+    height: 3rem;
+    border-radius: 10px;
+    color: #586380;
+    margin-right: 1rem;
+}
+
+.answersField:focus {
+    outline: none;
+    border-bottom: 5px solid rgb(22, 144, 248);
+}
+
+.deleteButton {
+    padding: .375rem .875rem;
+    background: red;
+    border-color: #d9dde8;
+    color: white;
+    font-weight: 600;
+    font-size: 2rem;
+    border: .3rem solid red;
+    border-radius: .5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font: inherit;
+    margin-left: 1rem;
+    height: 2rem;
+}
+
+.deleteButton:hover {
+    border: .3rem solid red;
+}
+
+.option-input {
+    appearance: none;
+    height: 40px;
+    width: 40px;
+    transition: all 0.15s ease-out 0s;
+    background: #cbd1d8;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    outline: none;
+    position: relative;
+    z-index: 1000;
+}
+
+.option-input:hover {
+    background: #9faab7;
+}
+
+.option-input:checked {
+    background: #1cbd51;
+}
+
+.option-input.radio {
+    border-radius: 50%;
+}
+
+.answers {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 90%;
+}
+
+.answerRow {
+    padding-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.questionBox {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.questionTypeSelector {
+    width: 100%;
+}
+
+.titleButton {
+    padding: .375rem .875rem;
+    background: white;
+    border-color: #d9dde8;
+    color: #586380;
+    font-weight: 600;
+    font-size: .875rem;
+    border: .125rem solid #58638063;
+    border-radius: .5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font: inherit;
+    margin-right: 2rem;
+}
+
+.titleButton:hover {
+    border: .125rem solid #586380a8;
+}
+
+.questionTypeSelector {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+select {
+    appearance: none;
+    border: 0;
+    outline: 0;
+    background-color: white;
+    color: inherit;
+    box-shadow: none;
+    color: #586380;
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: normal;
+    line-height: 1.5;
+    padding: 1rem;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+#addOption {
+    background: rgb(46, 165, 46);
+    border: none;
+    border-color: #d9dde8;
+    color: white;
+    font-weight: 400;
+    font-size: 1.3rem;
+    border-bottom: 5px solid #58638063;
+    border-radius: .5rem;
+    cursor: pointer;
+    padding: 0.3rem 1rem;
+}
+
+#removeOption {
+    background: red;
+    border: none;
+    border-color: #d9dde8;
+    color: white;
+    font-weight: 400;
+    font-size: 1.3rem;
+    border-bottom: 5px solid #58638063;
+    border-radius: .5rem;
+    cursor: pointer;
+    margin-right: 0.3rem;
+}
+
+#answerAddSplitter {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.loop {
+    width: 100%;
 }
 </style>

@@ -41,12 +41,12 @@ const removeAnswerOption = (index) => {
 
 <template>
     <div id="answerAddSplitter">
-        <div v-for="options in question.options" class="answerRow">
-            <button id="removeOption" @click="removeAnswerOption(ansIndex)">X</button>
-            <input class="answersField" v-model="question.answers[ansIndex]" :placeholder="`Answer ${ansIndex + 1}`">
+        <div v-for="option in question.options" class="answerRow">
+            <button id="removeOption" @click="removeAnswerOption(option.id)">X</button>
+            <input class="answersField" v-model="option.correct" :placeholder="`Answer ${ansIndex + 1}`">
             <div>
                 <input type="checkbox" class="option-input checkbox" :name="`correctAnswer-${question.id}`"
-                    :value="ansIndex" @change="toggleCorrectAnswer(ansIndex)"
+                    :value="ansIndex" @change="option(ansIndex)"
                     :checked="question.correctAnswerIndices.includes(ansIndex)">
             </div>
         </div>

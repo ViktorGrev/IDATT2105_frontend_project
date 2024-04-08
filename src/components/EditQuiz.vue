@@ -92,6 +92,7 @@ function populateFormWithData(data) {
             answers: q.type === "TRUE_FALSE" ? ['True', 'False'] : q.options?.map(option => option.optionText) || [q.solution],
             type: q.type.toLowerCase().replace('multiple_choice', 'multipleChoice').replace('true_false', 'trueFalse').replace('fill_in_the_blank', 'fillInBlank'),
             correctAnswerIndices: correctAnswerIndices,
+            options: options,
             image: q.image,
         };
     }));

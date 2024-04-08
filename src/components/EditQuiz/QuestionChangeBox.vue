@@ -48,6 +48,20 @@ const toggleCorrectAnswer = (answerIndex) => {
     emits('updateQuestion', { ...props.question });
 };
 
+const addAnswerOption = () => {
+    if (props.question.answers.length < 10) { // Example limit to 10 options
+        props.question.answers.push('');
+        emits('updateQuestion', { ...props.question });
+    }
+};
+
+const removeAnswerOption = (index) => {
+    if (props.question.answers.length > 2) { // Ensure there are at least 2 options
+        props.question.answers.splice(index, 1);
+        emits('updateQuestion', { ...props.question });
+    }
+};
+
 </script>
 
 <template>
