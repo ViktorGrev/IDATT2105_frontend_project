@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { search } from '@/api/UserController';
+import { searchForQuiz } from '@/api/QuizController';
 
 // Search word
 const searchQuery = ref(null);
@@ -16,39 +16,27 @@ const users = ref(null);
 const apiUrl = ref(null);
 
 // Categories category
-const selectedCategory = ref(null);
 const categories = ['CHEMISTRY', 'CALCULUS', 'ENGINEERING', 'ALGEBRA', 'PHYSICS', 'BIOLOGY', 'LANGUAGE'];
 
 // Handle keyup event to update search results only when Enter is pressed
 const handleKeyUp = async (event) => {
     if (event.key === 'Enter') {
       generateLink('title', searchQuery.value);
-      await fetchQuizData(); // Wait for fetchQuizData to complete
+      await fetchQuizData2(); // Wait for fetchQuizData to complete
       fetchUserData();
     }
 };
 
-// Method to get quiz data
-async function fetchQuizData() {
-    try {
-        const userToken = sessionStorage.getItem("userToken");
-        if (!userToken) {
-            throw new Error("User token not found in session storage.");
-        }    
-
-        const response = await axios.post(apiUrl.value, {}, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userToken.trim()}`
-            }
-        });
-        console.log(response.data);
-        
-        quizzes.value = response.data;
-
-    } catch (error) {
-        console.error("Failed to fetch quiz data:", error);
-    }
+// Function to fetch user data
+async function fetchQuizData2() {
+  try {
+    searchForQuiz(searchQuery.value).then((response) => {
+      quizzes.value = response.data;
+      console.log(response.data); 
+    });
+  } catch (error) {
+    console.error("Failed to fetch quiz data:", error);
+  }
 }
 
 // Function to fetch user data
@@ -76,12 +64,15 @@ const navigateToUser = (user) => {
 // Update selected category when a button is clicked
 const updateSelectedCategory = (category) => {
   generateLink('category', category);
-    fetchQuizData();
+  fetchQuizData2();
 };
 
 function generateLink(searchType: 'title' | 'category', query: string): void {
     const baseUrl: string = "http://localhost:8080/api/quiz/search";
-    apiUrl.value = `${baseUrl}?${searchType}=${query}`;
+    const restUrl: string = `${searchType}=${query}`
+    console.log(restUrl);
+    
+    apiUrl.value = restUrl;
     console.log(apiUrl.value);
 }
 </script>

@@ -115,7 +115,7 @@ import { ref, onMounted } from "vue";
 import listElement from '../components/listElementComponent.vue'
 import { resultsByUserId } from '@/api/QuizController';
 import { getByUsername, getSelf } from '@/api/UserController';
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router';
 
 const currentUserID = ref(null);
 const userResults = ref(null);
