@@ -45,3 +45,12 @@ export const feedback = () => {
     };
     return axios.get("http://localhost:8080/api/users/feedback" ,config);
 }
+
+export const sendFeedback = (email: string, message: string) => {
+    const config = {
+        headers: {
+            "Authorization": "Bearer " + useUserInfoStore().accessToken
+        }
+    };
+    return axios.post("http://localhost:8080/api/users/feedback", {email:email, message:message}, config);
+}
