@@ -2,7 +2,7 @@
   <input type="text" v-model="userInput" placeholder="Enter your answer">
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineProps, inject, computed } from 'vue';
 
 const props = defineProps({
