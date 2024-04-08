@@ -164,7 +164,7 @@ const createQuiz = async () => {
     console.log(JSON.stringify(quiz, null, 2));
     
     editQuiz(quizId.value, quiz).then(response => {
-        routerView.push({ name: 'quiz', params: { id: quizId } });
+        router.push({ name: 'quiz', params: { id: quizId.value } });
     }).catch(error => {
         console.error('Quiz creation error:', error);
     });
@@ -239,7 +239,7 @@ const createQuiz = async () => {
                         </div>
                         <div class="tagsDisplay">
                             <span v-for="(author, index) in quizCoAuthors" :key="index" class="tag">
-                                {{ author }}
+                                {{ author.username }}
                                 <button @click="removeCoAuthor(author)">x</button>
                             </span>
                         </div>
