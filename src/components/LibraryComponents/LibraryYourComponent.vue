@@ -4,7 +4,7 @@
         <div>
             <h2 style="color: #6d6e72;">Your created quizzes</h2>
             <div v-if="createdQuizzes" class="container">
-                <div v-if="createdQuizzesIsEmpty">You have no created quizzes</div>
+                <div v-if="createdQuizzesIsEmpty" style="color: #6d6e72;">You have no created quizzes</div>
                 <div class="contentBox" v-else>
                     <div class="quizz" v-for="quiz in createdQuizzes" :key="quiz.id" @click="navigateToQuiz(quiz.id)" style="cursor: pointer;">
                         <div class="quizzInfo">
@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-            <div v-else style="text-align: center; align-items:center;">
+            <div v-else style="text-align: center; align-items:center; color: #6d6e72;">
                 loading
             </div>
         </div>
@@ -39,7 +39,7 @@
                     </div>
                 </div>
             </div>
-            <div v-else style="text-align: center; align-items:center;">
+            <div v-else style="text-align: center; align-items:center; color: #6d6e72;">
                 loading
             </div>
         </div>
