@@ -54,12 +54,30 @@ const router = useRouter();
 
 const qId = ref(0);
 
+function shuffleArray<T>(array: T[]): T[] {
+    const newArray = array.slice(); // Create a copy of the original array
+
+    console.log(array);
+
+    // Fisher-Yates shuffle algorithm
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    console.log("I randomized :D")
+    console.log(newArray);
+
+    return newArray;
+}
+
 async function fetchQuizData() {
   const quizId = route.params.id;
   qId.value = quizId;
   quiz(quizId).then((response) => {
     quizData.value = response.data;
-    console.log(quizData.value);
+    if(quizData.value.random) {
+      quizData.value.questions = shuffleArray(quizData.value.questions);
+    }
     // Initialize selectedAnswers with arrays for multiple choice questions
     selectedAnswers.value = quizData.value.questions.map(question => question.type === 'MULTIPLE_CHOICE' ? [] : null);
     userInputs.value = new Array(quizData.value.questions.length).fill('');
