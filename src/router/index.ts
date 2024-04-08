@@ -85,6 +85,12 @@ const routes = [
         meta: { requiresAuth: true },
       },
       {
+        path: '/admin',
+        name: 'admin',
+        component: () => import('../views/AdminFeedback.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
         path: '/:pathMatch(.*)*',
         name: 'not-found',
         component: () => import('@/views/NotFoundView.vue'),

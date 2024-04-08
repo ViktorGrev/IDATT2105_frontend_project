@@ -6,55 +6,54 @@ import QuestionChangeBox from './QuestionChangeBox.vue';
 import { editQuiz, quiz } from '@/api/QuizController';
 import { onMounted } from 'vue';
 
+const quizData = ref([]);
 const quizId = ref(0);
-const time = ref("");
-const creator = ref("");
+const quizTime = ref("");
+const quizCreator = ref("");
 const quizTitle = ref('');
 const quizTags = ref([]);
-const quizTagInput = ref('');
 const quizDescription = ref('');
 const quizCategory = ref('');
-const quizRandomization = ref(false);
-const quizImage = ref(null);
+const quizRandom = ref(false);
+const quizImage = ref("");
 const quizCoAuthors = ref([]);
+const quizQuestions = ref([]);
+
+const quizTagInput = ref("");
+const quizImageInput = ref("");
 const quizCoAuthorInput = ref('');
-defineProps(['question']);
 
-const routerView = useRouter();
-
-const questions = reactive([
+const trueOrFalseQuestion = reactive([
     {
         id: 1,
-        questionText: '',
-        answers: ['', '', '', ''],
-        correctAnswerIndices: [], // Changed from correctAnswerIndex to an array
-        type: 'multipleChoice',
+        text: '',
+        true: false,
+        type: "TRUE_FALSE",
         image: null,
     }
 ]);
 
-const currentQuestionId = ref(questions[0].id);
-
-const addQuestion = (type = 'multipleChoice') => {
-    const nextId = questions.length === 0 ? 1 : Math.max(...questions.map(q => q.id)) + 1;
-    let answers = ['', '', '', ''];
-    if (type === 'trueFalse') {
-        answers = ['True', 'False'];
-    } else if (type === 'fillInBlank') {
-        answers = [''];
+const multipleChoiceQuestion = reactive([
+    {
+        id: 1,
+        text: '',
+        options: [],
+        type: "MULTIPLE_CHOICE",
+        image: null,
     }
-    questions.push({
-        id: nextId,
-        questionText: '',
-        answers: answers,
-        correctAnswerIndices: [0],
-        type: 'multipleChoice'
-    });
-    currentQuestionId.value = nextId;
-};
+]);
+
+const fillInTheBlankQuestion = reactive([
+    {
+        id: 1,
+        text: '',
+        solution: '',
+        type: "FILL_IN_THE_BLANK",
+        image: null,
+    }
+]);
 
 onMounted(async () => {
-    const quizId = router.currentRoute.value.params.id; // Or use `useRoute` if inside a setup function
         quiz(58).then(response => {
             console.log(JSON.stringify(response.data, null, 2));
             populateFormWithData(response.data);
@@ -63,54 +62,60 @@ onMounted(async () => {
         });
 });
 
-function populateFormWithData(data) {
+function populateFormWithData(data: any) {
     quizId.value = data.id;
-    time.value = data.timestamp;
-    creator.value = data.creator;
+    quizTime.value = data.timestamp;
+    quizCreator.value = data.creator;
     quizTitle.value = data.title;
     quizCategory.value = data.category;
     quizDescription.value = data.description;
     quizTags.value = data.tags;
-    quizRandomization.value = data.random;
+    quizRandom.value = data.random;
     quizImage.value = data.image;
     quizCoAuthors.value = data.coAuthors;
+    quizQuestions.value = data.questions;
 
-    // Replace placeholder questions with actual data
-    questions.splice(0, questions.length, ...data.questions.map((q, index) => {
-        // Handling for "TRUE_FALSE" questions to store the 'true' value as a correctAnswerIndices
-        let correctAnswerIndices = [];
-        let options = [];
-        if (q.type === "TRUE_FALSE") {
-            correctAnswerIndices = q.true ? true : false; // If 'true' is true, the correct answer is 'True' (index 0), else 'False' (index 1)
-        } else if (q.options) {
-            correctAnswerIndices = q.options.flatMap((option, index) => option.correct ? [index] : []);
-            options = q.options;
+    console.log(JSON.stringify(quizQuestions.value, null, 2));
+
+    /*trueOrFalseQuestion.splice(0, trueOrFalseQuestion.length);
+    multipleChoiceQuestion.splice(0, multipleChoiceQuestion.length);
+    fillInTheBlankQuestion.splice(0, fillInTheBlankQuestion.length);
+    data.questions.forEach((question: any) => {
+        switch (question.type) {
+            case 'TRUE_FALSE':
+                trueOrFalseQuestion.push({
+                    id: question.id,
+                    text: question.text,
+                    true: question.true,
+                    type: question.type,
+                    image: question.image,
+                });
+                break;
+            case 'MULTIPLE_CHOICE':
+                multipleChoiceQuestion.push({
+                    id: question.id,
+                    text: question.text,
+                    options: question.options.map((option: any) => ({
+                        id: option.id,
+                        optionText: option.text,
+                        correct: option.correct,
+                    })),
+                    type: question.type,
+                    image: question.image,
+                });
+                break;
+            case 'FILL_IN_THE_BLANK':
+                fillInTheBlankQuestion.push({
+                    id: question.id,
+                    text: question.text,
+                    solution: question.solution,
+                    type: question.type,
+                    image: question.image,
+                });
+                break;
         }
-        return {
-            id: index,
-            questionText: q.text,
-            answers: q.type === "TRUE_FALSE" ? ['True', 'False'] : q.options?.map(option => option.optionText) || [q.solution],
-            type: q.type.toLowerCase().replace('multiple_choice', 'multipleChoice').replace('true_false', 'trueFalse').replace('fill_in_the_blank', 'fillInBlank'),
-            correctAnswerIndices: correctAnswerIndices,
-            image: q.image,
-        };
-    }));
-    console.log(JSON.stringify(questions, null, 2));
+    });*/
 }
-
-const findQuestionById = (id) => {
-    return questions.find(q => q.id === id);
-};
-
-const deleteQuestion = (id) => {
-    const index = questions.findIndex(q => q.id === id);
-    if (index !== -1) {
-        questions.splice(index, 1);
-        if (currentQuestionId.value === id) {
-            currentQuestionId.value = questions.length > 0 ? questions[0].id : null;
-        }
-    }
-};
 
 const addTag = () => {
     if (!quizTags.value.includes(quizTagInput.value) && quizTagInput.value.trim() !== '') {
@@ -123,27 +128,16 @@ const removeTag = (tagToRemove) => {
     quizTags.value = quizTags.value.filter(tag => tag !== tagToRemove);
 };
 
-const toggleRandomization = () => {
-    quizRandomization.value = !quizRandomization.value;
+const toggleRandom = () => {
+    quizRandom.value = !quizRandom.value;
 };
 
-const randomizationLabel = () => {
-    return quizRandomization.value ? "On" : "Off";
+const randomLabel = () => {
+    return quizRandom.value ? "On" : "Off";
 };
 
-const handleImageUpload = (event, questionId) => {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const question = findQuestionById(questionId);
-            if (question) {
-                // Store the Base64 string
-                question.image = reader.result;
-            }
-        };
-        reader.readAsDataURL(file); // Converts the file to Base64
-    }
+const triggerQuizImageUpload = () => {
+    quizImageInput.value.click();
 };
 
 const handleQuizImageUpload = (event) => {
@@ -158,95 +152,6 @@ const handleQuizImageUpload = (event) => {
     }
 };
 
-
-const quizImageInput = ref(null);
-
-const triggerQuizImageUpload = () => {
-    quizImageInput.value.click();
-};
-
-const setCorrectAnswer = (questionId, answerIndex) => {
-    const question = findQuestionById(questionId);
-    if (question) {
-        if (question.type === 'trueFalse') {
-            // For TRUE_FALSE, ensure only one correct answer can be set
-            question.correctAnswerIndices = [answerIndex];
-        } else {
-            // For MULTIPLE_CHOICE or other types allowing multiple correct answers
-            const index = question.correctAnswerIndices.indexOf(answerIndex);
-            if (index > -1) {
-                question.correctAnswerIndices.splice(index, 1);
-            } else {
-                question.correctAnswerIndices.push(answerIndex);
-            }
-        }
-    }
-};
-
-const createQuiz = async () => {
-    const formattedQuestions = questions.map((q) => {
-        // Construct the base question object without the image property
-        let question = {
-            id: q.id,
-            text: q.questionText,
-            type: q.type.replace('multipleChoice', 'MULTIPLE_CHOICE')
-                .replace('trueFalse', 'TRUE_FALSE')
-                .replace('fillInBlank', 'FILL_IN_THE_BLANK'),
-        };
-
-        switch (q.type) {
-            case 'multipleChoice':
-                question.options = q.answers.map((answer, index) => ({
-                    optionText: answer,
-                    correct: q.correctAnswerIndices.includes(index),
-                }));
-                break;
-            case 'trueFalse':
-                question.true = q.correctAnswerIndex === 0;
-                break;
-            case 'fillInBlank':
-                question.solution = q.answers[0];
-                break;
-            default:
-        }
-
-        if (q.image) {
-            question.image = q.image;
-        }
-        console.log(question);
-        return question;
-    });
-
-    const quiz = {
-        id: quizId.value,
-        title: quizTitle.value,
-        category: quizCategory.value,
-        description: quizDescription.value,
-        tags: quizTags.value,
-        random: quizRandomization.value,
-        image: quizImage.value,
-        coAuthors: quizCoAuthors.value,
-        questions: formattedQuestions,
-        timestamp: time.value,
-        creator: creator.value,
-    };
-
-    console.log(JSON.stringify(quiz, null, 2));
-
-    editQuiz(quizId.value, quiz).then(response => {
-        console.log(response.data);
-    }).catch(error => {
-        console.error('Quiz creation error:', error);
-    });
-};
-
-const handleUpdateQuestion = (updatedQuestion) => {
-    const questionIndex = questions.findIndex(q => q.id === updatedQuestion.id);
-    if (questionIndex !== -1) {
-        questions[questionIndex] = updatedQuestion;
-    }
-};
-
 const addCoAuthor = () => {
     if (!quizCoAuthors.value.includes(quizCoAuthorInput.value) && quizCoAuthorInput.value.trim() !== '') {
         quizCoAuthors.value.push(quizCoAuthorInput.value.trim());
@@ -258,81 +163,16 @@ const removeCoAuthor = (authorToRemove) => {
     quizCoAuthors.value = quizCoAuthors.value.filter(author => author !== authorToRemove);
 };
 
-const fileInput = ref(null);
+
+const importQuiz = () => {
+    fileInput.value.click();
+};
 
 const triggerFileInput = () => {
     fileInput.value.click();
 };
-
-import Papa from 'papaparse';
-import router from '@/router';
-import { timeStamp } from 'console';
-
-const importQuiz = (event) => {
-    const files = event.target.files;
-    if (files.length > 0) {
-        const file = files[0];
-        Papa.parse(file, {
-            delimiter: ";", // Specifying the delimiter as semicolon
-            complete: (result) => {
-                if (result.data.length > 1) {
-                    // Parse quiz metadata
-                    quizTitle.value = result.data[1][0];
-                    quizDescription.value = result.data[1][1];
-                    quizTags.value = result.data[1][2].split(',').map(tag => tag.trim());
-                    quizCategory.value = result.data[1][3];
-                    quizRandomization.value = result.data[1][4].toLowerCase() === 'yes';
-
-                    // Clear existing questions
-                    questions.splice(0, questions.length);
-
-                    // Parse questions
-                    for (let i = 3; i < result.data.length; i++) {
-                        const row = result.data[i];
-                        if (row.length === 0 || row[0] === '') continue; // Skip empty rows
-                        let type, questionText, answers, correctAnswerIndices = [];
-
-                        switch (row[0].toUpperCase()) {
-                            case "MULTIPLE_CHOICE":
-                                type = "multipleChoice";
-                                questionText = row[1];
-                                answers = row.slice(3); // Adjust for your CSV format
-                                let correctAnswer = row[2]; // Assuming correct answer is provided
-                                let correctIndex = answers.findIndex(ans => ans.trim().toLowerCase() === correctAnswer.trim().toLowerCase());
-                                if (correctIndex !== -1) correctAnswerIndices.push(correctIndex);
-                                break;
-                            case "TRUE_FALSE":
-                                type = "trueFalse";
-                                questionText = row[1];
-                                answers = ["True", "False"];
-                                correctAnswerIndices = [row[2].trim().toLowerCase() === "true" ? 0 : 1];
-                                break;
-                            case "FILL_IN_THE_BLANK":
-                                type = "fillInBlank";
-                                questionText = row[1];
-                                answers = [row[2]]; // Direct answer
-                                correctAnswerIndices = [0]; // Single correct answer
-                                break;
-                        }
-
-                        // Push the parsed question
-                        questions.push({
-                            id: questions.length + 1,
-                            questionText,
-                            answers,
-                            correctAnswerIndices, // Adjust to use an array for indices
-                            type,
-                            image: null,
-                        });
-                    }
-                }
-            },
-            header: false
-        });
-    }
-};
-
 </script>
+
 
 <template>
     <main>
@@ -374,7 +214,6 @@ const importQuiz = (event) => {
                                     placeholder="Add a tag for the Quiz, like “IDATT2105”" v-model="quizTagInput">
 
                                 <button class="titleButton" @click="addTag">Apply Tag</button>
-                                <!-- Display added tags -->
                             </div>
                             <div class="tagsDisplay">
                                 <span v-for="(tag, index) in quizTags" :key="index" class="tag">
@@ -385,12 +224,14 @@ const importQuiz = (event) => {
                         </div>
                     </div>
                 </div>
+
+
                 <div class=titleButtons>
                     <button class="titleButton" @click="triggerFileInput">+ Import CSV</button>
                     <input type="file" ref="fileInput" @change="importQuiz" accept=".csv" style="display:none">
 
-                    <button @click="toggleRandomization" class="titleButton">
-                        Randomize Answers: {{ randomizationLabel() }}
+                    <button @click="toggleRandom" class="titleButton">
+                        Randomize Answers: {{ randomLabel() }}
                     </button>
 
                     <button @click="triggerQuizImageUpload" class="titleButton">
@@ -418,7 +259,7 @@ const importQuiz = (event) => {
             <div class="contentCreation">
                 <div id="questionsTitle">Questions</div>
                 <div class="questionsList">
-                    <QuestionChangeBox v-for="(question, index) in questions" :key="question.id" :question="question"
+                    <QuestionChangeBox v-for="(question, index) in quizQuestions.value" :key="question.id" :question="question"
                         :index="index" @updateQuestion="handleUpdateQuestion" @deleteQuestion="deleteQuestion"
                         @setCorrectAnswer="setCorrectAnswer" @handleImageUpload="handleImageUpload" />
                     <button class="addQuestionButton" @click="addQuestion">+ Add Question</button>
