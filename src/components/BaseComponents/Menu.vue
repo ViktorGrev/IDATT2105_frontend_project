@@ -17,7 +17,7 @@
           <ul class="drop-menu">
             <li><a href="#" @click="user"><img src="../../assets/icons/user.svg">Profile</a></li>
             <li><a href="#" @click="feedback"><img src="../../assets/icons/feedback.svg">Feedback</a></li>
-            <li v-if="isAdmin"><a href="#" @click="feedback"><img src="../../assets/icons/feedback.svg">View feedback</a></li>
+            <li v-if="isAdmin"><a href="#" @click="admin"><img src="../../assets/icons/feedback.svg">View feedback</a></li>
             <li><a href="#" @click="settings"><img src="@/assets/icons/download.svg">Settings</a></li>
             <li><a href="#" @click="logout"><img src="../../assets/icons/logout.svg">Log out</a></li>
           </ul>
@@ -78,6 +78,9 @@ export default {
       },
       feedback() {
         router.push({ name: 'feedback' }); 
+      },
+      admin() {
+        router.push({ name: 'admin' }); 
       },
       yourLibrary() {
         router.push({ name: 'yourLibrary' }); 
