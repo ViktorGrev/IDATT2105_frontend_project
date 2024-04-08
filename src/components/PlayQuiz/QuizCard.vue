@@ -35,7 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 import { ref, reactive, onMounted, provide, nextTick } from 'vue';
 import MultipleChoiceButton from './MultipleChoiceButton.vue';

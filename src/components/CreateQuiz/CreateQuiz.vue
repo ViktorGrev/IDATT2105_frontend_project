@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive, nextTick } from 'vue';
-import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import QuestionEditBox from './QuestionEditBox.vue';
 import { create } from '@/api/QuizController';

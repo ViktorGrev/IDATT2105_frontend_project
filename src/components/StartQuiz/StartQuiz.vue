@@ -30,7 +30,6 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import Leaderboard from './Leaderboard.vue';
