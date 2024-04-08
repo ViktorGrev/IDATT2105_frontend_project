@@ -112,7 +112,7 @@ body {
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import listElement from '../components/listElementComponent.vue'
+import listElement from '@/components/HistoryComponents/listElementComponent.vue'
 import { resultsByUserId } from '@/api/QuizController';
 import { getByUsername, getSelf } from '@/api/UserController';
 import { useRoute, useRouter } from 'vue-router';

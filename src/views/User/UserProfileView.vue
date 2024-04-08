@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from 'vue-router'
-import History from '../../components/history.vue';
-import LongTermHistoryComponent from '@/components/LongTermHistoryComponent.vue';
+import History from '@/components/HistoryComponents/history.vue';
+import LongTermHistoryComponent from '@/components/HistoryComponents/LongTermHistoryComponent.vue';
 import {getByUsername} from "@/api/UserController";
 
 const route = useRoute() // Use useRoute to access the current route details

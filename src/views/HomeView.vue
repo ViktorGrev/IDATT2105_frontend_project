@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import history from '@/components/history.vue';
+import history from '@/components/HistoryComponents/history.vue';
 import HomeColorfullBoxes from '@/components/HomeComponents/HomeColorfullBoxes.vue';
 import HomeNavlinks from '@/components/HomeComponents/HomeNav-linksComponent.vue';
 </script>
