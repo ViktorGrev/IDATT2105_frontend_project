@@ -63,7 +63,7 @@ async function fetchQuizData() {
   const quizId = Number(route.params.id);
   playId.value = Number(quizId);
   leaderboard(quizId).then((response) => {
-    leaderboardData.value = response.data;
+    leaderboardData.value = response.data.slice(0, 10);
   }).catch((error) => {
     console.error("Failed to fetch leaderboard data:", error);
   });

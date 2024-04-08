@@ -36,3 +36,12 @@ export const search = (username: string) => {
     };
     return axios.post("http://localhost:8080/api/users/search?username=" + username, {} ,config);
 }
+
+export const sendFeedback = (email: string, message: string) => {
+    const config = {
+        headers: {
+            "Authorization": "Bearer " + useUserInfoStore().accessToken
+        }
+    };
+    return axios.post("http://localhost:8080/api/users/feedback", {email:email, message:message}, config);
+}
