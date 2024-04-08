@@ -13,6 +13,7 @@ const routes = [
         path: '',
         name: 'home',
         component: () => import('../views/HomeView.vue'),
+        meta: { requiresAuth: true },
       },
       {
         path: '/login',
@@ -88,7 +89,7 @@ const routes = [
         path: '/admin',
         name: 'admin',
         component: () => import('../views/AdminFeedback.vue'),
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true , requiresAdmin: true},
       },
       {
         path: '/:pathMatch(.*)*',
@@ -115,10 +116,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isLoggedIn = () => !!useUserInfoStore().accessToken;
+  const isAdmin = () => useUserInfoStore().role == 'ADMIN';
+  console.log(isAdmin())
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
   if (requiresAuth && !isLoggedIn()) {
     next({ name: 'login', query: { redirect: to.fullPath } });
-  } else {
+  } else if (requiresAdmin && !isAdmin()) {
+    next({ name: 'home' });
+  }else {
     next();
   }
 });
