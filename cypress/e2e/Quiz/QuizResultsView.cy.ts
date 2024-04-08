@@ -11,8 +11,8 @@ describe('Start page for a quiz', () => {
     it('Quizz result is loaded in', () => {
         cy.get('.title').contains(/Test/i);
         cy.get('.scoreText').contains(/you/i);
-        cy.get('.scoreText').contains(/0 correct/i);
-        cy.get('.scoreText').contains(/1 wrong/i);
+        cy.get('.scoreText').contains(/1 correct/i);
+        cy.get('.scoreText').contains(/2 wrong/i);
         cy.get('.choiceButtons').contains(/again/i);
         cy.get('.choiceButtons').contains(/leave/i);
         cy.get('.content').contains(/describe/i);
