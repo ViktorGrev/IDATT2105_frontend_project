@@ -114,3 +114,13 @@ export const editQuiz = (id: number, quiz: any) => {
   };
   return axios.put('http://localhost:8080/api/quiz/' + id, quiz, config);
 }
+
+export const searchForQuiz = (search: string) => {
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+      'Authorization': "Bearer " + userStore.accessToken
+    },
+  };
+  return axios.post('http://localhost:8080/api/quiz/search?' + search, {},config);
+}
