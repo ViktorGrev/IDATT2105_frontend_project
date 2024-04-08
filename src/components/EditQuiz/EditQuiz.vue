@@ -147,6 +147,32 @@ const addQuestion = (type = 'MULTIPLE_CHOICE') => {
 
 
 const createQuiz = async () => {
+    const formattedQuestions = quizQuestions.value.map((q) => {
+        let question = {
+            text: q.questionText,
+            type: q.type
+        };
+
+        switch (q.type) {
+            case 'multipleChoice':
+                question.options = q.options
+                break;
+            case 'trueFalse':
+                question.true = q.true
+                break;
+            case 'fillInBlank':
+                question.solution = q.solution
+                break;
+            default:
+        }
+
+        if (q.image) {
+            question.image = q.image;
+        }
+
+        return question;
+    });
+
     const quiz = {
         id: quizId.value,
         title: quizTitle.value,
@@ -156,7 +182,7 @@ const createQuiz = async () => {
         random: quizRandom.value,
         image: quizImage.value,
         coAuthors: quizCoAuthors.value,
-        questions: quizQuestions.value,
+        questions: formattedQuestions,
         timestamp: quizTime.value,
         creator: quizCreator.value,
     };

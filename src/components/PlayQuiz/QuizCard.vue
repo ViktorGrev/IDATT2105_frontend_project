@@ -135,19 +135,6 @@ function scrollToNextQuestion(index) {
   });
 }
 
-function skipQuestion(index) {
-  // Check the question type and reset accordingly
-  if (quizData.value.questions[index].type === 'MULTIPLE_CHOICE') {
-    selectedAnswers.value[index] = []; // Clear the array for multiple-choice questions
-  } else {
-    selectedAnswers.value[index] = null; // For other types, set to null
-  }
-  
-  userInputs.value[index] = ''; // Clear user input if it's a fill-in-the-blank question
-  // Scroll to the next question
-  scrollToNextQuestion(index);
-}
-
 
 </script>
 
