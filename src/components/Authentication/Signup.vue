@@ -1,7 +1,7 @@
 <template>
   <div id="box">
     <div class="splitt" id="box3">
-      <img src="../assets/rizzletRpng.png" width="100%" height="75%">
+      <img src="../../assets/rizzletRpng.png" width="100%" height="75%">
     </div>
     <div id="box1" class="splitt">
       <div>

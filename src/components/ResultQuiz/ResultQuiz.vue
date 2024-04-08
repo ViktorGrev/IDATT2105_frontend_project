@@ -19,6 +19,7 @@
                                 :class="{ correct: isCorrectFillInBlank(question), incorrect: !isCorrectFillInBlank(question) }">
                                 Answer: {{ findAnswer(question.id) || "No answer provided" }}
                             </div>
+                          <strong>Score: {{question.solution.toUpperCase() === findAnswer(question.id).toUpperCase() ? 1 : 0}}/1</strong>
                         </template>
                         <template v-else-if="question.type === 'MULTIPLE_CHOICE'">
                             <div v-for="option in question.options" :key="option.id" :class="{
@@ -29,16 +30,16 @@
                                     
                                 
                             </div>
-                            
+                          <strong>Score: {{g(question.id) ? 1 : 0}}/1</strong>
                         </template>
                         <template v-else-if="question.type === 'TRUE_FALSE'">
-                          Answer: {{findAnswer(question.id)}}
                             <div
                                 :class="{ correct: question.true && findAnswer(question.id).toString() === 'true', incorrect: !question.true && findAnswer(question.id).toString() === 'true' }">
                                 True<img v-if="question.true" src="@/assets/icons/Check.svg"> </div>
                             <div
                                 :class="{ correct: !question.true && findAnswer(question.id).toString() === 'false', incorrect: question.true && findAnswer(question.id).toString() === 'false' }">
                                 False<img v-if="!question.true" src="@/assets/icons/Check.svg"> </div>
+                          <strong>Score: {{(question.true && findAnswer(question.id).toString() === 'true') || (!question.true && findAnswer(question.id).toString() === 'false') ? 1 : 0}}/1</strong>
                         </template>
                     </div>
                 </div>
@@ -77,9 +78,36 @@ async function fetchResultData() {
         });
 }
 
-function findTrueFalseAnswer(questionId) {
-  const answerObj = result.value.answers.find(a => a.question === questionId);
-  return answerObj ? answerObj.answer : undefined;
+function g(id: number): boolean {
+  if (result.value.answers.find(a => a.question === id) === undefined) {
+    return false;
+  }
+  const ar: number[] = [];
+  for (var q of quiz.value.questions.filter(q => q.id == id)) {
+    for (var o of q.options) {
+      if (o.correct) {
+        ar.push(o.id);
+      }
+    }
+  }
+  const s = result.value.answers.find(a => a.question === id).answer;
+  const t = s.substring(1, s.length - 1).split(", ");
+  const ar2: number[] = [];
+  for (var x of t) {
+    ar2.push(Number(x));
+  }
+
+  if (ar2.length != ar.length) {
+    console.log("A");
+    return false;
+  }
+  for (var a of ar) {
+    if (!ar2.includes(a)) {
+      console.log("B");
+      return false;
+    }
+  }
+  return true;
 }
 
 function findAnswer(questionId) {

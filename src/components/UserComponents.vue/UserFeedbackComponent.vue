@@ -4,14 +4,12 @@
       <div id="formFrame">
           <h1>Feedback</h1>
       <form @submit.prevent="submitForm">
-        <h3 id="title">{{ title }}</h3>
-        <FormInput v-model="name" fieldName="Name" type="text"></FormInput>
         <FormInput v-model="email" fieldName="Email" type="email"></FormInput>
         <br>
         <label for="feedback">Your feedback:</label>
         <textarea v-model="message" placeholder="Write here" rows="5" name="comment[text]" id="comment_text" cols="33"
           required></textarea>
-        <button type="submit" class="btn" :disabled="!isFormValid">
+        <button type="submit" class="btn">
           <span>Send</span>
         </button>
         <p v-if="submissionStatus">{{ submissionStatus }}</p>
@@ -22,69 +20,21 @@
   </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { useFormStore } from '@/stores/counter';
+import { ref } from 'vue';
 import FormInput from '@/components/FormInput.vue';
+import {sendFeedback} from "@/api/UserController";
 
-const submissionStatus = ref('');
+const email = ref("");
+const message = ref("");
+const submissionStatus = ref("");
 
-// Definerer props for komponenten
-const props = defineProps<{
-  title: string;
-}>();
-
-// Bruker useFormStore for å hente og sette tilstand
-const store = useFormStore();
-
-// Lokale ref-er som er bundet til input-feltene og initialiseres med verdier fra butikken
-const name = ref(store.name);
-const email = ref(store.email);
-const message = ref('');
-
-// Se på endringer i navn og e-post og oppdater butikken tilsvarende
-watch(name, (newName) => {
-  store.setName(newName);
-});
-
-watch(email, (newEmail) => {
-  store.setEmail(newEmail);
-});
-
-// Valideringslogikk
-const isFormValid = computed(() => {
-  return name.value.trim() !== '' && email.value.trim() !== '' && message.value.trim() !== '';
-});
-
-// Form submit handling
 const submitForm = async () => {
-  if (isFormValid.value) {
-    try {
-      const response = await fetch('http://localhost:3000/submissions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: name.value,
-          email: email.value,
-          message: message.value,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      // Update submission status for UI feedback
-      submissionStatus.value = 'Form submitted successfully';
-    } catch (error) {
-      console.error('Submission error:', error);
-      submissionStatus.value = 'Submission failed';
-    }
-  } else {
-    submissionStatus.value = 'Please fill in all fields';
-  }
+  console.log("test");
+  sendFeedback(email.value, message.value).then(response => {
+    submissionStatus.value = "Feedback has been sent!";
+  }).catch(error => {
+    submissionStatus.value = error.response.data.message;
+  });
 };
 </script>
 
@@ -110,7 +60,7 @@ main {
   width: 400px;
   padding: 40px;
   border-radius: 50px;
-  color: #6d6e72;
+  color: #101010;
 }
 
 label {

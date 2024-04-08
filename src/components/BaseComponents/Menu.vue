@@ -17,6 +17,7 @@
           <ul class="drop-menu">
             <li><a href="#" @click="user"><img src="../../assets/icons/user.svg">Profile</a></li>
             <li><a href="#" @click="feedback"><img src="../../assets/icons/feedback.svg">Feedback</a></li>
+            <li v-if="isAdmin"><a href="#" @click="feedback"><img src="../../assets/icons/feedback.svg">View feedback</a></li>
             <li><a href="#" @click="settings"><img src="@/assets/icons/download.svg">Settings</a></li>
             <li><a href="#" @click="logout"><img src="../../assets/icons/logout.svg">Log out</a></li>
           </ul>
@@ -31,7 +32,7 @@
   </nav>
 </template>
 
-<script>
+<script lang="ts">
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserInfoStore } from '@/stores/UserStore';
@@ -42,6 +43,13 @@ export default {
     const isLoggedIn = computed(() => userStore.isLoggedIn); 
     const username = computed(() => userStore.username);
     const router = useRouter();
+    const userRole = computed(() => userStore.role)
+    console.log(userRole.value)
+    const isAdmin = ref(null);
+    if(userRole.value === 'ADMIN') {
+      isAdmin.value = 1;
+      console.log("he admin");
+    }
 
 
     return {
@@ -77,7 +85,8 @@ export default {
       search() {
         router.push({ name: 'search' }); 
       },
-      isLoggedIn
+      isLoggedIn,
+      isAdmin
     };
   }
 }
@@ -163,7 +172,7 @@ nav .wrapper{
 .nav-links .drop-menu{
   position: absolute;
   background: rgb(22, 144, 248);
-  width: 180px;
+  width: 200px;
   line-height: 45px;
   top: 85px;
   opacity: 0;
@@ -171,6 +180,9 @@ nav .wrapper{
   box-shadow: 0 6px 10px rgba(0,0,0,0.15);
   padding-inline-start: 0px;
   padding: 5px;
+  z-index: 2;
+  white-space: nowrap; 
+  overflow: hidden;
 }
 .nav-links li:hover .drop-menu,
 .nav-links li:hover .mega-box{
@@ -178,12 +190,14 @@ nav .wrapper{
   top: 70px;
   opacity: 1;
   visibility: visible;
+  z-index: 2;
 }
 .drop-menu li a{
   display: block;
   padding: 0px 0px 0px 10px;
   font-weight: 400;
   border-radius: 0px;
+  z-index: 2;
 }
 .content .row img{
   width: 100%;

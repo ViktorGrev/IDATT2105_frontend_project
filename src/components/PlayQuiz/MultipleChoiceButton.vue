@@ -6,7 +6,7 @@
   </button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps(['optionText', 'optionIndex', 'isSelected']);
 </script>
 
